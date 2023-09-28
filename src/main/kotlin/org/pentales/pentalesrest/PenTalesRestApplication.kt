@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import org.springframework.boot.*
+import org.springframework.boot.autoconfigure.*
 
 @SpringBootApplication
 class PenTalesRestApplication
