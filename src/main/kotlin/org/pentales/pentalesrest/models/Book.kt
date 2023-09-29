@@ -8,23 +8,19 @@ import org.pentales.pentalesrest.models.intermediates.*
 class Book(
 
     @Id
-    override var id: Long? = null,
+    override var id: Long = 0L,
 
     @field:NotBlank
-    var title: String? = null,
-    var description: String? = null,
-    var ISBN: String? = null,
-    var publicationYear: Int? = null,
-
+    var title: String = "",
+    var description: String = "",
+    var ISBN: String = "",
+    var publicationYear: Int = 0,
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
-    var authors: List<BookAuthor?>? = ArrayList(),
-
+    var authors: List<BookAuthor> = ArrayList(),
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var genres: List<BookGenre> = ArrayList(),
-
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var languages: List<BookLanguage> = ArrayList(),
-
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var publishers: List<BookPublisher> = ArrayList()
 

@@ -8,12 +8,11 @@ import java.io.*
 class BookGenre(
 
     @EmbeddedId
-    var bookGenreKey: BookGenreKey? = null, var sortOrder: Int = 0,
-
+    var id: BookGenreKey = BookGenreKey(),
+    var sortOrder: Int = 0,
     @MapsId("bookId")
     @ManyToOne
     var book: Book? = null,
-
     @MapsId("genreId")
     @ManyToOne
     var genre: Genre? = null
@@ -22,5 +21,5 @@ class BookGenre(
 
 @Embeddable
 class BookGenreKey(
-    var bookId: Long?, var genreId: Long?
+    var bookId: Long = 0L, var genreId: Long = 0L
 ) : Serializable

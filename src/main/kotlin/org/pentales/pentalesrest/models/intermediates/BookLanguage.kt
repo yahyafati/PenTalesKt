@@ -8,12 +8,11 @@ import java.io.*
 class BookLanguage(
 
     @EmbeddedId
-    var id: BookLanguageKey? = null, var sortOrder: Int = 0,
-
+    var id: BookLanguageKey = BookLanguageKey(),
+    var sortOrder: Int = 0,
     @MapsId("bookId")
     @ManyToOne
     var book: Book? = null,
-
     @MapsId("languageId")
     @ManyToOne
     var language: Language? = null
@@ -22,5 +21,5 @@ class BookLanguage(
 
 @Embeddable
 class BookLanguageKey(
-    var bookId: Long?, var languageId: Long?
+    var bookId: Long = 0L, var languageId: Long = 0L
 ) : Serializable

@@ -8,12 +8,11 @@ import java.io.*
 class UserProfileGenre(
 
     @EmbeddedId
-    var id: UserProfileGenreKey? = null, var sortOrder: Int = 0,
-
+    var id: UserProfileGenreKey = UserProfileGenreKey(),
+    var sortOrder: Int = 0,
     @MapsId("userProfileId")
     @ManyToOne
     var profile: UserProfile? = null,
-
     @MapsId("genreId")
     @ManyToOne
     var genre: Genre? = null
@@ -22,5 +21,5 @@ class UserProfileGenre(
 
 @Embeddable
 class UserProfileGenreKey(
-    var userProfileId: Long?, var genreId: Long?
+    var userProfileId: Long = 0L, var genreId: Long = 0L
 ) : Serializable

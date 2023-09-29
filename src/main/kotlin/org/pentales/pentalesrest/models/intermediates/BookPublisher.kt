@@ -8,12 +8,11 @@ import java.io.*
 class BookPublisher(
 
     @EmbeddedId
-    var id: BookPublisherKey? = null, var sortOrder: Int = 0,
-
+    var id: BookPublisherKey = BookPublisherKey(),
+    var sortOrder: Int = 0,
     @MapsId("bookId")
     @ManyToOne
     var book: Book? = null,
-
     @MapsId("publisherId")
     @ManyToOne
     var publisher: Publisher? = null
@@ -22,5 +21,5 @@ class BookPublisher(
 
 @Embeddable
 class BookPublisherKey(
-    var bookId: Long?, var publisherId: Long?
+    var bookId: Long = 0L, var publisherId: Long = 0L
 ) : Serializable

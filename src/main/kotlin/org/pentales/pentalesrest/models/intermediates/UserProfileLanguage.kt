@@ -8,12 +8,11 @@ import java.io.*
 class UserProfileLanguage(
 
     @EmbeddedId
-    var id: UserProfileLanguageKey? = null, var sortOrder: Int = 0,
-
+    var id: UserProfileLanguageKey = UserProfileLanguageKey(),
+    var sortOrder: Int = 0,
     @MapsId("userProfileId")
     @ManyToOne
     var profile: UserProfile? = null,
-
     @MapsId("languageId")
     @ManyToOne
     var language: Language? = null
@@ -22,5 +21,5 @@ class UserProfileLanguage(
 
 @Embeddable
 class UserProfileLanguageKey(
-    var userProfileId: Long?, var languageId: Long?
+    var userProfileId: Long = 0L, var languageId: Long = 0L
 ) : Serializable

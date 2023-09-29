@@ -8,17 +8,15 @@ import java.time.*
 class UserProfile(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Long?,
-    var firstName: String?,
-    var lastName: String?,
-    var displayName: String?,
-    var dateOfBirth: LocalDate?,
-    var bio: String?,
-
+    override var id: Long = 0L,
+    var firstName: String = "",
+    var lastName: String = "",
+    var displayName: String = "",
+    var dateOfBirth: LocalDate = LocalDate.now(),
+    var bio: String = "",
     @Enumerated(value = EnumType.STRING)
-    var gender: Gender?,
-
+    var gender: Gender = Gender.FEMALE,
     @OneToOne
-    var user: User?
+    var user: User = User()
 
 ) : IModel
