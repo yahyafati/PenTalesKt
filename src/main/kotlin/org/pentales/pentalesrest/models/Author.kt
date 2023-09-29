@@ -10,5 +10,10 @@ class Author(
     override var id: Long = 0L,
     @field:NotBlank
     var name: String = ""
-) : IModel
+) : IModel {
+
+    override fun toString(): String {
+        return "Author(id=$id, name='$name')"
+    }
+}
 

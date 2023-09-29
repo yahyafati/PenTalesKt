@@ -14,5 +14,9 @@ class User(
     var email: String = "",
     var password: String = "",
     var phone: String = "",
+) : IModel {
 
-    ) : IModel
+    override fun toString(): String {
+        return "User(id=$id, name='$name', username='$username', email='$email', password='$password', phone='$phone')"
+    }
+}
