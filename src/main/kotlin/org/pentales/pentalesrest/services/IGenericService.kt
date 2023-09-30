@@ -4,10 +4,12 @@ import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.springframework.data.jpa.repository.*
 import java.util.*
+import kotlin.reflect.*
 
 interface IGenericService<T : IModel> {
 
     val repository: JpaRepository<T, Long>
+    val modelProperties: Collection<KProperty1<T, *>>
     val entityName: String
         get() {
             val className = javaClass.getSimpleName()
@@ -32,13 +34,23 @@ interface IGenericService<T : IModel> {
         return save(entity)
     }
 
-    fun update(id: Long, entity: T): T {
+    fun update(id: Long, entity: T, updatedFields: List<String> = emptyList()): T {
         val existingEntity: Optional<T> = repository.findById(id)
-        if (existingEntity.isEmpty) {
-            throw NoEntityWithIdException.create(entityName, id)
-        }
+        if (existingEntity.isEmpty) throw NoEntityWithIdException.create(entityName, id)
         entity.id = id
-        return save(entity)
+        if (updatedFields.isEmpty()) {
+            return save(entity)
+        }
+
+        modelProperties.forEach { property ->
+            if (updatedFields.contains(property.name)) {
+                if (property is KMutableProperty<*>) {
+                    property.setter.call(existingEntity.get(), property.get(entity))
+                }
+            }
+        }
+
+        return save(existingEntity.get())
     }
 
     fun deleteById(id: Long) {

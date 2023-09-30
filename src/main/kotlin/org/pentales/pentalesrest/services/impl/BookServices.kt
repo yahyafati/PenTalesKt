@@ -7,6 +7,8 @@ import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.stereotype.*
+import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 @Service
 class BookServices(
@@ -19,6 +21,8 @@ class BookServices(
 
     override val repository: JpaRepository<Book, Long>
         get() = bookRepository
+    override val modelProperties: Collection<KProperty1<Book, *>>
+        get() = Book::class.memberProperties
 
     private fun saveBookGenres(book: Book): List<BookGenre> {
         val bookGenres: List<BookGenre> = book.genres

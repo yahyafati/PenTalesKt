@@ -35,17 +35,19 @@ class BookController(private val bookServices: IBookServices) {
 
     @PutMapping("/{id}")
     fun updateBook(
-        @PathVariable id: Long, @RequestBody bookDTO: BookDTO
+        @PathVariable id: Long,
+        @RequestBody bookDTO: BookDTO,
+        @RequestParam(required = false) includeFields: List<String>?
     ): ResponseEntity<BookDTO> {
         val book = bookDTO.toBook()
-        val updatedBook = service.update(id, book)
+        val updatedBook = service.update(id, book, includeFields ?: emptyList())
         return ResponseEntity.ok(BookDTO(updatedBook))
     }
 
     @DeleteMapping("/{id}")
     fun deleteBook(
         @PathVariable id: Long
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<Unit> {
         service.deleteById(id)
         return ResponseEntity.ok().build()
     }
