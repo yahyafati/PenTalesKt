@@ -6,18 +6,14 @@ import java.time.*
 
 @Entity
 class UserProfile(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Long = 0L,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) override var id: Long = 0L,
     var firstName: String = "",
     var lastName: String = "",
     var displayName: String = "",
     var dateOfBirth: LocalDate = LocalDate.now(),
     var bio: String = "",
-    @Enumerated(value = EnumType.STRING)
-    var gender: Gender = Gender.FEMALE,
-    @OneToOne
-    var user: User = User()
+    @Enumerated(value = EnumType.STRING) var gender: Gender = Gender.FEMALE,
+    @OneToOne var user: User = User()
 
 ) : IModel {
 

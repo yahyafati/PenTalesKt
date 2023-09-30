@@ -6,9 +6,7 @@ import jakarta.persistence.*
 @Table(name = "users")
 class User(
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Long = 0L,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) override var id: Long = 0L,
     var name: String = "",
     var username: String = "",
     var email: String = "",

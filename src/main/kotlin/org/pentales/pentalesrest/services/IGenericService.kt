@@ -19,12 +19,11 @@ interface IGenericService<T : IModel> {
         return repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id) }
     }
 
-    fun findAll(): List<T>? {
+    fun findAll(): List<T> {
         return repository.findAll()
     }
 
     fun save(entity: T): T {
-        println("Saving entity: $entity")
         return repository.save<T>(entity)
     }
 
@@ -33,11 +32,12 @@ interface IGenericService<T : IModel> {
         return save(entity)
     }
 
-    fun update(entity: T): T {
-        val existingEntity: Optional<T> = repository.findById(entity.id)
+    fun update(id: Long, entity: T): T {
+        val existingEntity: Optional<T> = repository.findById(id)
         if (existingEntity.isEmpty) {
-            throw NoEntityWithIdException.create(entityName, entity.id)
+            throw NoEntityWithIdException.create(entityName, id)
         }
+        entity.id = id
         return save(entity)
     }
 
