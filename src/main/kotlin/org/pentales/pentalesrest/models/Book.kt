@@ -18,7 +18,7 @@ class Book(
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book") var languages: List<BookLanguage> = ArrayList(),
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book") var publishers: List<BookPublisher> = ArrayList()
 
-) : IModel {
+) : IModel() {
 
     override fun toString(): String {
         return "Book(id=$id, title='$title', description='$description', ISBN='$ISBN', publicationYear=$publicationYear)"

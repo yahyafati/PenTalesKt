@@ -7,7 +7,7 @@ import jakarta.validation.constraints.*
 class Genre(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) override var id: Long = 0L,
     @field:NotBlank var name: String = ""
-) : IModel {
+) : IModel() {
 
     override fun toString(): String {
         return "Genre(id=$id, name='$name')"
