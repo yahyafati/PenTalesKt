@@ -38,3 +38,5 @@ out/
 
 application-local.properties
 application-local.yml
+certs/
+*.pem

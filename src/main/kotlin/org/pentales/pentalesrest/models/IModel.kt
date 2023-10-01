@@ -3,11 +3,12 @@ package org.pentales.pentalesrest.models
 import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*
 import org.hibernate.annotations.*
+import java.io.*
 import java.sql.*
 import java.time.*
 
 @MappedSuperclass
-abstract class IModel {
+abstract class IModel : Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
