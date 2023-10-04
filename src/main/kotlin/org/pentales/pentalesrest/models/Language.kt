@@ -12,7 +12,6 @@ class Language(
     var name: String = ""
 ) : IModel() {
 
-
     override fun toString(): String {
         return "Language(id=$id, name='$name')"
     }

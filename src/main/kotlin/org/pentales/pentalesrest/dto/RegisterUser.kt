@@ -15,7 +15,6 @@ data class RegisterUser(
     val displayName: String = "",
 ) {
 
-
     fun toUser(): User {
         val user = User(0L, username, password, email)
         val profile = UserProfile(firstName = firstName, lastName = lastName, displayName = displayName, user = user)

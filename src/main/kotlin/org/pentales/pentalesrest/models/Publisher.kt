@@ -12,7 +12,6 @@ class Publisher(
     var name: String = ""
 ) : IModel() {
 
-
     override fun toString(): String {
         return "Publisher(id=$id, name='$name')"
     }

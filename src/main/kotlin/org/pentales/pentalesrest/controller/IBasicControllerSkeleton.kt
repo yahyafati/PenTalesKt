@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*
 
 interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<Entity>> {
 
-
     val service: Service
 
     // Why do we need the @get:GetMapping("") annotation?

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 class PublisherController(private val publisherServices: IPublisherServices) :
     IBasicControllerSkeleton<Publisher, IPublisherServices> {
 
-
     override val service: IPublisherServices
         get() = publisherServices
 }

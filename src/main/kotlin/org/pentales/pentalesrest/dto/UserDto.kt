@@ -7,6 +7,5 @@ data class UserDto(
     val email: String,
 ) {
 
-
     constructor(user: User) : this(user.username, user.email)
 }

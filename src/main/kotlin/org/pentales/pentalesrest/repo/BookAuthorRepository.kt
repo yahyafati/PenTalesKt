@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.*
 
 interface BookAuthorRepository : JpaRepository<BookAuthor, Long> {
 
-
     fun deleteAllByBookId(bookId: Long)
 }

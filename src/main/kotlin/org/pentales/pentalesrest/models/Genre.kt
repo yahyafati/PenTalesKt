@@ -12,7 +12,6 @@ class Genre(
     var name: String = ""
 ) : IModel() {
 
-
     override fun toString(): String {
         return "Genre(id=$id, name='$name')"
     }

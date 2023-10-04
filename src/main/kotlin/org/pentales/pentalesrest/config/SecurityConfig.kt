@@ -29,32 +29,24 @@ class SecurityConfig(
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
-                .cors(Customizer.withDefaults())
-                .csrf { it.disable() }
-                .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-                .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
-                .addFilter(
-                    JWTAuthorizationFilter(
-                        authenticationManager(), securityConfigProperties, userService, jwtService
-                    )
+        return http.cors(Customizer.withDefaults()).csrf { it.disable() }
+            .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
+            .addFilter(
+                JWTAuthorizationFilter(
+                    authenticationManager(), securityConfigProperties, userService, jwtService
                 )
-                .authorizeHttpRequests { auth ->
-                    auth
-                            .requestMatchers(
-                                HttpMethod.POST,
-                                securityConfigProperties.loginUrl,
-                                securityConfigProperties.logoutUrl,
-                                securityConfigProperties.registerUrl,
-                            )
-                            .permitAll().requestMatchers("/v3/api-docs/**", "/swagger-ui/**")
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated()
-                }
+            ).authorizeHttpRequests { auth ->
+                auth.requestMatchers(
+                    HttpMethod.POST,
+                    securityConfigProperties.loginUrl,
+                    securityConfigProperties.logoutUrl,
+                    securityConfigProperties.registerUrl,
+                ).permitAll().requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll().anyRequest()
+                    .authenticated()
+            }
 //                .oauth2ResourceServer { oauth2 -> oauth2.jwt(Customizer.withDefaults()) }
-                .exceptionHandling(Customizer.withDefaults())
-                .build()
+            .exceptionHandling(Customizer.withDefaults()).build()
     }
 
     @Bean

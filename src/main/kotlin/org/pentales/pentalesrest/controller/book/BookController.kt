@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/book")
 class BookController(private val bookServices: IBookServices) {
 
-
     val service: IBookServices
         get() = bookServices
 

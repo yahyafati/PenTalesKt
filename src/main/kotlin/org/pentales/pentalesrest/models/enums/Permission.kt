@@ -19,7 +19,6 @@ enum class Permission(private val title: String) { ADMIN_READ("admin:read"),
 
     companion object {
 
-
         fun fromTitle(title: String): Permission {
             return Permission.values().first { it.title == title }
         }

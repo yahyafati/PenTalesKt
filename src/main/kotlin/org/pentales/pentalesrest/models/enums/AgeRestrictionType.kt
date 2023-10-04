@@ -6,7 +6,6 @@ enum class AgeRestrictionType(
     val description: String
 ) {
 
-
     // Suitable for all ages
     G("General Audience"),
 
@@ -27,7 +26,6 @@ enum class AgeRestrictionType(
     }
 
     companion object {
-
 
         fun fromDescription(description: String?): AgeRestrictionType? {
             val first = Arrays.stream(values()).filter { type: AgeRestrictionType ->

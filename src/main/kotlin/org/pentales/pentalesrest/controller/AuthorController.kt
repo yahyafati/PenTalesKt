@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 class AuthorController(private val authorServices: IAuthorServices) :
     IBasicControllerSkeleton<Author, IAuthorServices> {
 
-
     override val service: IAuthorServices
         get() = authorServices
 }

@@ -20,7 +20,6 @@ class UserProfile(
     var user: User = User(),
 ) : IModel() {
 
-
     override fun toString(): String {
         return "UserProfile(id=$id, firstName='$firstName', lastName='$lastName', displayName='$displayName', dateOfBirth=$dateOfBirth, bio='$bio', gender=$gender)"
     }

@@ -8,7 +8,6 @@ import org.springframework.web.servlet.mvc.method.annotation.*
 @RestControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
-
     @ExceptionHandler(value = [Exception::class])
     protected fun handleConflict(ex: RuntimeException, request: WebRequest?): ResponseEntity<Any>? {
         ex.printStackTrace()

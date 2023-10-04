@@ -4,7 +4,6 @@ import org.pentales.pentalesrest.models.*
 
 interface IBookIntermediatesServices {
 
-
     fun updateAuthors(bookId: Long, authors: List<Author>, delete: Boolean): Book
     fun removeAuthors(bookId: Long): Book
     fun updatePublishers(bookId: Long, publishers: List<Publisher>, delete: Boolean): Book

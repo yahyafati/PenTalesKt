@@ -5,7 +5,6 @@ import org.pentales.pentalesrest.models.*
 
 class AuthorityConverter : AttributeConverter<List<Authority>, String> {
 
-
     override fun convertToDatabaseColumn(attribute: List<Authority>?): String {
         if (attribute == null) {
             return ""

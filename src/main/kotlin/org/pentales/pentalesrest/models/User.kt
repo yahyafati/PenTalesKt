@@ -27,7 +27,6 @@ class User(
     var profile: UserProfile? = null,
 ) : IModel(), UserDetails {
 
-
     private var isAccountNonExpired: Boolean = true
     private var isAccountNonLocked: Boolean = true
 

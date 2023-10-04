@@ -22,7 +22,6 @@ class BookAuthorKey(
     var bookId: Long = 0L, var authorId: Long = 0L
 ) : Serializable {
 
-
     override fun toString(): String {
         return "BookAuthorKey(bookId=$bookId, authorId=$authorId)"
     }

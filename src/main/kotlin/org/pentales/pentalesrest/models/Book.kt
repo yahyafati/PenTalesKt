@@ -24,7 +24,6 @@ class Book(
     var publishers: List<BookPublisher> = ArrayList()
 ) : IModel() {
 
-
     override fun toString(): String {
         return "Book(id=$id, title='$title', description='$description', ISBN='$ISBN', publicationYear=$publicationYear)"
     }

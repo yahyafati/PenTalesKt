@@ -15,7 +15,6 @@ class BookDTO(
     var publishers: List<Publisher> = ArrayList()
 ) {
 
-
     constructor(book: Book) : this(book.id,
         book.title,
         book.description,

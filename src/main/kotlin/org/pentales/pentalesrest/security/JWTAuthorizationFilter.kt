@@ -19,11 +19,9 @@ class JWTAuthorizationFilter(
     private val jwtService: JwtService
 ) : BasicAuthenticationFilter(authenticationManager) {
 
-
     private var jwtProperties: SecurityConfigProperties.JwtProperties = securityConfigProperties.jwt
 
     companion object {
-
 
         private val LOG = LoggerFactory.getLogger(JWTAuthorizationFilter::class.java)
     }

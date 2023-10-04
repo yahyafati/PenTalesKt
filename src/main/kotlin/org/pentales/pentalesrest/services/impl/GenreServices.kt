@@ -11,7 +11,6 @@ import kotlin.reflect.full.*
 @Service
 class GenreServices(private val genreRepository: GenreRepository) : IGenreServices {
 
-
     override val repository: JpaRepository<Genre, Long>
         get() = genreRepository
     override val modelProperties: Collection<KProperty1<Genre, *>>

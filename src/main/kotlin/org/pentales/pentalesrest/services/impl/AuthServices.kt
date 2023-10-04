@@ -11,7 +11,6 @@ class AuthServices(
     private val userServices: IUserService, private val passwordEncoder: PasswordEncoder
 ) : IAuthServices {
 
-
     override fun register(registerUser: RegisterUser): User {
         val user = registerUser.toUser()
         user.password = passwordEncoder.encode(user.password)

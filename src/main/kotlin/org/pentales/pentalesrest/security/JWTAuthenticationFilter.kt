@@ -22,9 +22,7 @@ class JWTAuthenticationFilter(
     private val jwtService: JwtService,
 ) : UsernamePasswordAuthenticationFilter() {
 
-
     companion object {
-
 
         private val LOG = LoggerFactory.getLogger(JWTAuthenticationFilter::class.java)
     }

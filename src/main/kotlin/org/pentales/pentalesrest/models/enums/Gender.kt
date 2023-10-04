@@ -11,7 +11,6 @@ enum class Gender(private val value: String) { MALE("MALE"),
 
     companion object {
 
-
         fun fromValue(value: String?): Gender? {
             val first = Arrays.stream(values()).filter { gender: Gender -> gender.hasValue(value) }.findFirst()
             return first.orElse(null)

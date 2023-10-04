@@ -11,7 +11,6 @@ import kotlin.reflect.full.*
 @Service
 class LanguageServices(private val languageRepository: LanguageRepository) : ILanguageServices {
 
-
     override val repository: JpaRepository<Language, Long>
         get() = languageRepository
     override val modelProperties: Collection<KProperty1<Language, *>>

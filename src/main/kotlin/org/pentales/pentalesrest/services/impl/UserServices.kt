@@ -9,7 +9,6 @@ import org.springframework.stereotype.*
 @Service
 class UserServices(private val userRepository: UserRepository) : IUserService {
 
-
     override fun save(user: User): User {
         return userRepository.save(user)
     }

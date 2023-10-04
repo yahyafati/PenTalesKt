@@ -11,7 +11,6 @@ import java.util.*
 @Service
 class JwtService(securityConfigProperties: SecurityConfigProperties) {
 
-
     private val jwtProperties: SecurityConfigProperties.JwtProperties = securityConfigProperties.jwt
     private fun decodedJWT(token: String): DecodedJWT {
         return JWT.require(getSignInKey()).build().verify(token)
@@ -37,8 +36,8 @@ class JwtService(securityConfigProperties: SecurityConfigProperties) {
         val jwtBuilder = JWT.create()
         extraClaims.forEach { (key, value) -> jwtBuilder.withClaim(key, value.toString()) }
 
-        return jwtBuilder.withArrayClaim("authorities",
-            userDetails.authorities.map { it.authority }.toTypedArray<String?>()
+        return jwtBuilder.withArrayClaim(
+            "authorities", userDetails.authorities.map { it.authority }.toTypedArray<String?>()
         ).withSubject(userDetails.username).withIssuedAt(Instant.now()).withIssuer(jwtProperties.issuer)
             .withExpiresAt(Date(System.currentTimeMillis() + jwtProperties.expiration)).sign(getSignInKey())
     }

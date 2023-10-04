@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/book/{bookId}/languages")
 class BookLanguageController(private val bookIntermediatesServices: IBookIntermediatesServices) {
 
-
     val service: IBookIntermediatesServices
         get() = bookIntermediatesServices
 

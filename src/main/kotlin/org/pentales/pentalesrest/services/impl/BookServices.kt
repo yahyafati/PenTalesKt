@@ -19,7 +19,6 @@ class BookServices(
     private val bookAuthorRepository: BookAuthorRepository
 ) : IBookServices {
 
-
     override val repository: JpaRepository<Book, Long>
         get() = bookRepository
     override val modelProperties: Collection<KProperty1<Book, *>>

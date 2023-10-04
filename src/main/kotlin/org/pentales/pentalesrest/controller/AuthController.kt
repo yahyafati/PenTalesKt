@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/auth")
 class AuthController(private val authServices: IAuthServices) {
 
-
     @PostMapping("/register")
     fun register(
         @Valid

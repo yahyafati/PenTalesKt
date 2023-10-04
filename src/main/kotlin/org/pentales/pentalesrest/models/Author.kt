@@ -12,7 +12,6 @@ class Author(
     var name: String = ""
 ) : IModel() {
 
-
     override fun toString(): String {
         return "Author(id=$id, name='$name')"
     }
