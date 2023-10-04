@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.*
 
 interface BookGenreRepository : JpaRepository<BookGenre, Long> {
 
+
     fun deleteAllByBookId(bookId: Long)
 }

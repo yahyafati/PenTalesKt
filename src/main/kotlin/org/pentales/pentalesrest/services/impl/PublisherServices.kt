@@ -11,6 +11,7 @@ import kotlin.reflect.full.*
 @Service
 class PublisherServices(private val publisherRepository: PublisherRepository) : IPublisherServices {
 
+
     override val repository: JpaRepository<Publisher, Long>
         get() = publisherRepository
     override val modelProperties: Collection<KProperty1<Publisher, *>>

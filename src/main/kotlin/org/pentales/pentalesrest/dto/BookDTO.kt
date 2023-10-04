@@ -13,8 +13,8 @@ class BookDTO(
     var genres: List<Genre> = ArrayList(),
     var languages: List<Language> = ArrayList(),
     var publishers: List<Publisher> = ArrayList()
-
 ) {
+
 
     constructor(book: Book) : this(book.id,
         book.title,
@@ -27,17 +27,15 @@ class BookDTO(
         book.publishers.map { it.publisher })
 
     fun toBook(): Book {
-        return Book(id, title, description, ISBN, publicationYear,
-
-            authors.mapIndexed { index, it ->
-                BookAuthor(BookAuthorKey(id, it.id), book = Book(id), author = it, sortOrder = index)
-            }, genres.mapIndexed { index, it ->
-                BookGenre(BookGenreKey(id, it.id), book = Book(id), genre = it, sortOrder = index)
-            }, languages.mapIndexed { index, it ->
-                BookLanguage(BookLanguageKey(id, it.id), book = Book(id), language = it, sortOrder = index)
-            }, publishers.mapIndexed { index, it ->
-                BookPublisher(BookPublisherKey(id, it.id), book = Book(id), publisher = it, sortOrder = index)
-            })
+        return Book(id, title, description, ISBN, publicationYear, authors.mapIndexed { index, it ->
+            BookAuthor(BookAuthorKey(id, it.id), book = Book(id), author = it, sortOrder = index)
+        }, genres.mapIndexed { index, it ->
+            BookGenre(BookGenreKey(id, it.id), book = Book(id), genre = it, sortOrder = index)
+        }, languages.mapIndexed { index, it ->
+            BookLanguage(BookLanguageKey(id, it.id), book = Book(id), language = it, sortOrder = index)
+        }, publishers.mapIndexed { index, it ->
+            BookPublisher(BookPublisherKey(id, it.id), book = Book(id), publisher = it, sortOrder = index)
+        })
     }
 
     override fun toString(): String {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 class LanguageController(private val languageServices: ILanguageServices) :
     IBasicControllerSkeleton<Language, ILanguageServices> {
 
+
     override val service: ILanguageServices
         get() = languageServices
 }

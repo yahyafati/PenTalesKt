@@ -2,9 +2,7 @@ package org.pentales.pentalesrest.models.enums
 
 import org.pentales.pentalesrest.models.*
 
-enum class Role(private val permissions: List<Permission>) {
-
-    GUEST(emptyList()),
+enum class Role(private val permissions: List<Permission>) { GUEST(emptyList()),
     CUSTOM(emptyList()),
     USER(
         listOf(

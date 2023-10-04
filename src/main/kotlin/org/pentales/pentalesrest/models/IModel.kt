@@ -10,6 +10,7 @@ import java.time.*
 @MappedSuperclass
 abstract class IModel : Serializable {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Long = 0

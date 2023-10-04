@@ -8,6 +8,7 @@ import kotlin.reflect.*
 
 interface IGenericService<T : IModel> {
 
+
     val repository: JpaRepository<T, Long>
     val modelProperties: Collection<KProperty1<T, *>>
     val entityName: String

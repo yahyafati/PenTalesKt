@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
+import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.converters.*
 import org.pentales.pentalesrest.models.enums.*
 import org.springframework.security.core.*
@@ -9,14 +10,23 @@ import org.springframework.security.core.userdetails.*
 @Entity
 @Table(name = "users")
 class User(
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) override var id: Long = 0L,
-    var name: String = "",
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    override var id: Long = 0L,
+    @Column(
+        unique = true, nullable = false
+    )
+    @NotBlank(message = "Username is required")
     private var username: String = "",
-    var email: String = "",
+    @NotBlank(message = "Password is required")
     private var password: String = "",
-    var phone: String = "",
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Email is required")
+    var email: String = "",
+    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    var profile: UserProfile? = null,
 ) : IModel(), UserDetails {
+
 
     private var isAccountNonExpired: Boolean = true
     private var isAccountNonLocked: Boolean = true
@@ -29,17 +39,14 @@ class User(
         set(value) {
             field = value
             this.setAuthorities(
-                value
-                        .getPermittedAuthorities()
-                        .toMutableList()
+                value.getPermittedAuthorities().toMutableList()
             )
         }
 
     @Convert(converter = AuthorityConverter::class)
     private var authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
-
     override fun toString(): String {
-        return "User(id=$id, name='$name', username='$username', email='$email', password='$password', phone='$phone')"
+        return "User(id=$id, username='$username', email='$email', password='$password')"
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {

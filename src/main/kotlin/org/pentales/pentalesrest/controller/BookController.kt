@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/book")
 class BookController(private val bookServices: IBookServices) {
 
+
     val service: IBookServices
         get() = bookServices
 
@@ -18,7 +19,8 @@ class BookController(private val bookServices: IBookServices) {
 
     @GetMapping("/{id}")
     fun getBookById(
-        @PathVariable id: Long
+        @PathVariable
+        id: Long
     ): ResponseEntity<BookDTO> {
         val book = service.findById(id)
         return ResponseEntity.ok(BookDTO(book))
@@ -26,7 +28,8 @@ class BookController(private val bookServices: IBookServices) {
 
     @PostMapping("")
     fun saveBook(
-        @RequestBody bookDTO: BookDTO
+        @RequestBody
+        bookDTO: BookDTO
     ): ResponseEntity<BookDTO> {
         val book = bookDTO.toBook()
         val savedBook = service.saveNew(book)
@@ -35,9 +38,12 @@ class BookController(private val bookServices: IBookServices) {
 
     @PutMapping("/{id}")
     fun updateBook(
-        @PathVariable id: Long,
-        @RequestBody bookDTO: BookDTO,
-        @RequestParam(required = false) includeFields: List<String>?
+        @PathVariable
+        id: Long,
+        @RequestBody
+        bookDTO: BookDTO,
+        @RequestParam(required = false)
+        includeFields: List<String>?
     ): ResponseEntity<BookDTO> {
         val book = bookDTO.toBook()
         val updatedBook = service.update(id, book, includeFields ?: emptyList())
@@ -46,7 +52,8 @@ class BookController(private val bookServices: IBookServices) {
 
     @DeleteMapping("/{id}")
     fun deleteBook(
-        @PathVariable id: Long
+        @PathVariable
+        id: Long
     ): ResponseEntity<Unit> {
         service.deleteById(id)
         return ResponseEntity.ok().build()

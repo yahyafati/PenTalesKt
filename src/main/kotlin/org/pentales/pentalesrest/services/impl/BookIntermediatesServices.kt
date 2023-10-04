@@ -17,6 +17,7 @@ class BookIntermediatesServices(
     private val bookAuthorRepository: BookAuthorRepository
 ) : IBookIntermediatesServices {
 
+
     @Transactional
     override fun updateAuthors(bookId: Long, authors: List<Author>, delete: Boolean): Book {
         val book = bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }

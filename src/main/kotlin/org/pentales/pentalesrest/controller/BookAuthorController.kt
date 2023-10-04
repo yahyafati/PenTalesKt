@@ -10,14 +10,18 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/book/{bookId}/authors")
 class BookAuthorController(private val bookIntermediatesServices: IBookIntermediatesServices) {
 
+
     val service: IBookIntermediatesServices
         get() = bookIntermediatesServices
 
     @PostMapping("")
     fun updateBookAuthors(
-        @PathVariable bookId: Long,
-        @RequestBody authors: List<Author>,
-        @RequestParam(required = false, name = "deleteExisting") delete: Boolean = false
+        @PathVariable
+        bookId: Long,
+        @RequestBody
+        authors: List<Author>,
+        @RequestParam(required = false, name = "deleteExisting")
+        delete: Boolean = false
     ): ResponseEntity<BookDTO> {
         val book = bookIntermediatesServices.updateAuthors(bookId, authors, delete)
         return ResponseEntity.ok(BookDTO(book))

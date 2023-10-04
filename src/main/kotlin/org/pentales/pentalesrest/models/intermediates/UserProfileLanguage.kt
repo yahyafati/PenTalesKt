@@ -6,18 +6,22 @@ import java.io.*
 
 @Entity
 class UserProfileLanguage(
-
-    @EmbeddedId var id: UserProfileLanguageKey = UserProfileLanguageKey(),
+    @EmbeddedId
+    var id: UserProfileLanguageKey = UserProfileLanguageKey(),
     var sortOrder: Int = 0,
-    @MapsId("userProfileId") @ManyToOne var profile: UserProfile = UserProfile(),
-    @MapsId("languageId") @ManyToOne var language: Language = Language()
-
+    @MapsId("userProfileId")
+    @ManyToOne
+    var profile: UserProfile = UserProfile(),
+    @MapsId("languageId")
+    @ManyToOne
+    var language: Language = Language()
 )
 
 @Embeddable
 class UserProfileLanguageKey(
     var userProfileId: Long = 0L, var languageId: Long = 0L
 ) : Serializable {
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

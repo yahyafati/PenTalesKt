@@ -6,18 +6,22 @@ import java.io.*
 
 @Entity
 class BookAuthor(
-
-    @EmbeddedId var id: BookAuthorKey = BookAuthorKey(),
+    @EmbeddedId
+    var id: BookAuthorKey = BookAuthorKey(),
     var sortOrder: Int = 0,
-    @MapsId("bookId") @ManyToOne var book: Book = Book(),
-    @MapsId("authorId") @ManyToOne var author: Author = Author()
-
+    @MapsId("bookId")
+    @ManyToOne
+    var book: Book = Book(),
+    @MapsId("authorId")
+    @ManyToOne
+    var author: Author = Author()
 )
 
 @Embeddable
 class BookAuthorKey(
     var bookId: Long = 0L, var authorId: Long = 0L
 ) : Serializable {
+
 
     override fun toString(): String {
         return "BookAuthorKey(bookId=$bookId, authorId=$authorId)"

@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.*
 @Configuration
 class WebConfig : WebMvcConfigurer {
 
+
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(CustomHandlerInterceptor())
     }

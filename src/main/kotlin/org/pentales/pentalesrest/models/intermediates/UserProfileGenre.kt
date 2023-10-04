@@ -6,18 +6,22 @@ import java.io.*
 
 @Entity
 class UserProfileGenre(
-
-    @EmbeddedId var id: UserProfileGenreKey = UserProfileGenreKey(),
+    @EmbeddedId
+    var id: UserProfileGenreKey = UserProfileGenreKey(),
     var sortOrder: Int = 0,
-    @MapsId("userProfileId") @ManyToOne var profile: UserProfile = UserProfile(),
-    @MapsId("genreId") @ManyToOne var genre: Genre = Genre()
-
+    @MapsId("userProfileId")
+    @ManyToOne
+    var profile: UserProfile = UserProfile(),
+    @MapsId("genreId")
+    @ManyToOne
+    var genre: Genre = Genre()
 )
 
 @Embeddable
 class UserProfileGenreKey(
     var userProfileId: Long = 0L, var genreId: Long = 0L
 ) : Serializable {
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -6,18 +6,22 @@ import java.io.*
 
 @Entity
 class BookLanguage(
-
-    @EmbeddedId var id: BookLanguageKey = BookLanguageKey(),
+    @EmbeddedId
+    var id: BookLanguageKey = BookLanguageKey(),
     var sortOrder: Int = 0,
-    @MapsId("bookId") @ManyToOne var book: Book = Book(),
-    @MapsId("languageId") @ManyToOne var language: Language = Language()
-
+    @MapsId("bookId")
+    @ManyToOne
+    var book: Book = Book(),
+    @MapsId("languageId")
+    @ManyToOne
+    var language: Language = Language()
 )
 
 @Embeddable
 class BookLanguageKey(
     var bookId: Long = 0L, var languageId: Long = 0L
 ) : Serializable {
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

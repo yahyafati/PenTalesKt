@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/genre")
 class GenreController(private val genreServices: IGenreServices) : IBasicControllerSkeleton<Genre, IGenreServices> {
 
+
     override val service: IGenreServices
         get() = genreServices
 }

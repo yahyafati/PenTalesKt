@@ -21,7 +21,7 @@ org:
         secret: secret # Secret key for JWT signing
         expiration: 86400000 # Token validity time in milliseconds
         header: Authorization # Header key for JWT
-        prefix: Bearer # Prefix for JWT
+        prefix: "Bearer " # Prefix for JWT
         issuer: pen-tales # Issuer of the token
       login-url: /api/auth/login # Login URL
       register-url: /api/auth/register # Registration URL

@@ -11,6 +11,7 @@ import kotlin.reflect.full.*
 @Service
 class AuthorServices(private val authorRepository: AuthorRepository) : IAuthorServices {
 
+
     override val repository: JpaRepository<Author, Long>
         get() = authorRepository
     override val modelProperties: Collection<KProperty1<Author, *>>
