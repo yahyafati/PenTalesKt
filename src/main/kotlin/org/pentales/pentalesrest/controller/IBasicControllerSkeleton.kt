@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.controller
 
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<Entity>> {
 
     val service: Service
+    val authenticationFacade: IAuthenticationFacade
 
     // Why do we need the @get:GetMapping("") annotation?
     @get:GetMapping("")
