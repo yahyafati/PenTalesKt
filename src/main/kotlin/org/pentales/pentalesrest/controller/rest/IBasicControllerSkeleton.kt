@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller
+package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*

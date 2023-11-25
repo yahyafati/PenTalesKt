@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller
+package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
@@ -9,4 +9,4 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/genre")
 class GenreController(
     override val service: IGenreServices, override val authenticationFacade: IAuthenticationFacade
-) : IBasicControllerSkeleton<Genre, IGenreServices> 
+) : IBasicControllerSkeleton<Genre, IGenreServices>

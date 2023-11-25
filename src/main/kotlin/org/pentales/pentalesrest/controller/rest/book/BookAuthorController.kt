@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.book
+package org.pentales.pentalesrest.controller.rest.book
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
@@ -7,22 +7,22 @@ import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/book/{bookId}/genres")
-class BookGenreController(private val bookIntermediatesServices: IBookIntermediatesServices) {
+@RequestMapping("/api/book/{bookId}/authors")
+class BookAuthorController(private val bookIntermediatesServices: IBookIntermediatesServices) {
 
     val service: IBookIntermediatesServices
         get() = bookIntermediatesServices
 
     @PostMapping("")
-    fun updateBookGenres(
+    fun updateBookAuthors(
         @PathVariable
         bookId: Long,
         @RequestBody
-        genres: List<Genre>,
+        authors: List<Author>,
         @RequestParam(required = false, name = "deleteExisting")
         delete: Boolean = false
     ): ResponseEntity<BookDTO> {
-        val book = bookIntermediatesServices.updateGenres(bookId, genres, delete)
+        val book = bookIntermediatesServices.updateAuthors(bookId, authors, delete)
         return ResponseEntity.ok(BookDTO(book))
     }
 }

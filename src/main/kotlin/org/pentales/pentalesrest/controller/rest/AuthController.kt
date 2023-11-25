@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller
+package org.pentales.pentalesrest.controller.rest
 
 import jakarta.validation.*
 import org.pentales.pentalesrest.dto.*
