@@ -9,10 +9,10 @@ class BookDTO(
     var description: String = "",
     var ISBN: String = "",
     var publicationYear: Int = 0,
-    var authors: List<Author> = ArrayList(),
-    var genres: List<Genre> = ArrayList(),
-    var languages: List<Language> = ArrayList(),
-    var publishers: List<Publisher> = ArrayList()
+    var authors: List<Long> = ArrayList(),
+    var genres: List<Long> = ArrayList(),
+    var languages: List<Long> = ArrayList(),
+    var publishers: List<Long> = ArrayList()
 ) {
 
     constructor(book: Book) : this(book.id,
@@ -20,20 +20,20 @@ class BookDTO(
         book.description,
         book.ISBN,
         book.publicationYear,
-        book.authors.map { it.author },
-        book.genres.map { it.genre },
-        book.languages.map { it.language },
-        book.publishers.map { it.publisher })
+        book.authors.map { it.author.id },
+        book.genres.map { it.genre.id },
+        book.languages.map { it.language.id },
+        book.publishers.map { it.publisher.id })
 
     fun toBook(): Book {
         return Book(id, title, description, ISBN, publicationYear, authors.mapIndexed { index, it ->
-            BookAuthor(BookAuthorKey(id, it.id), book = Book(id), author = it, sortOrder = index)
+            BookAuthor(BookAuthorKey(id, it), book = Book(id), author = Author(it), sortOrder = index)
         }, genres.mapIndexed { index, it ->
-            BookGenre(BookGenreKey(id, it.id), book = Book(id), genre = it, sortOrder = index)
+            BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
         }, languages.mapIndexed { index, it ->
-            BookLanguage(BookLanguageKey(id, it.id), book = Book(id), language = it, sortOrder = index)
+            BookLanguage(BookLanguageKey(id, it), book = Book(id), language = Language(it), sortOrder = index)
         }, publishers.mapIndexed { index, it ->
-            BookPublisher(BookPublisherKey(id, it.id), book = Book(id), publisher = it, sortOrder = index)
+            BookPublisher(BookPublisherKey(id, it), book = Book(id), publisher = Publisher(it), sortOrder = index)
         })
     }
 
