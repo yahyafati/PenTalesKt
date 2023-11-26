@@ -13,6 +13,7 @@ class Book(
     var title: String = "",
     var description: String = "",
     var ISBN: String = "",
+    var goodreadsLink: String = "",
     var publicationYear: Int = 0,
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var authors: List<BookAuthor> = ArrayList(),

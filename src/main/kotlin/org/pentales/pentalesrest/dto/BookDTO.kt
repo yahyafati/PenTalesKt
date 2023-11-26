@@ -26,15 +26,23 @@ class BookDTO(
         book.publishers.map { it.publisher.id })
 
     fun toBook(): Book {
-        return Book(id, title, description, ISBN, publicationYear, authors.mapIndexed { index, it ->
-            BookAuthor(BookAuthorKey(id, it), book = Book(id), author = Author(it), sortOrder = index)
-        }, genres.mapIndexed { index, it ->
-            BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
-        }, languages.mapIndexed { index, it ->
-            BookLanguage(BookLanguageKey(id, it), book = Book(id), language = Language(it), sortOrder = index)
-        }, publishers.mapIndexed { index, it ->
-            BookPublisher(BookPublisherKey(id, it), book = Book(id), publisher = Publisher(it), sortOrder = index)
-        })
+        return Book(id = id,
+            title = title,
+            description = description,
+            ISBN = ISBN,
+            publicationYear = publicationYear,
+            authors = authors.mapIndexed { index, it ->
+                BookAuthor(BookAuthorKey(id, it), book = Book(id), author = Author(it), sortOrder = index)
+            },
+            genres = genres.mapIndexed { index, it ->
+                BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
+            },
+            languages = languages.mapIndexed { index, it ->
+                BookLanguage(BookLanguageKey(id, it), book = Book(id), language = Language(it), sortOrder = index)
+            },
+            publishers = publishers.mapIndexed { index, it ->
+                BookPublisher(BookPublisherKey(id, it), book = Book(id), publisher = Publisher(it), sortOrder = index)
+            })
     }
 
     override fun toString(): String {
