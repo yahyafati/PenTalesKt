@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.dto
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
+import org.pentales.pentalesrest.models.keys.*
 
 class BookDTO(
     var id: Long = 0L,
