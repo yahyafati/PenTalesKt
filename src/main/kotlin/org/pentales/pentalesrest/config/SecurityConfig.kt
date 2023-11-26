@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest.config
 
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.context.annotation.*
 import org.springframework.http.*
 import org.springframework.security.authentication.*

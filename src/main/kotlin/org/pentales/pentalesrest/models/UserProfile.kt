@@ -18,6 +18,7 @@ class UserProfile(
     var gender: Gender = Gender.FEMALE,
     @OneToOne
     var wantToReadShelf: BookShelf = BookShelf(),
+    var avatar: String = "",
     @OneToOne
     var user: User = User(),
 ) : IModel() {

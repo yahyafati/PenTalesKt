@@ -16,15 +16,15 @@ class BookDTO(
     var publishers: List<Long> = ArrayList()
 ) {
 
-    constructor(book: Book) : this(book.id,
-        book.title,
-        book.description,
-        book.ISBN,
-        book.publicationYear,
-        book.authors.map { it.author.id },
-        book.genres.map { it.genre.id },
-        book.languages.map { it.language.id },
-        book.publishers.map { it.publisher.id })
+    constructor(book: Book) : this(id = book.id,
+        title = book.title,
+        description = book.description,
+        ISBN = book.ISBN,
+        publicationYear = book.publicationYear,
+        authors = book.authors.map { it.author.id },
+        genres = book.genres.map { it.genre.id },
+        languages = book.languages.map { it.language.id },
+        publishers = book.publishers.map { it.publisher.id })
 
     fun toBook(): Book {
         return Book(id = id,

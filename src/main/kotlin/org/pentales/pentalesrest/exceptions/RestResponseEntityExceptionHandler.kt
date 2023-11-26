@@ -13,7 +13,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         ex.printStackTrace()
         val bodyOfResponse = ex.message
         return handleExceptionInternal(
-            ex, bodyOfResponse, HttpHeaders(), HttpStatus.I_AM_A_TEAPOT, request!!
+            ex, bodyOfResponse, HttpHeaders(), HttpStatus.BAD_REQUEST, request!!
         )
     }
 }

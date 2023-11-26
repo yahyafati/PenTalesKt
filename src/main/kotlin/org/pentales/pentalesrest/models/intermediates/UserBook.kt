@@ -10,6 +10,13 @@ class UserBook(
     @EmbeddedId
     var userBook: UserBookKey = UserBookKey(),
 
+    @MapsId("userId")
+    @ManyToOne
+    var user: User? = null,
+    @MapsId("bookId")
+    @ManyToOne
+    var book: Book? = null,
+
     @Enumerated(EnumType.STRING)
     var status: UserBookReadStatus = UserBookReadStatus.NONE,
     var likeBook: Boolean = false,
