@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.controller.rest.book
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 

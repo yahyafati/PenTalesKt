@@ -1,8 +1,8 @@
-package org.pentales.pentalesrest.services.impl
+package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.security.crypto.password.*
 import org.springframework.stereotype.*
 

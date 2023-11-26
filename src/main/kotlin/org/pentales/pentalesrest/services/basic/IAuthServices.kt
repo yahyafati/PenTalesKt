@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.services
+package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*

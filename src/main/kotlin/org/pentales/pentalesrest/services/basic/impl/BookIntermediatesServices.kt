@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.services.impl
+package org.pentales.pentalesrest.services.basic.impl
 
 import jakarta.transaction.*
 import org.pentales.pentalesrest.exceptions.*
@@ -6,7 +6,7 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.stereotype.*
 
 @Service

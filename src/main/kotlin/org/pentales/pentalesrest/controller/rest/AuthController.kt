@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.controller.rest
 
 import jakarta.validation.*
 import org.pentales.pentalesrest.dto.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 

@@ -5,7 +5,7 @@ import jakarta.servlet.*
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.models.User
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.slf4j.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.context.*

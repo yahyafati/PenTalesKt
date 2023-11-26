@@ -1,8 +1,8 @@
-package org.pentales.pentalesrest.services.impl
+package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.stereotype.*
 import kotlin.reflect.*

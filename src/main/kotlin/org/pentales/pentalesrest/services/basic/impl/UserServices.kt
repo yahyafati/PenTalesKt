@@ -1,8 +1,8 @@
-package org.pentales.pentalesrest.services.impl
+package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.repo.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.services.basic.*
 import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 
