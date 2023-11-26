@@ -12,5 +12,5 @@ class Rating(
     @field:Min(1)
     @field:Max(5)
     var value: Int = 3,
-    var comment: String = "",
+    var review: String = "",
 ) : IAudit()

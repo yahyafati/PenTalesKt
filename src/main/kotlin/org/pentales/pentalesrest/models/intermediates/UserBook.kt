@@ -12,4 +12,5 @@ class UserBook(
 
     @Enumerated(EnumType.STRING)
     var status: UserBookReadStatus = UserBookReadStatus.NONE,
+    var likeBook: Boolean = false,
 ) : IAudit() {}

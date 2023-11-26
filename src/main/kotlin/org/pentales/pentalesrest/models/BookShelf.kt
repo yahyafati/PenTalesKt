@@ -2,20 +2,16 @@ package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.intermediates.*
 
 @Entity
-class ReadList(
+class BookShelf(
     var title: String = "",
     var description: String = "",
 
     @Enumerated(EnumType.STRING)
     var access: AccessLevel = AccessLevel.PRIVATE,
 
-    @ManyToMany
-    @JoinTable(
-        name = "read_list_books",
-        joinColumns = [JoinColumn(name = "read_list_id")],
-        inverseJoinColumns = [JoinColumn(name = "book_id")]
-    )
-    var books: MutableList<Book> = mutableListOf(),
+    @OneToMany(mappedBy = "bookShelf", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var books: MutableList<BookShelfBook> = mutableListOf(),
 ) : IModel() {}
