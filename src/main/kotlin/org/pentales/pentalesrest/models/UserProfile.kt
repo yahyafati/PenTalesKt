@@ -17,6 +17,8 @@ class UserProfile(
     @Enumerated(value = EnumType.STRING)
     var gender: Gender = Gender.FEMALE,
     @OneToOne
+    var wantToReadList: ReadList = ReadList(),
+    @OneToOne
     var user: User = User(),
 ) : IModel() {
 
