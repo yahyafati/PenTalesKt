@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pen-tales
+    url: jdbc:postgresql://localhost:5432/reading-realm
     username:
     password:
     driver-class-name: org.postgresql.Driver
@@ -8,6 +8,7 @@ spring:
     hibernate:
       ddl-auto: update # You can use "create" for initial setup or "update" for updates
     show-sql: true # Set to true to see SQL queries in the console
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     active: prod # Set the active profile here, e.g., "dev" or "prod"
 
