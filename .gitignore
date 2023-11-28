@@ -40,4 +40,4 @@ application-local.properties
 application-local.yml
 certs/
 *.pem
-log/
+logs/

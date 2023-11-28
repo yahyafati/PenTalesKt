@@ -23,10 +23,10 @@ public class AuthorRepository {
             statement.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
             statement.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
             statement.addBatch();
+            statement.executeBatch();
+            
             if (commit) {
-                statement.executeBatch();
-                connector.getConnection()
-                        .commit();
+                connector.commit();
             }
         } catch (Exception e) {
             e.printStackTrace();
