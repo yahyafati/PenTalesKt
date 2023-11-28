@@ -3,3 +3,82 @@ username: postgres
 password: password
 driver-class-name: org.postgresql.Driver
 author-dataset-file-path: C:\Users\yahya\Downloads\Goodreads Data\author_dataset.csv
+genres:
+  Fantasy:
+    - Fantasy
+  Science Fiction:
+    - Science Fiction
+    - Sci-Fi
+    - SF
+  Mystery:
+    - Mystery
+  Thriller:
+    - Thriller
+  Romance:
+    - Romance
+  Historical Fiction:
+    - Historical Fiction
+    - Historical
+  Horror:
+    - Horror
+  Adventure:
+    - Adventure
+  Young Adult:
+    - Young Adult
+    - YA
+  Dystopian:
+    - Dystopian
+  Memoir:
+    - Memoir
+  Biography:
+    - Biography
+    - Bio
+  Self-help:
+    - Self-help
+    - Self Help
+  Business:
+    - Business
+  Classic Literature:
+    - Classic Literature
+    - Classics
+  Poetry:
+    - Poetry
+  Comedy:
+    - Comedy
+    - Humor
+  Satire:
+    - Satire
+  Crime:
+    - Crime
+  Suspense:
+    - Suspense
+  Non-fiction:
+    - Non-fiction
+    - Nonfiction
+  Travel:
+    - Travel
+  Autobiography:
+    - Autobiography
+    - Auto-biography
+  Science:
+    - Science
+  Philosophy:
+    - Philosophy
+  Psychology:
+    - Psychology
+  Religion/Spirituality:
+    - Religion/Spirituality
+    - Religion
+    - Spirituality
+  Art/Photography:
+    - Art/Photography
+    - Art
+    - Photography
+  Cooking/Food:
+    - Cooking/Food
+    - Cooking
+    - Food
+  Health/Fitness:
+    - Health/Fitness
+    - Health
+    - Fitness

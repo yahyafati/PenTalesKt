@@ -2,6 +2,8 @@ package org.example.populater;
 
 import com.opencsv.CSVReader;
 import org.example.Configuration;
+import org.example.DatabaseConnector;
+import org.example.Main;
 import org.example.model.Author;
 import org.example.repo.AuthorRepository;
 
@@ -25,9 +27,10 @@ public class AuthorPopulater implements IPopulater {
 
     private void setupLogger() {
         try {
-            String logDirectory = "logs/populate/author";
+            String logDirectory = "logs/populate/" + Main.PROGRAM_TIMESTAMP;
             Files.createDirectories(Path.of(logDirectory));
-            String fileName = "/application-" + System.currentTimeMillis() + ".log";
+            String fileName = this.getClass()
+                    .getName() + ".log";
             FileHandler fileHandler = new FileHandler(logDirectory + fileName);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
@@ -62,8 +65,11 @@ public class AuthorPopulater implements IPopulater {
                     logger.info("Inserted " + count + " records");
                 }
             }
+            DatabaseConnector.getInstance()
+                    .commit();
             logger.info("Populated Authors Table Successfully!");
         } catch (Exception e) {
+            logger.severe("Error while populating Authors Table");
             logger.severe(e.getMessage());
             logger.severe("Author: " + (author != null ? author.toString() : null));
             logger.severe("Line: " + (line != null ? Arrays.toString(line) : null));
