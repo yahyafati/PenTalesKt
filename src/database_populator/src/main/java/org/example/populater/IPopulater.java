@@ -1,6 +1,6 @@
 package org.example.populater;
 
-public interface IPopulator {
+public interface IPopulater {
 
     void populate();
 
