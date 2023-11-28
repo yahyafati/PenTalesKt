@@ -13,8 +13,6 @@ import org.springframework.stereotype.*
 class BookIntermediatesServices(
     private val bookRepository: BookRepository,
     private val bookGenreRepository: BookGenreRepository,
-    private val bookLanguageRepository: BookLanguageRepository,
-    private val bookPublisherRepository: BookPublisherRepository,
     private val bookAuthorRepository: BookAuthorRepository
 ) : IBookIntermediatesServices {
 
@@ -38,25 +36,6 @@ class BookIntermediatesServices(
     }
 
     @Transactional
-    override fun updatePublishers(bookId: Long, publishers: List<Publisher>, delete: Boolean): Book {
-        val book = bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
-        if (delete) {
-            bookPublisherRepository.deleteAllByBookId(bookId)
-        }
-        val bookPublishers = publishers.mapIndexed { index, publisher ->
-            BookPublisher(BookPublisherKey(book.id, publisher.id), index, book, publisher)
-        }
-        bookPublisherRepository.saveAll(bookPublishers)
-        return book
-    }
-
-    @Transactional
-    override fun removePublishers(bookId: Long): Book {
-        bookPublisherRepository.deleteAllByBookId(bookId)
-        return bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
-    }
-
-    @Transactional
     override fun updateGenres(bookId: Long, genres: List<Genre>, delete: Boolean): Book {
         val book = bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
         if (delete) {
@@ -75,22 +54,4 @@ class BookIntermediatesServices(
         return bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
     }
 
-    @Transactional
-    override fun updateLanguages(bookId: Long, languages: List<Language>, delete: Boolean): Book {
-        val book = bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
-        if (delete) {
-            bookLanguageRepository.deleteAllByBookId(bookId)
-        }
-        val bookLanguages = languages.mapIndexed { index, language ->
-            BookLanguage(BookLanguageKey(book.id, language.id), index, book, language)
-        }
-        bookLanguageRepository.saveAll(bookLanguages)
-        return book
-    }
-
-    @Transactional
-    override fun removeLanguages(bookId: Long): Book {
-        bookLanguageRepository.deleteAllByBookId(bookId)
-        return bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
-    }
 }

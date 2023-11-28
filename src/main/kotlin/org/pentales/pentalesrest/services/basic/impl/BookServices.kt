@@ -14,8 +14,6 @@ import kotlin.reflect.full.*
 class BookServices(
     private val bookRepository: BookRepository,
     private val bookGenreRepository: BookGenreRepository,
-    private val bookLanguageRepository: BookLanguageRepository,
-    private val bookPublisherRepository: BookPublisherRepository,
     private val bookAuthorRepository: BookAuthorRepository
 ) : IBookServices {
 
@@ -34,26 +32,6 @@ class BookServices(
         return bookGenreRepository.saveAll(bookGenres)
     }
 
-    private fun saveBookLanguages(book: Book): List<BookLanguage> {
-        val bookLanguages: List<BookLanguage> = book.languages
-        bookLanguages.forEach { bookLanguage: BookLanguage ->
-            val language = Language(bookLanguage.id.languageId)
-            bookLanguage.book = book
-            bookLanguage.language = language
-        }
-        return bookLanguageRepository.saveAll(bookLanguages)
-    }
-
-    private fun saveBookPublishers(book: Book): List<BookPublisher> {
-        val bookPublishers: List<BookPublisher> = book.publishers
-        bookPublishers.forEach { bookPublisher: BookPublisher ->
-            val publisher = Publisher(bookPublisher.id.publisherId)
-            bookPublisher.book = book
-            bookPublisher.publisher = publisher
-        }
-        return bookPublisherRepository.saveAll(bookPublishers)
-    }
-
     private fun saveBookAuthors(book: Book): List<BookAuthor> {
         val bookAuthors: List<BookAuthor> = book.authors
         bookAuthors.forEach { bookAuthor: BookAuthor ->
@@ -69,10 +47,6 @@ class BookServices(
         val savedBook: Book = super.saveNew(entity)
         val savedBookGenres = saveBookGenres(savedBook)
         savedBook.genres = savedBookGenres
-        val savedBookLanguages = saveBookLanguages(savedBook)
-        savedBook.languages = savedBookLanguages
-        val savedBookPublishers = saveBookPublishers(savedBook)
-        savedBook.publishers = savedBookPublishers
         val savedBookAuthors = saveBookAuthors(savedBook)
         savedBook.authors = savedBookAuthors
         return savedBook

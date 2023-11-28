@@ -5,12 +5,23 @@ import org.example.model.Author;
 
 public class AuthorRepository {
 
-    private static final int INSERT_BATCH_SIZE = 5;
-    private static final int DELETE_BATCH_SIZE = 5;
 
-    private static void insertAuthor(Author author) {
-        insertAuthor(author, false);
+    public static long getAuthorIdByGoodReadsId(long goodReadsId) {
+        DatabaseConnector connector = DatabaseConnector.getInstance();
+        String query = "SELECT id FROM author WHERE good_reads_author_id = ?";
+        try (var statement = connector.getConnection()
+                .prepareStatement(query)) {
+            statement.setLong(1, goodReadsId);
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong("id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
+
 
     public static void insertAuthor(Author author, boolean commit) {
         DatabaseConnector connector = DatabaseConnector.getInstance();
@@ -24,7 +35,7 @@ public class AuthorRepository {
             statement.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
             statement.addBatch();
             statement.executeBatch();
-            
+
             if (commit) {
                 connector.commit();
             }

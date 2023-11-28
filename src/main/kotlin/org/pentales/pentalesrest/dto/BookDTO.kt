@@ -12,22 +12,25 @@ class BookDTO(
     var publicationYear: Int = 0,
     var authors: List<Long> = ArrayList(),
     var genres: List<Long> = ArrayList(),
-    var languages: List<Long> = ArrayList(),
-    var publishers: List<Long> = ArrayList()
+    var languageCode: String = "",
+    var publisherId: Long = 0L,
 ) {
 
-    constructor(book: Book) : this(id = book.id,
+    constructor(book: Book) : this(
+        id = book.id,
         title = book.title,
         description = book.description,
         ISBN = book.ISBN,
         publicationYear = book.publicationYear,
         authors = book.authors.map { it.author.id },
         genres = book.genres.map { it.genre.id },
-        languages = book.languages.map { it.language.id },
-        publishers = book.publishers.map { it.publisher.id })
+        languageCode = book.languageCode,
+        publisherId = book.publisher.id
+    )
 
     fun toBook(): Book {
-        return Book(id = id,
+        return Book(
+            id = id,
             title = title,
             description = description,
             ISBN = ISBN,
@@ -38,12 +41,9 @@ class BookDTO(
             genres = genres.mapIndexed { index, it ->
                 BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
             },
-            languages = languages.mapIndexed { index, it ->
-                BookLanguage(BookLanguageKey(id, it), book = Book(id), language = Language(it), sortOrder = index)
-            },
-            publishers = publishers.mapIndexed { index, it ->
-                BookPublisher(BookPublisherKey(id, it), book = Book(id), publisher = Publisher(it), sortOrder = index)
-            })
+            languageCode = languageCode,
+            publisher = Publisher(publisherId)
+        )
     }
 
     override fun toString(): String {

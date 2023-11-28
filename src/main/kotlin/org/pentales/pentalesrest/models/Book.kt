@@ -14,16 +14,15 @@ class Book(
     var description: String = "",
     var ISBN: String = "",
     var goodreadsLink: String = "",
+    var languageCode: String = "",
     var coverImage: String = "",
     var publicationYear: Int = 0,
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var authors: List<BookAuthor> = ArrayList(),
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var genres: List<BookGenre> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
-    var languages: List<BookLanguage> = ArrayList(),
-    @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
-    var publishers: List<BookPublisher> = ArrayList()
+    @ManyToOne
+    var publisher: Publisher = Publisher(),
 ) : IModel() {
 
     override fun toString(): String {
