@@ -1,5 +1,10 @@
 package org.example.model;
 
+import org.example.Configuration;
+
+import java.util.List;
+import java.util.Objects;
+
 public class Genre {
 
     private Long id;
@@ -36,6 +41,24 @@ public class Genre {
         this.name = name;
     }
 
+    public List<String> getPossibleNames() {
+        return Configuration.getInstance()
+                .getGenres()
+                .get(this.name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Genre genre = (Genre) o;
+        return Objects.equals(id, genre.id) && Objects.equals(name, genre.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 
     @Override
     public String toString() {

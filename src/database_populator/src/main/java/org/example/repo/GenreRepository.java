@@ -2,9 +2,11 @@ package org.example.repo;
 
 import org.example.DatabaseConnector;
 import org.example.model.Genre;
+import org.example.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GenreRepository {
 
@@ -30,6 +32,19 @@ public class GenreRepository {
         return genres;
     }
 
+    public static Genre getGenreByName(String name) {
+        List<Genre> genres = getAllGenres();
+        for (Genre genre : genres) {
+            List<String> possibleNames = genre.getPossibleNames();
+            for (String possibleName : possibleNames) {
+                if (StringUtils.isCleanedEqual(name, possibleName)) {
+                    return genre;
+                }
+            }
+        }
+        return null;
+    }
+
     public static List<Genre> getAllGenres() {
         return getAllGenres(false);
     }
@@ -52,5 +67,10 @@ public class GenreRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static long getGenreByIdByName(String genre) {
+        return Objects.requireNonNullElse(getGenreByName(genre), new Genre(0L, genre))
+                .getId();
     }
 }

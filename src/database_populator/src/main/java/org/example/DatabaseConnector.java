@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnector implements Serializable {
+public class DatabaseConnector implements Serializable, AutoCloseable {
 
     private static DatabaseConnector INSTANCE = null;
 
@@ -67,4 +67,8 @@ public class DatabaseConnector implements Serializable {
     }
 
 
+    @Override
+    public void close() {
+        this.closeConnection();
+    }
 }

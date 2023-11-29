@@ -16,6 +16,9 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
     implementation("org.yaml:snakeyaml:2.2")
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
 
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

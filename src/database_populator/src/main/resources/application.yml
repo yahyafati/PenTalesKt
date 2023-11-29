@@ -3,6 +3,7 @@ username: postgres
 password: password
 driver-class-name: org.postgresql.Driver
 author-dataset-file-path: C:\Users\yahya\Downloads\Goodreads Data\author_dataset.csv
+goodreads-dataset-file-path: C:\Users\yahya\Downloads\Goodreads Data\goodreads_books.json.gz
 genres:
   Fantasy:
     - Fantasy
@@ -60,6 +61,9 @@ genres:
   Autobiography:
     - Autobiography
     - Auto-biography
+    - Autobiographical
+    - Auto-biographical
+    - Autobiographies
   Science:
     - Science
   Philosophy:
@@ -70,6 +74,8 @@ genres:
     - Religion/Spirituality
     - Religion
     - Spirituality
+    - Religious
+    - Spiritual
   Art/Photography:
     - Art/Photography
     - Art
@@ -82,3 +88,7 @@ genres:
     - Health/Fitness
     - Health
     - Fitness
+  Fiction:
+    - Fiction
+    - Fictional
+    - Novel
