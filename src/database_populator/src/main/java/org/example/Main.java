@@ -1,6 +1,9 @@
 package org.example;
 
+import org.example.populater.AuthorPopulater;
 import org.example.populater.BookPopulater;
+import org.example.populater.GenrePopulater;
+import org.example.repo.GenreRepository;
 
 public class Main {
 
@@ -9,15 +12,13 @@ public class Main {
     public static void main(String[] args) {
         DatabaseConnector connector = DatabaseConnector.getInstance();
 
-        //        AuthorPopulater authorPopulater = new AuthorPopulater();
-        //        authorPopulater.populate();
+        AuthorPopulater authorPopulater = new AuthorPopulater();
+        authorPopulater.populate();
 
-        //        Long id = AuthorRepository.getAuthorIdByGoodReadsId(15340731);
-        //        System.out.println(id);
 
-        //        GenrePopulater genrePopulater = new GenrePopulater();
-        //        genrePopulater.populate();
-        //        GenreRepository.getAllGenres(true);
+        GenrePopulater genrePopulater = new GenrePopulater();
+        genrePopulater.populate();
+        GenreRepository.getAllGenres(true);
 
         BookPopulater bookPopulater = new BookPopulater();
         bookPopulater.populate();

@@ -115,6 +115,8 @@ public class BookPopulater implements IPopulater {
 
     @Override
     public void populate() {
+        int BATCH_SIZE = 50;
+        String line = null;
         try (FileInputStream fis = new FileInputStream(String.valueOf(Configuration.getInstance()
                 .get("goodreads-dataset-file-path")));
 
@@ -123,22 +125,28 @@ public class BookPopulater implements IPopulater {
              InputStreamReader reader = new InputStreamReader(gzis);
 
              BufferedReader br = new BufferedReader(reader);) {
-            String line;
-            Book[] books = new Book[2];
+            Book[] books = new Book[BATCH_SIZE];
             int count = 0;
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
                 Book book = parseBook(line);
                 books[count % books.length] = book;
-                System.out.println(book);
                 count++;
                 if (count % books.length == 0) {
                     BookRepository.insertBookBatch(books);
-                    break;
+                    logger.info("Inserted " + count + " books");
                 }
             }
-
+            if (count % books.length != 0) {
+                Book[] temp = new Book[count % books.length];
+                System.arraycopy(books, 0, temp, 0, count % books.length);
+                BookRepository.insertBookBatch(temp);
+                logger.info("Inserted " + count + " books");
+            }
         } catch (Exception e) {
+            logger.severe("Error while populating books");
+            logger.severe(e.getMessage());
+            logger.severe("line: " + line);
+
             e.printStackTrace();
         }
     }
