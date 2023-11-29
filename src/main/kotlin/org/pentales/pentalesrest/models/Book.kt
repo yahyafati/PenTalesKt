@@ -11,13 +11,18 @@ class Book(
     override var id: Long = 0L,
     @field:NotBlank
     var title: String = "",
+    @Column(columnDefinition = "TEXT")
     var description: String = "",
+    @Column(nullable = true)
+    var goodreadsId: Long = 0L,
     var ISBN: String = "",
+    var ISBN13: String = "",
     var goodreadsLink: String = "",
     var languageCode: String = "",
     var coverImage: String = "",
     var publicationYear: Int = 0,
     var publisher: String = "",
+    var pageCount: Int = 0,
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var authors: List<BookAuthor> = ArrayList(),
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
