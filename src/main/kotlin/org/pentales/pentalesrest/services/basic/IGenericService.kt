@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
+import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 import java.util.*
 import kotlin.reflect.*
@@ -21,8 +22,8 @@ interface IGenericService<T : IModel> {
         return repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id) }
     }
 
-    fun findAll(): List<T> {
-        return repository.findAll()
+    fun findAll(pageable: Pageable): Page<T> {
+        return repository.findAll(pageable)
     }
 
     fun save(entity: T): T {

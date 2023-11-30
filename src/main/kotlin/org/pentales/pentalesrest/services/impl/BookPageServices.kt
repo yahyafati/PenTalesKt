@@ -5,6 +5,7 @@ import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
+import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
 
@@ -18,10 +19,10 @@ class BookPageServices(
     @Transactional
     override fun getBookPageData(bookId: Long): Map<String, Any> {
         val book = bookRepository.findById(bookId).orElseThrow()
-        val ratings = ratingRepository.findAllByBook(book)
+        val ratings = ratingRepository.findAllByBook(book, Pageable.ofSize(10))
         val ratingCount = ratingRepository.countAllByBook(book)
         val reviewCount = ratingRepository.countBookReviews(book)
-        val relatedBooks = bookRepository.findAll().map { BookDTO(it) }
+        val relatedBooks = bookRepository.findAll(Pageable.ofSize(6)).map { BookDTO(it) }.toList()
         val currentUser = authenticationFacade.currentUser
         val currentUserRating = if (currentUser != null) {
             ratingRepository.findById(UserBookKey(userId = currentUser.id, bookId = book.id)).orElse(null)
