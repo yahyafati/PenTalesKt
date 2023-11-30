@@ -17,7 +17,7 @@ interface RatingRepository : JpaRepository<Rating, UserBookKey> {
         book: Book
     ): Long
 
-    fun findByUser(user: User, pageable: Pageable): Page<Rating>
+    fun findAllByUser(user: User, pageable: Pageable): Page<Rating>
     fun countAllByUser(user: User): Long
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.user = :user AND r.review IS NOT NULL AND r.review != ''")
@@ -25,5 +25,8 @@ interface RatingRepository : JpaRepository<Rating, UserBookKey> {
         @Param("user")
         user: User
     ): Long
+
+    fun deleteAllByBook(book: Book)
+    fun deleteAllByUser(user: User)
 
 }
