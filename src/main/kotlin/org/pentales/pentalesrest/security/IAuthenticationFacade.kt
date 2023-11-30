@@ -40,4 +40,13 @@ interface IAuthenticationFacade {
             }
             return null
         }
+
+    val currentUserMust: User
+        get() {
+            val principal = authentication?.principal
+            if (principal is User) {
+                return principal
+            }
+            throw Exception("User not found")
+        }
 }

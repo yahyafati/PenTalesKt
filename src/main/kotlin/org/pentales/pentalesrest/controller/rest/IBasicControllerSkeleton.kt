@@ -32,12 +32,12 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
         val pageSize = size ?: 10
         val sortDirection = direction ?: Sort.Direction.ASC
 
-        val firstPage = if (sort.isNullOrEmpty()) {
+        val pageRequest = if (sort.isNullOrEmpty()) {
             PageRequest.of(pageNumber, pageSize.coerceAtMost(MAX_PAGE_SIZE))
         } else {
             PageRequest.of(pageNumber, pageSize.coerceAtMost(MAX_PAGE_SIZE), Sort.by(sortDirection, sort))
         }
-        return ResponseEntity.ok(service.findAll(firstPage))
+        return ResponseEntity.ok(service.findAll(pageRequest))
     }
 
     @GetMapping("/{id}")
