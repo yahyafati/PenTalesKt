@@ -152,13 +152,11 @@ public class Book {
     }
 
     public List<Genre> getUniqueGenres() {
-        var list = genres.stream()
+        return genres.stream()
                 .map(GenreRepository::getGenreByName)
                 .filter(Objects::nonNull)
                 .distinct()
                 .toList();
-        System.out.println(list);
-        return list;
     }
 
     @Override

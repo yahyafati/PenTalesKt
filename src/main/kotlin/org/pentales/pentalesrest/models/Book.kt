@@ -10,6 +10,7 @@ class Book(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Long = 0L,
     @field:NotBlank
+    @Column(columnDefinition = "TEXT")
     var title: String = "",
     @Column(columnDefinition = "TEXT")
     var description: String = "",
@@ -17,8 +18,10 @@ class Book(
     var goodreadsId: Long = 0L,
     var ISBN: String = "",
     var ISBN13: String = "",
+    @Column(columnDefinition = "TEXT")
     var goodreadsLink: String = "",
     var languageCode: String = "",
+    @Column(columnDefinition = "TEXT")
     var coverImage: String = "",
     var publicationYear: Int = 0,
     var publisher: String = "",

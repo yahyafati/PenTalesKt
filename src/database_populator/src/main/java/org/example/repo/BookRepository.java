@@ -8,6 +8,7 @@ import org.example.model.Genre;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 
 public class BookRepository {
 
@@ -70,13 +71,15 @@ public class BookRepository {
                 while (generatedKeys.next()) {
                     long bookId = generatedKeys.getLong(1);
                     int addedAuthors = 0;
+                    HashSet<Long> authorIds = new HashSet<>();
                     for (Author author : books[index].getAuthors()) {
                         long newAuthorId = AuthorRepository.getAuthorIdByGoodReadsId(author.getGoodReadsAuthorId());
-                        if (newAuthorId == 0) {
+                        if (newAuthorId == 0 || authorIds.contains(newAuthorId)) {
                             System.err.println("Author not found: " + author.getGoodReadsAuthorId());
                             continue;
                         }
                         addBookAuthorToBatch(bookAuthorStatement, bookId, newAuthorId, index - addedAuthors);
+                        authorIds.add(newAuthorId);
                         addedAuthors++;
                     }
 

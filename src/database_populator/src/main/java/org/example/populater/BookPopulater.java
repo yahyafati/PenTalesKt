@@ -31,6 +31,12 @@ public class BookPopulater implements IPopulater {
         setupLogger();
     }
 
+    public static Map<String, Object> parseBookToMap(String line) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        return gson.fromJson(line, type);
+    }
+
     private void setupLogger() {
         try {
             String logDirectory = "logs/populate/" + Main.PROGRAM_TIMESTAMP;
@@ -45,11 +51,8 @@ public class BookPopulater implements IPopulater {
         }
     }
 
-    private Book parseBook(String line) {
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+    private Book parseBook(Map<String, Object> map) {
         Book book = new Book();
-        Map<String, Object> map = gson.fromJson(line, type);
 
         for (Map.Entry<String, Object> entries : map.entrySet()) {
             String key = entries.getKey();
@@ -116,6 +119,7 @@ public class BookPopulater implements IPopulater {
     @Override
     public void populate() {
         int BATCH_SIZE = 50;
+        int RATING_THRESHOLD = 100;
         String line = null;
         try (FileInputStream fis = new FileInputStream(String.valueOf(Configuration.getInstance()
                 .get("goodreads-dataset-file-path")));
@@ -128,7 +132,12 @@ public class BookPopulater implements IPopulater {
             Book[] books = new Book[BATCH_SIZE];
             int count = 0;
             while ((line = br.readLine()) != null) {
-                Book book = parseBook(line);
+                Map<String, Object> bookMap = parseBookToMap(line);
+                if (bookMap == null || StringUtils.safeConvertOrDefault((String) bookMap.get("ratings_count"), 0) < RATING_THRESHOLD) {
+                    continue;
+                }
+
+                Book book = parseBook(bookMap);
                 books[count % books.length] = book;
                 count++;
                 if (count % books.length == 0) {
