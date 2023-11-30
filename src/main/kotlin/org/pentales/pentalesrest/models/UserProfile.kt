@@ -16,7 +16,7 @@ class UserProfile(
     var bio: String = "",
     @Enumerated(value = EnumType.STRING)
     var gender: Gender = Gender.FEMALE,
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
     var wantToReadShelf: BookShelf = BookShelf(),
     var avatar: String = "",
     @OneToOne

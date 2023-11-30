@@ -1,7 +1,9 @@
 package org.pentales.pentalesrest.controller.rest.book
 
+import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.services.basic.*
+import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -12,9 +14,30 @@ class BookController(private val bookServices: IBookServices) {
     val service: IBookServices
         get() = bookServices
 
-    @get:GetMapping("")
-    val all: ResponseEntity<List<BookDTO>>
-        get() = ResponseEntity.ok(service.findAll().map { BookDTO(it) })
+    @GetMapping("")
+    fun getAll(
+        @RequestParam(defaultValue = "0")
+        page: Int?,
+        @RequestParam(defaultValue = "10")
+        size: Int?,
+        @RequestParam(defaultValue = "")
+        sort: String?,
+        @RequestParam(defaultValue = "ASC")
+        direction: Sort.Direction?
+    ): ResponseEntity<Page<BookDTO>> {
+        val pageNumber = page ?: 0
+        val pageSize = size ?: 10
+        val sortDirection = direction ?: Sort.Direction.ASC
+
+        val firstPage = if (sort.isNullOrEmpty()) {
+            PageRequest.of(pageNumber, pageSize.coerceAtMost(IBasicControllerSkeleton.MAX_PAGE_SIZE))
+        } else {
+            PageRequest.of(
+                pageNumber, pageSize.coerceAtMost(IBasicControllerSkeleton.MAX_PAGE_SIZE), Sort.by(sortDirection, sort)
+            )
+        }
+        return ResponseEntity.ok(service.findAll(firstPage).map { BookDTO(it) })
+    }
 
     @GetMapping("/{id}")
     fun getBookById(

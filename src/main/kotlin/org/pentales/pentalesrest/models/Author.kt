@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.models
 
+import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
 
@@ -14,6 +15,7 @@ class Author(
     @field:NotBlank
     var name: String = "",
     @Column(nullable = true)
+    @JsonIgnore
     var goodReadsAuthorId: Long = 0L,
 ) : IModel() {
 
