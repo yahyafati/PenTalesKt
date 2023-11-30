@@ -11,7 +11,7 @@ class BookSpecification {
     companion object {
 
         fun columnEquals(filterDtoList: List<FilterDto>): Specification<Book> {
-            return Specification { root, _, criteriaBuilder ->
+            return Specification { root, query, criteriaBuilder ->
 
                 val predicates = mutableListOf<Predicate>()
                 filterDtoList.forEach { filter ->
@@ -22,11 +22,44 @@ class BookSpecification {
                         predicates.add(predicate)
                         return@forEach
                     }
-                    if (filter.columnName == "genres") {
+                    if (filter.columnName == "authorIds") {
+                        val bookAuthorJoin = root.join<Book, BookAuthor>("authors", JoinType.LEFT)
+                        val predicate =
+                            criteriaBuilder.equal(bookAuthorJoin.get<String>("author").get<String>("id"), filter.value)
+                        predicates.add(predicate)
+                        return@forEach
+                    }
+                    if (filter.columnName == "genreIds") {
                         val bookGenreJoin = root.join<Book, BookGenre>("genres", JoinType.LEFT)
                         val predicate =
                             criteriaBuilder.equal(bookGenreJoin.get<String>("genre").get<String>("id"), filter.value)
                         predicates.add(predicate)
+                        return@forEach
+                    }
+                    if (filter.columnName == "averageRating") {
+                        val ratingsJoin = root.join<Book, Rating>("ratings", JoinType.LEFT)
+                        query.groupBy(root.get<Number>("id"))
+//                        average must be above or equal to the filter value
+                        val predicate = when (filter.filterType) {
+                            FilterTypes.GREATER_THAN_OR_EQUAL -> {
+                                criteriaBuilder.greaterThanOrEqualTo(
+                                    criteriaBuilder.avg(ratingsJoin.get("value")), filter.value.toString().toDouble()
+                                )
+                            }
+
+                            FilterTypes.LESS_THAN_OR_EQUAL -> {
+                                criteriaBuilder.lessThanOrEqualTo(
+                                    criteriaBuilder.avg(ratingsJoin.get("value")), filter.value.toString().toDouble()
+                                )
+                            }
+
+                            else -> {
+                                criteriaBuilder.equal(
+                                    criteriaBuilder.avg(ratingsJoin.get("value")), filter.value.toString()
+                                )
+                            }
+                        }
+                        query.having(predicate)
                         return@forEach
                     }
                     val predicate = when (filter.filterType) {
