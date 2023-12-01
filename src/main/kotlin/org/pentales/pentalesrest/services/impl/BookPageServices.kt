@@ -75,13 +75,23 @@ class BookPageServices(
                             "avatar" to rating.user?.profile?.avatar
                         )
                     )
-                }),
+                },
+
+                "distribution" to ratingRepository.findRatingDistributionByBook(book).map { ratingDistribution ->
+                    mapOf(
+                        "value" to ratingDistribution.value, "count" to ratingDistribution.count
+                    )
+                }
+
+            ),
 
             "relatedBooks" to relatedBooks.map { currentBook ->
-                mapOf("id" to currentBook.id,
+                mapOf(
+                    "id" to currentBook.id,
                     "title" to currentBook.title,
                     "coverImage" to book.coverImage,
-                    "authors" to book.authors.map { author -> author.id.authorId })
+                    "authors" to book.authors.map { AuthorDto(it.author) },
+                )
             })
 
         return map
