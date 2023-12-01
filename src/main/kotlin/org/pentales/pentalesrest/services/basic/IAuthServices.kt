@@ -6,4 +6,6 @@ import org.pentales.pentalesrest.models.*
 interface IAuthServices {
 
     fun register(registerUser: RegisterUser): User
+
+    fun getCurrentUser(): User
 }
