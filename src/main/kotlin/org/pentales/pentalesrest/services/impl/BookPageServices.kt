@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.services.impl
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.springframework.data.domain.*
@@ -15,6 +16,15 @@ class BookPageServices(
     private val ratingRepository: RatingRepository,
     private val authenticationFacade: IAuthenticationFacade
 ) : IBookPageServices {
+
+    override fun getBooks(page: Int, size: Int, filters: List<FilterDto>): Page<BookDTO> {
+        val pageable = PageRequest.of(page, size, Sort.by("id").descending())
+        val books = bookRepository.findAll(BookSpecification.columnEquals(filters), pageable).map { BookDTO(it) }
+//        val bookCount = bookRepository.count(BookSpecification.columnEquals(filters))
+//        val bookList = books.map { BookDTO(it) }.toList()
+
+        return books
+    }
 
     @Transactional
     override fun getBookPageData(bookId: Long): Map<String, Any> {

@@ -30,6 +30,8 @@ class Book(
     var authors: List<BookAuthor> = ArrayList(),
     @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
     var genres: List<BookGenre> = ArrayList(),
+    @OneToMany(cascade = [CascadeType.REMOVE], mappedBy = "book")
+    var ratings: List<Rating> = ArrayList(),
 ) : IModel() {
 
     override fun toString(): String {
