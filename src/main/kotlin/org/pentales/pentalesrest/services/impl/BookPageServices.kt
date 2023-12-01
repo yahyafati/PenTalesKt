@@ -85,12 +85,12 @@ class BookPageServices(
 
             ),
 
-            "relatedBooks" to relatedBooks.map { currentBook ->
+            "relatedBooks" to relatedBooks.map { relatedBook ->
                 mapOf(
-                    "id" to currentBook.id,
-                    "title" to currentBook.title,
-                    "coverImage" to book.coverImage,
-                    "authors" to book.authors.map { AuthorDto(it.author) },
+                    "id" to relatedBook.id,
+                    "title" to relatedBook.title,
+                    "coverImage" to relatedBook.coverImage,
+                    "authors" to relatedBook.authors,
                 )
             })
 
