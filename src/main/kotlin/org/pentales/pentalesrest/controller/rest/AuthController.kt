@@ -19,4 +19,10 @@ class AuthController(private val authServices: IAuthServices) {
         val user = authServices.register(registerUser)
         return ResponseEntity.ok(UserDto(user))
     }
+
+    @GetMapping("/current")
+    fun getCurrentUser(): ResponseEntity<UserDto> {
+        val user = authServices.getCurrentUser()
+        return ResponseEntity.ok(UserDto(user))
+    }
 }
