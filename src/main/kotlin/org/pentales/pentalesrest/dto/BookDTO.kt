@@ -14,6 +14,7 @@ class BookDTO(
     var genres: List<Long> = ArrayList(),
     var languageCode: String = "",
     var publisher: String = "",
+    var coverImage: String = ""
 ) {
 
     constructor(book: Book) : this(
@@ -25,7 +26,8 @@ class BookDTO(
         authors = book.authors.map { it.author.id },
         genres = book.genres.map { it.genre.id },
         languageCode = book.languageCode,
-        publisher = book.publisher
+        publisher = book.publisher,
+        coverImage = book.coverImage
     )
 
     fun toBook(): Book {
@@ -42,7 +44,8 @@ class BookDTO(
                 BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
             },
             languageCode = languageCode,
-            publisher = publisher
+            publisher = publisher,
+            coverImage = coverImage
         )
     }
 
