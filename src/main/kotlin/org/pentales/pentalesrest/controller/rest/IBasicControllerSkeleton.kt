@@ -18,8 +18,8 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
     val service: Service
     val authenticationFacade: IAuthenticationFacade
 
-    @GetMapping("")
-    fun getAll(
+    @PostMapping("/search")
+    fun searchAll(
         @RequestParam(defaultValue = "0")
         page: Int?,
         @RequestParam(defaultValue = "10")
@@ -28,8 +28,8 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
         sort: String?,
         @RequestParam(defaultValue = "ASC")
         direction: Sort.Direction?,
-        @RequestBody
-        filters: List<FilterDto> = listOf()
+        @RequestBody(required = false)
+        filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<Entity>> {
         val pageNumber = page ?: 0
         val pageSize = size ?: 10
@@ -40,7 +40,7 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
         } else {
             PageRequest.of(pageNumber, pageSize.coerceAtMost(MAX_PAGE_SIZE), Sort.by(sortDirection, sort))
         }
-        return ResponseEntity.ok(service.findAll(pageRequest, filters))
+        return ResponseEntity.ok(service.findAll(pageRequest, filters ?: listOf()))
     }
 
     @GetMapping("/{id}")
