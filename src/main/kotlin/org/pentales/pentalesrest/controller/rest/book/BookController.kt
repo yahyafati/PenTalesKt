@@ -23,7 +23,9 @@ class BookController(private val bookServices: IBookServices) {
         @RequestParam(defaultValue = "")
         sort: String?,
         @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?
+        direction: Sort.Direction?,
+        @RequestBody
+        filters: List<FilterDto> = listOf()
     ): ResponseEntity<Page<BookDTO>> {
         val pageNumber = page ?: 0
         val pageSize = size ?: 10
@@ -36,7 +38,7 @@ class BookController(private val bookServices: IBookServices) {
                 pageNumber, pageSize.coerceAtMost(IBasicControllerSkeleton.MAX_PAGE_SIZE), Sort.by(sortDirection, sort)
             )
         }
-        return ResponseEntity.ok(service.findAll(pageRequest).map { BookDTO(it) })
+        return ResponseEntity.ok(service.findAll(pageRequest, filters).map { BookDTO(it) })
     }
 
     @GetMapping("/{id}")

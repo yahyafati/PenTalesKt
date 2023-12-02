@@ -4,8 +4,8 @@ import jakarta.transaction.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.services.basic.*
-import org.springframework.data.jpa.repository.*
 import org.springframework.stereotype.*
 import kotlin.reflect.*
 import kotlin.reflect.full.*
@@ -14,13 +14,17 @@ import kotlin.reflect.full.*
 class BookServices(
     private val bookRepository: BookRepository,
     private val bookGenreRepository: BookGenreRepository,
-    private val bookAuthorRepository: BookAuthorRepository
+    private val bookAuthorRepository: BookAuthorRepository,
+    private val bookSpecification: ISpecification<Book>
 ) : IBookServices {
 
-    override val repository: JpaRepository<Book, Long>
+    override val repository: IRepoSpecification<Book, Long>
         get() = bookRepository
     override val modelProperties: Collection<KProperty1<Book, *>>
         get() = Book::class.memberProperties
+
+    override val specification: ISpecification<Book>
+        get() = bookSpecification
 
     private fun saveBookGenres(book: Book): List<BookGenre> {
         val bookGenres: List<BookGenre> = book.genres
