@@ -73,15 +73,29 @@ class BookPageServices(
                             "username" to rating.user?.username,
                             "name" to rating.user?.profile?.displayName,
                             "avatar" to rating.user?.profile?.avatar
-                        )
-                    )
-                }),
+                        ),
 
-            "relatedBooks" to relatedBooks.map { currentBook ->
-                mapOf("id" to currentBook.id,
-                    "title" to currentBook.title,
-                    "coverImage" to book.coverImage,
-                    "authors" to book.authors.map { author -> author.id.authorId })
+                        "createdAt" to rating.createdAt.time,
+
+                        "updatedAt" to rating.updatedAt.time
+                    )
+                },
+
+                "distribution" to ratingRepository.findRatingDistributionByBook(book).map { ratingDistribution ->
+                    mapOf(
+                        "value" to ratingDistribution.value, "count" to ratingDistribution.count
+                    )
+                }
+
+            ),
+
+            "relatedBooks" to relatedBooks.map { relatedBook ->
+                mapOf(
+                    "id" to relatedBook.id,
+                    "title" to relatedBook.title,
+                    "coverImage" to relatedBook.coverImage,
+                    "authors" to relatedBook.authors,
+                )
             })
 
         return map

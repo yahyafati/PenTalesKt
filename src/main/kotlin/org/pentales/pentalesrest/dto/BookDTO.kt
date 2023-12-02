@@ -10,7 +10,7 @@ class BookDTO(
     var description: String = "",
     var ISBN: String = "",
     var publicationYear: Int = 0,
-    var authors: List<Long> = ArrayList(),
+    var authors: List<AuthorDto> = ArrayList(),
     var genres: List<Long> = ArrayList(),
     var languageCode: String = "",
     var publisher: String = "",
@@ -23,7 +23,7 @@ class BookDTO(
         description = book.description,
         ISBN = book.ISBN,
         publicationYear = book.publicationYear,
-        authors = book.authors.map { it.author.id },
+        authors = book.authors.map { AuthorDto(it.author) },
         genres = book.genres.map { it.genre.id },
         languageCode = book.languageCode,
         publisher = book.publisher,
@@ -38,7 +38,7 @@ class BookDTO(
             ISBN = ISBN,
             publicationYear = publicationYear,
             authors = authors.mapIndexed { index, it ->
-                BookAuthor(BookAuthorKey(id, it), book = Book(id), author = Author(it), sortOrder = index)
+                BookAuthor(BookAuthorKey(id, it.id), book = Book(id), author = Author(it.id), sortOrder = index)
             },
             genres = genres.mapIndexed { index, it ->
                 BookGenre(BookGenreKey(id, it), book = Book(id), genre = Genre(it), sortOrder = index)
