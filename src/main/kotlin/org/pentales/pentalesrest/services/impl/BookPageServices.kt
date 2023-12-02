@@ -73,7 +73,11 @@ class BookPageServices(
                             "username" to rating.user?.username,
                             "name" to rating.user?.profile?.displayName,
                             "avatar" to rating.user?.profile?.avatar
-                        )
+                        ),
+
+                        "createdAt" to rating.createdAt.time,
+
+                        "updatedAt" to rating.updatedAt.time
                     )
                 },
 
