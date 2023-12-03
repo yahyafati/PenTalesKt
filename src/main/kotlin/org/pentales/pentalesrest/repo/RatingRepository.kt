@@ -7,7 +7,7 @@ import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.query.*
 
-interface RatingRepository : JpaRepository<Rating, UserBookKey> {
+interface RatingRepository : IRepoSpecification<Rating, UserBookKey> {
 
     fun findAllByBook(book: Book, pageable: Pageable): Page<Rating>
     fun countAllByBook(book: Book): Long

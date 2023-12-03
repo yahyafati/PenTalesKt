@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest.dto
 
 class FilterDto(
-    var columnName: String = "",
+    var name: String = "",
 
     var value: Any = "",
 
