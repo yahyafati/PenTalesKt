@@ -15,25 +15,30 @@ class BookSpecification : ISpecification<Book> {
 
             val predicates = mutableListOf<Predicate>()
             filterDtoList.forEach { filter ->
-                if (filter.name == "authors") {
+                if (filter.name == "author") {
                     val bookAuthorJoin = root.join<Book, BookAuthor>("authors", JoinType.LEFT)
                     val authorJoin = bookAuthorJoin.join<BookAuthor, Author>("author", JoinType.LEFT)
-                    val predicate = criteriaBuilder.equal(authorJoin.get<String>("name"), filter.value)
+                    val predicate = criteriaBuilder.equal(
+                        criteriaBuilder.lower(authorJoin.get("name")), filter.value.toString().lowercase()
+                    )
                     predicates.add(predicate)
                     return@forEach
                 }
-                if (filter.name == "authorIds") {
-                    val bookAuthorJoin = root.join<Book, BookAuthor>("authors", JoinType.LEFT)
-                    val predicate =
-                        criteriaBuilder.equal(bookAuthorJoin.get<String>("author").get<String>("id"), filter.value)
-                    predicates.add(predicate)
-                    return@forEach
-                }
-                if (filter.name == "genreIds") {
-                    val bookGenreJoin = root.join<Book, BookGenre>("genres", JoinType.LEFT)
-                    val predicate =
-                        criteriaBuilder.equal(bookGenreJoin.get<String>("genre").get<String>("id"), filter.value)
-                    predicates.add(predicate)
+                if (filter.name == "authorIds" || filter.name == "genreIds") {
+                    val inClause = if (filter.name == "authorIds") {
+                        val bookAuthorJoin = root.join<Book, BookAuthor>("authors", JoinType.LEFT)
+                        criteriaBuilder.`in`(bookAuthorJoin.get<Author>("author").get<Int>("id"))
+                    } else {
+                        val bookGenreJoin = root.join<Book, BookGenre>("genres", JoinType.LEFT)
+                        criteriaBuilder.`in`(bookGenreJoin.get<Genre>("genre").get<Int>("id"))
+                    }
+                    val value = filter.value
+                    if (value is List<*>) {
+                        value.forEach { inClause.value(it.toString().toInt()) }
+                    } else {
+                        inClause.value(value.toString().toInt())
+                    }
+                    predicates.add(inClause)
                     return@forEach
                 }
                 if (filter.name == "averageRating") {
