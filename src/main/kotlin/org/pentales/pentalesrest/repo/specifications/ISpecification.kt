@@ -39,11 +39,11 @@ interface ISpecification<T> {
             }
 
             FilterTypes.LIKE -> {
-                criteriaBuilder.like(root.get(filter.name), "%${filter.value}%")
+                criteriaBuilder.like(criteriaBuilder.lower(root.get(filter.name)), "%${filter.value}%".lowercase())
             }
 
             FilterTypes.NOT_LIKE -> {
-                criteriaBuilder.notLike(root.get(filter.name), "%${filter.value}%")
+                criteriaBuilder.notLike(criteriaBuilder.lower(root.get(filter.name)), "%${filter.value}%".lowercase())
             }
 
             FilterTypes.IN -> {
