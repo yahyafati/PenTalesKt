@@ -5,7 +5,7 @@ import java.io.*
 
 @Embeddable
 class UserUserKey(
-    var followerId: Long = 0L, var followingId: Long = 0L
+    var followerId: Long = 0L, var followedId: Long = 0L
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -15,19 +15,19 @@ class UserUserKey(
         other as UserUserKey
 
         if (followerId != other.followerId) return false
-        if (followingId != other.followingId) return false
+        if (followedId != other.followedId) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = followerId.hashCode()
-        result = 31 * result + followingId.hashCode()
+        result = 31 * result + followedId.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "UserUserKey(followerId=$followerId, followingId=$followingId)"
+        return "UserUserKey(followerId=$followerId, followingId=$followedId)"
     }
 
 }

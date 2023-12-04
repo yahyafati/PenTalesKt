@@ -10,9 +10,9 @@ class Follower(
 
     @ManyToOne
     @MapsId("followerId")
-    var follower: User = User(),
+    var follower: User = User(), // This is the user who follows
 
     @ManyToOne
-    @MapsId("followingId")
-    var following: User = User()
+    @MapsId("followedId")
+    var followed: User = User() // This is the user who is followed
 ) : IAudit()
