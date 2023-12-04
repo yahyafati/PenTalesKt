@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 class RatingController(
     private val ratingServices: IRatingServices,
     private val ratingCommentServices: IRatingCommentServices,
+    private val activityShareServices: IActivityShareServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
@@ -120,13 +121,43 @@ class RatingController(
     @DeleteMapping("/{userId}/comments/{commentId}")
     fun deleteRatingComment(
         @PathVariable
-        bookId: Long,
-        @PathVariable
-        userId: Long,
-        @PathVariable
         commentId: Long
     ): ResponseEntity<Unit> {
         ratingCommentServices.deleteById(id = commentId)
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/{userId}/share/{shareId}")
+    fun getRatingShare(
+        @PathVariable
+        shareId: Long
+    ): ResponseEntity<ShareDto> {
+        val share = activityShareServices.getShareById(id = shareId)
+        return ResponseEntity.ok(ShareDto(share))
+    }
+
+    @PostMapping("/{userId}/share")
+    fun shareRating(
+        @PathVariable
+        bookId: Long,
+        @PathVariable
+        userId: Long,
+        @RequestBody
+        shareDto: AddShareDto
+    ): ResponseEntity<ShareDto> {
+        val user = authenticationFacade.currentUserMust
+        val rating = Rating(id = UserBookKey(bookId = bookId, userId = userId))
+        val share = shareDto.toActivityShare(rating = rating, user = user)
+        val savedShare = activityShareServices.saveNew(share)
+        return ResponseEntity.ok(ShareDto(savedShare))
+    }
+
+    @DeleteMapping("/{userId}/share/{shareId}")
+    fun unshareRating(
+        @PathVariable
+        shareId: Long
+    ): ResponseEntity<Unit> {
+        activityShareServices.deleteById(id = shareId)
         return ResponseEntity.ok().build()
     }
 
