@@ -67,6 +67,17 @@ class RatingController(
         return ResponseEntity.ok(RatingDto(savedRating))
     }
 
+    @DeleteMapping("/{userId}")
+    fun deleteRating(
+        @PathVariable
+        bookId: Long,
+        @PathVariable
+        userId: Long
+    ): ResponseEntity<Unit> {
+        ratingServices.deleteById(bookId = bookId, userId = userId)
+        return ResponseEntity.ok().build()
+    }
+
     @GetMapping("/{userId}/comments")
     fun getRatingComments(
         @PathVariable
@@ -104,17 +115,6 @@ class RatingController(
         val ratingComment = ratingCommentDto.toRatingComment(user, rating)
         val savedRatingComment = ratingCommentServices.saveNew(ratingComment)
         return ResponseEntity.ok(RatingCommentDto(savedRatingComment))
-    }
-
-    @DeleteMapping("/{userId}")
-    fun deleteRating(
-        @PathVariable
-        bookId: Long,
-        @PathVariable
-        userId: Long
-    ): ResponseEntity<Unit> {
-        ratingServices.deleteById(bookId = bookId, userId = userId)
-        return ResponseEntity.ok().build()
     }
 
     @DeleteMapping("/{userId}/comments/{commentId}")
