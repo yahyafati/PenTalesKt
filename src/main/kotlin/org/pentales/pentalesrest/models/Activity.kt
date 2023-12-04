@@ -6,11 +6,9 @@ import org.pentales.pentalesrest.models.interfaces.*
 @Entity
 class Activity(
     @ManyToOne
-    var rating: Rating = Rating(),
+    var rating: Rating? = Rating(),
     @ManyToOne
-    var ratingComment: RatingComment = RatingComment(),
-    @ManyToOne
-    var follower: Follower = Follower(),
+    var ratingComment: RatingComment? = RatingComment(),
     @ManyToOne
     var share: ActivityShare? = null,
 ) : IModel() {}

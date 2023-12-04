@@ -5,7 +5,10 @@ import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
 class ActivityShare(
-    var comment: String = "",
+    @Column(columnDefinition = "TEXT")
+    var shareQuote: String = "",
     @ManyToOne
-    var activity: Activity = Activity(),
+    var rating: Rating = Rating(),
+    @ManyToOne
+    var user: User = User(),
 ) : IModel() {}
