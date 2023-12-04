@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.models.keys.*
 
 @Entity

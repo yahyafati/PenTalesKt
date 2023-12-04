@@ -15,7 +15,7 @@ class ProfilePageServices(
     private val followerService: IFollowerService,
     private val ratingRepository: RatingRepository,
     private val userGoalService: IUserGoalService,
-    private val userBookServices: IUserBookServices,
+    private val userBookActivityServices: IUserBookActivityServices,
 ) : IProfilePageServices {
 
     override fun getProfilePage(username: String): Map<String, Any> {
@@ -26,10 +26,10 @@ class ProfilePageServices(
         val ratingCount = ratingRepository.countAllByUser(profile.user)
         val reviewCount = ratingRepository.countUserReviews(profile.user)
         val currentGoal = userGoalService.findByUserAndGoalYear(profile.user, Year.now().value)
-        val nowReading = userBookServices.getNowReadingBook(profile.user.id)
+        val nowReading = userBookActivityServices.getNowReadingBook(profile.user.id)
         val startOfYear = Year.now().atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
         val readSoFar =
-            userBookServices.getBooksCountByStatusSince(profile.user.id, UserBookReadStatus.READ, startOfYear)
+            userBookActivityServices.getBooksCountByStatusSince(profile.user.id, UserBookReadStatus.READ, startOfYear)
 
         val map = mutableMapOf(
 

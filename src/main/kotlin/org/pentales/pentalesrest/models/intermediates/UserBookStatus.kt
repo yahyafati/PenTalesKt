@@ -3,14 +3,21 @@ package org.pentales.pentalesrest.models.intermediates
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.keys.*
 
 @Entity
-class UserBook(
+class UserBookStatus(
+    @EmbeddedId
+    var id: UserBookKey = UserBookKey(),
+
     @ManyToOne
+    @MapsId("userId")
     var user: User = User(),
+
     @ManyToOne
+    @MapsId("bookId")
     var book: Book = Book(),
 
     @Enumerated(EnumType.STRING)
     var status: UserBookReadStatus = UserBookReadStatus.NONE,
-) : IModel() {}
+) {}

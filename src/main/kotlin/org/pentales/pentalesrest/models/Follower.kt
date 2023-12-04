@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.models.keys.*
 
 @Entity

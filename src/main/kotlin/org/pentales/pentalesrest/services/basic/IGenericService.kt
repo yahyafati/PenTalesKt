@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.exceptions.*
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.repo.specifications.*
 import org.springframework.data.domain.*

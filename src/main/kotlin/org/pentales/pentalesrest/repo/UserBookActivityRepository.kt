@@ -1,17 +1,17 @@
 package org.pentales.pentalesrest.repo
 
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.models.intermediates.*
 import org.springframework.data.domain.*
 import java.sql.*
 
-interface UserBookRepository : IRepoSpecification<UserBook, Long> {
+interface UserBookActivityRepository : IRepoSpecification<UserBookActivity, Long> {
 
-    fun findAllByUserIdAndStatus(userId: Long, status: UserBookReadStatus, pageable: Pageable): List<UserBook>
+    fun findAllByUserIdAndStatus(userId: Long, status: UserBookReadStatus, pageable: Pageable): List<UserBookActivity>
     fun countAllByUserIdAndStatus(userId: Long, status: UserBookReadStatus): Int
     fun findAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
         userId: Long, status: UserBookReadStatus, createdAt: Timestamp, pageable: Pageable
-    ): List<UserBook>
+    ): List<UserBookActivity>
 
     fun countAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
         userId: Long, status: UserBookReadStatus, createdAt: Timestamp
@@ -19,9 +19,9 @@ interface UserBookRepository : IRepoSpecification<UserBook, Long> {
 
     fun findLastByUserIdAndBookIdOrderByCreatedAt(
         userId: Long, bookId: Long
-    ): UserBook?
+    ): UserBookActivity?
 
     fun findLastByUserIdAndStatusOrderByCreatedAt(
         userId: Long, status: UserBookReadStatus
-    ): UserBook?
+    ): UserBookActivity?
 }

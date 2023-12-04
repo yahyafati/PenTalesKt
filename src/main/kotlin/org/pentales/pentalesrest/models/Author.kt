@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.models
 import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
+import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
 @Table(

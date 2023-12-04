@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.converters.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.springframework.security.core.*
 import org.springframework.security.core.userdetails.*
 

@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.models.intermediates.*
 
 @Entity

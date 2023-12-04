@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.models
+package org.pentales.pentalesrest.models.interfaces
 
 import com.fasterxml.jackson.annotation.*
 import jakarta.persistence.*

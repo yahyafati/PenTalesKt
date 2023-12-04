@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.dto.*
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
