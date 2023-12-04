@@ -5,13 +5,15 @@ import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.stereotype.*
+import java.time.*
 
 @Service
 class ProfilePageServices(
     private val userRepository: UserRepository,
     private val profileRepository: UserProfileRepository,
     private val followerService: IFollowerService,
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val userGoalService: IUserGoalService
 ) : IProfilePageServices {
 
     override fun getProfilePage(username: String): Map<String, Any> {
@@ -21,6 +23,7 @@ class ProfilePageServices(
         val followingCount = followerService.countFollowingsOf(profile.user)
         val ratingCount = ratingRepository.countAllByUser(profile.user)
         val reviewCount = ratingRepository.countUserReviews(profile.user)
+        val currentGoal = userGoalService.findByUserAndGoalYear(profile.user, Year.now().value)
 
         return mapOf(
 
@@ -33,6 +36,10 @@ class ProfilePageServices(
             "ratingCount" to ratingCount,
 
             "reviewCount" to reviewCount,
+
+            "currentGoal" to mapOf(
+                "target" to currentGoal?.target,
+            )
         )
     }
 }
