@@ -9,7 +9,7 @@ import org.springframework.stereotype.*
 @Service
 class FollowerService(
     private val followerRepository: FollowerRepository
-) : IFollowerService {
+) : IFollowerServices {
 
     override fun countFollowersOf(user: User): Int {
         // We have to look for the cases where the user is followed

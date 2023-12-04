@@ -11,6 +11,22 @@ import kotlin.reflect.*
 
 interface IGenericService<T : IModel> {
 
+    companion object {
+
+        fun <T : IModel> create(
+            repository: IRepoSpecification<T, Long>,
+            modelProperties: Collection<KProperty1<T, *>>,
+            specification: ISpecification<T>
+        ): IGenericService<T> {
+            return object : IGenericService<T> {
+                override val repository: IRepoSpecification<T, Long> = repository
+                override val modelProperties: Collection<KProperty1<T, *>> = modelProperties
+                override val specification: ISpecification<T> = specification
+            }
+        }
+
+    }
+
     val repository: IRepoSpecification<T, Long>
     val modelProperties: Collection<KProperty1<T, *>>
     val specification: ISpecification<T>

@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.www.*
 class JWTAuthorizationFilter(
     authenticationManager: AuthenticationManager,
     securityConfigProperties: SecurityConfigProperties,
-    private val userService: IUserService,
+    private val userService: IUserServices,
     private val jwtService: JwtService
 ) : BasicAuthenticationFilter(authenticationManager) {
 

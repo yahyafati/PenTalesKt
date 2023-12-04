@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.models.*
 
-interface IFollowerService {
+interface IFollowerServices {
 
     fun countFollowersOf(
         user: User

@@ -21,4 +21,7 @@ class Rating(
     @field:Max(5)
     var value: Int = 3,
     var review: String = "",
+
+    @OneToMany(mappedBy = "rating", cascade = [CascadeType.REMOVE])
+    var comments: List<RatingComment> = listOf(),
 ) : IAudit()

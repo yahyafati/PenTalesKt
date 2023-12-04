@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: IUserService, private val userProfileService: IUserProfileService
+    private val userService: IUserServices, private val userProfileService: IUserProfileServices
 ) {}

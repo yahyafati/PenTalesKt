@@ -12,9 +12,9 @@ import java.time.*
 class ProfilePageServices(
     private val userRepository: UserRepository,
     private val profileRepository: UserProfileRepository,
-    private val followerService: IFollowerService,
+    private val followerService: IFollowerServices,
     private val ratingRepository: RatingRepository,
-    private val userGoalService: IUserGoalService,
+    private val userGoalService: IUserGoalServices,
     private val userBookActivityServices: IUserBookActivityServices,
     private val userBookStatusServices: IUserBookStatusServices,
 ) : IProfilePageServices {

@@ -3,7 +3,7 @@ package org.pentales.pentalesrest.services.basic
 import org.pentales.pentalesrest.models.User
 import org.springframework.security.core.userdetails.*
 
-interface IUserService : UserDetailsService {
+interface IUserServices : UserDetailsService {
 
     fun save(user: User): User
     fun saveNew(user: User): User

@@ -7,9 +7,9 @@ import org.pentales.pentalesrest.services.basic.*
 import org.springframework.stereotype.*
 
 @Service
-class UserGoalService(
+class UserGoalServices(
     private val userGoalRepository: UserGoalRepository
-) : IUserGoalService {
+) : IUserGoalServices {
 
     override fun findByUserAndGoal(user: User, goal: Goal): UserGoal? {
         return userGoalRepository.findByUserAndGoal(user, goal)
