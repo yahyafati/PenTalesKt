@@ -63,7 +63,7 @@ class RatingController(private val service: IRatingServices, private val authent
         val book = Book(id = bookId)
         val user = authenticationFacade.currentUserMust
         val rating = ratingDto.toRating(book, user)
-        val savedRating = service.save(rating)
+        val savedRating = service.saveNew(rating)
         return ResponseEntity.ok(RatingDto(savedRating))
     }
 

@@ -5,8 +5,8 @@ import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
 class ActivityShare(
-    @Column(columnDefinition = "TEXT")
-    var shareQuote: String = "",
+    @Column(columnDefinition = "TEXT", nullable = true)
+    var shareQuote: String? = "",
     @ManyToOne
     var rating: Rating = Rating(),
     @ManyToOne

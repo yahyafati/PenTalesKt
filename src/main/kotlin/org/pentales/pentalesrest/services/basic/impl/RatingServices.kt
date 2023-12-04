@@ -12,7 +12,10 @@ import kotlin.reflect.*
 import kotlin.reflect.full.*
 
 @Service
-class RatingServices(private val repository: RatingRepository) : IRatingServices {
+class RatingServices(
+    private val repository: RatingRepository,
+    private val activityServices: IActivityServices,
+) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
         get() = Rating::class.memberProperties
@@ -33,6 +36,13 @@ class RatingServices(private val repository: RatingRepository) : IRatingServices
     @Transactional
     override fun save(entity: Rating): Rating {
         return repository.save(entity)
+    }
+
+    @Transactional
+    override fun saveNew(entity: Rating): Rating {
+        val savedEntity = save(entity)
+        activityServices.saveRating(savedEntity)
+        return savedEntity
     }
 
     @Transactional

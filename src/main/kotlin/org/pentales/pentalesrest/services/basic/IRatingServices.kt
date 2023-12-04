@@ -19,6 +19,7 @@ interface IRatingServices {
     fun findById(bookId: Long, userId: Long): Rating
 
     fun save(entity: Rating): Rating
+    fun saveNew(entity: Rating): Rating
     fun update(bookId: Long, userId: Long, entity: Rating, updatedFields: List<String> = emptyList()): Rating
 
     fun deleteById(bookId: Long, userId: Long)
