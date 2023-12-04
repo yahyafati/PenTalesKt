@@ -12,5 +12,5 @@ class UserBookActivity(
     var book: Book = Book(),
 
     @Enumerated(EnumType.STRING)
-    var status: UserBookReadStatus = UserBookReadStatus.NONE,
+    var status: EUserBookReadStatus = EUserBookReadStatus.NONE,
 ) : IModel() {}

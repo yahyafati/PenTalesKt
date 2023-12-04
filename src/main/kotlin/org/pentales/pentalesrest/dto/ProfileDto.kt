@@ -9,7 +9,7 @@ class ProfileDto(
     var profilePicture: String? = "",
     var coverPicture: String? = "",
     var bio: String = "",
-    var gender: Gender = Gender.FEMALE,
+    var gender: EGender = EGender.FEMALE,
     var socialMedia: List<SocialMediaDto> = listOf(),
 ) {
 

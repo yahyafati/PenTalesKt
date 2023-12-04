@@ -16,6 +16,7 @@ class ProfilePageServices(
     private val ratingRepository: RatingRepository,
     private val userGoalService: IUserGoalService,
     private val userBookActivityServices: IUserBookActivityServices,
+    private val userBookStatusServices: IUserBookStatusServices,
 ) : IProfilePageServices {
 
     override fun getProfilePage(username: String): Map<String, Any> {
@@ -26,10 +27,10 @@ class ProfilePageServices(
         val ratingCount = ratingRepository.countAllByUser(profile.user)
         val reviewCount = ratingRepository.countUserReviews(profile.user)
         val currentGoal = userGoalService.findByUserAndGoalYear(profile.user, Year.now().value)
-        val nowReading = userBookActivityServices.getNowReadingBook(profile.user.id)
+        val nowReading = userBookStatusServices.getNowReadingBook(profile.user.id)
         val startOfYear = Year.now().atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
         val readSoFar =
-            userBookActivityServices.getBooksCountByStatusSince(profile.user.id, UserBookReadStatus.READ, startOfYear)
+            userBookActivityServices.getBooksCountByStatusSince(profile.user.id, EUserBookReadStatus.READ, startOfYear)
 
         val map = mutableMapOf(
 
@@ -54,7 +55,7 @@ class ProfilePageServices(
         if (nowReading != null) {
             map["nowReading"] = mapOf(
                 "book" to BookDTO(nowReading.book),
-                "startedAt" to nowReading.updatedAt,
+                "startedAt" to nowReading.createdAt,
             )
         }
 

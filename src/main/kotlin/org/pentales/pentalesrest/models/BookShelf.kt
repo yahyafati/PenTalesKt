@@ -11,7 +11,7 @@ class BookShelf(
     var description: String = "",
 
     @Enumerated(EnumType.STRING)
-    var access: AccessLevel = AccessLevel.PRIVATE,
+    var access: EAccessLevel = EAccessLevel.PRIVATE,
 
     @OneToMany(mappedBy = "bookShelf", cascade = [CascadeType.ALL], orphanRemoval = true)
     var books: MutableList<BookShelfBook> = mutableListOf(),

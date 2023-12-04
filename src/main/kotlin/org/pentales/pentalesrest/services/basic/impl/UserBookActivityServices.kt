@@ -13,34 +13,25 @@ class UserBookActivityServices(
     private val userBookActivityRepository: UserBookActivityRepository
 ) : IUserBookActivityServices {
 
-    override fun getBookStatus(userId: Long, bookId: Long): UserBookReadStatus {
-        val userBook = userBookActivityRepository.findLastByUserIdAndBookIdOrderByCreatedAt(userId, bookId)
-        return userBook?.status ?: UserBookReadStatus.NONE
-    }
-
-    override fun getNowReadingBook(userId: Long): UserBookActivity? {
-        return userBookActivityRepository.findLastByUserIdAndStatusOrderByCreatedAt(userId, UserBookReadStatus.READING)
-    }
-
     override fun getBooksByStatus(
-        userId: Long, status: UserBookReadStatus, pageable: Pageable
+        userId: Long, status: EUserBookReadStatus, pageable: Pageable
     ): List<UserBookActivity> {
         return userBookActivityRepository.findAllByUserIdAndStatus(userId, status, pageable)
     }
 
-    override fun getBooksCountByStatus(userId: Long, status: UserBookReadStatus): Int {
+    override fun getBooksCountByStatus(userId: Long, status: EUserBookReadStatus): Int {
         return userBookActivityRepository.countAllByUserIdAndStatus(userId, status)
     }
 
     override fun getBooksByStatusSince(
-        userId: Long, status: UserBookReadStatus, since: Long, pageable: Pageable
+        userId: Long, status: EUserBookReadStatus, since: Long, pageable: Pageable
     ): List<UserBookActivity> {
         return userBookActivityRepository.findAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
             userId, status, Timestamp(since), pageable
         )
     }
 
-    override fun getBooksCountByStatusSince(userId: Long, status: UserBookReadStatus, since: Long): Int {
+    override fun getBooksCountByStatusSince(userId: Long, status: EUserBookReadStatus, since: Long): Int {
         return userBookActivityRepository.countAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
             userId, status, Timestamp(since)
         )

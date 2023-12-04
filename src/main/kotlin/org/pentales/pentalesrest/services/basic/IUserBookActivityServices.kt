@@ -6,13 +6,11 @@ import org.springframework.data.domain.*
 
 interface IUserBookActivityServices {
 
-    fun getBookStatus(userId: Long, bookId: Long): UserBookReadStatus
-    fun getNowReadingBook(userId: Long): UserBookActivity?
-    fun getBooksByStatus(userId: Long, status: UserBookReadStatus, pageable: Pageable): List<UserBookActivity>
-    fun getBooksCountByStatus(userId: Long, status: UserBookReadStatus): Int
+    fun getBooksByStatus(userId: Long, status: EUserBookReadStatus, pageable: Pageable): List<UserBookActivity>
+    fun getBooksCountByStatus(userId: Long, status: EUserBookReadStatus): Int
     fun getBooksByStatusSince(
-        userId: Long, status: UserBookReadStatus, since: Long, pageable: Pageable
+        userId: Long, status: EUserBookReadStatus, since: Long, pageable: Pageable
     ): List<UserBookActivity>
 
-    fun getBooksCountByStatusSince(userId: Long, status: UserBookReadStatus, since: Long): Int
+    fun getBooksCountByStatusSince(userId: Long, status: EUserBookReadStatus, since: Long): Int
 }
