@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JWTAuthorizationFilter(
     authenticationManager: AuthenticationManager,
     securityConfigProperties: SecurityConfigProperties,
-    private val userService: IUserService,
+    private val userService: IUserServices,
     private val jwtService: JwtService
 ) : OncePerRequestFilter() {
 

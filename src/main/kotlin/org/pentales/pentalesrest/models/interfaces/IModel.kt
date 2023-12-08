@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.models
+package org.pentales.pentalesrest.models.interfaces
 
 import jakarta.persistence.*
 import java.io.*

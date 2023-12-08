@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.models.enums
 
-enum class UserBookReadStatus {
+enum class EUserBookReadStatus {
 
     NONE,
     READ,

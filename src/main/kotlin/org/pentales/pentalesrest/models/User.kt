@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.converters.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.interfaces.*
 import org.springframework.security.core.*
 import org.springframework.security.core.userdetails.*
 
@@ -34,7 +35,7 @@ class User(
     private var isEnabled: Boolean = true
 
     @Enumerated(EnumType.STRING)
-    var role: Role = Role.GUEST
+    var role: ERole = ERole.GUEST
         set(value) {
             field = value
             this.setAuthorities(

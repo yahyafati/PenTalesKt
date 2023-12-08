@@ -27,18 +27,11 @@ class BookController(private val bookServices: IBookServices) {
         @RequestBody(required = false)
         filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<BookDTO>> {
-        val pageNumber = page ?: 0
-        val pageSize = size ?: 10
-        val sortDirection = direction ?: Sort.Direction.ASC
-
-        val pageRequest = if (sort.isNullOrEmpty()) {
-            PageRequest.of(pageNumber, pageSize.coerceAtMost(IBasicControllerSkeleton.MAX_PAGE_SIZE))
-        } else {
-            PageRequest.of(
-                pageNumber, pageSize.coerceAtMost(IBasicControllerSkeleton.MAX_PAGE_SIZE), Sort.by(sortDirection, sort)
-            )
-        }
-        return ResponseEntity.ok(service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it) })
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(
+            page, size, sort, direction
+        )
+        val response = service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it) }
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}")

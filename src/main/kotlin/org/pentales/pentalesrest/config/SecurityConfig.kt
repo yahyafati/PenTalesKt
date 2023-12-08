@@ -23,7 +23,7 @@ import org.springframework.web.filter.*
 class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
     private val securityConfigProperties: SecurityConfigProperties,
-    private val userService: IUserService,
+    private val userService: IUserServices,
     private val jwtService: JwtService
 ) {
 

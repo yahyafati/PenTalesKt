@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.models.enums
 
-enum class Permission(private val title: String) { ADMIN_READ("admin:read"),
+enum class EPermission(private val title: String) { ADMIN_READ("admin:read"),
     ADMIN_UPDATE("admin:update"),
     ADMIN_CREATE("admin:create"),
     ADMIN_DELETE("admin:delete"),
@@ -19,8 +19,8 @@ enum class Permission(private val title: String) { ADMIN_READ("admin:read"),
 
     companion object {
 
-        fun fromTitle(title: String): Permission {
-            return Permission.values().first { it.title == title }
+        fun fromTitle(title: String): EPermission {
+            return EPermission.values().first { it.title == title }
         }
     }
 }
