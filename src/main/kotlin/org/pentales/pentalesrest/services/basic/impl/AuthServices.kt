@@ -9,7 +9,7 @@ import org.springframework.stereotype.*
 
 @Service
 class AuthServices(
-    private val userServices: IUserService,
+    private val userServices: IUserServices,
     private val passwordEncoder: PasswordEncoder,
     private val authenticationFacade: IAuthenticationFacade
 ) : IAuthServices {

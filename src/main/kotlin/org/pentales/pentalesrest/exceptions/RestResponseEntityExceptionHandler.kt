@@ -11,9 +11,12 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(value = [Exception::class])
     protected fun handleConflict(ex: RuntimeException, request: WebRequest?): ResponseEntity<Any>? {
         ex.printStackTrace()
-        val bodyOfResponse = ex.message
+        val bodyOfResponse = ex.message ?: "Unknown error"
+        val errorModel: GenericErrorModel = GenericErrorModel(
+            "error", bodyOfResponse, System.currentTimeMillis(), HttpStatus.BAD_REQUEST
+        )
         return handleExceptionInternal(
-            ex, bodyOfResponse, HttpHeaders(), HttpStatus.BAD_REQUEST, request!!
+            ex, errorModel, HttpHeaders(), HttpStatus.BAD_REQUEST, request!!
         )
     }
 }

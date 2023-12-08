@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.models.enums
 
 import java.util.*
 
-enum class AgeRestrictionType(
+enum class EAgeRestrictionType(
     val description: String
 ) {
 
@@ -27,8 +27,8 @@ enum class AgeRestrictionType(
 
     companion object {
 
-        fun fromDescription(description: String?): AgeRestrictionType? {
-            val first = Arrays.stream(values()).filter { type: AgeRestrictionType ->
+        fun fromDescription(description: String?): EAgeRestrictionType? {
+            val first = Arrays.stream(values()).filter { type: EAgeRestrictionType ->
                 type.hasDescription(
                     description
                 )

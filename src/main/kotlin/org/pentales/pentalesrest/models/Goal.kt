@@ -1,9 +1,13 @@
 package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
+import org.pentales.pentalesrest.models.interfaces.*
 import java.time.*
 
 @Entity
+@Table(
+    indexes = [Index(name = "goal_year_idx", columnList = "year", unique = true)]
+)
 class Goal(
     var title: String = "",
     var description: String = "",

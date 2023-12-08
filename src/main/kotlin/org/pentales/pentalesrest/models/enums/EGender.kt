@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.models.enums
 
 import java.util.*
 
-enum class Gender(private val value: String) { MALE("MALE"),
+enum class EGender(private val value: String) { MALE("MALE"),
     FEMALE("FEMALE");
 
     fun hasValue(value: String?): Boolean {
@@ -11,8 +11,8 @@ enum class Gender(private val value: String) { MALE("MALE"),
 
     companion object {
 
-        fun fromValue(value: String?): Gender? {
-            val first = Arrays.stream(values()).filter { gender: Gender -> gender.hasValue(value) }.findFirst()
+        fun fromValue(value: String?): EGender? {
+            val first = Arrays.stream(values()).filter { gender: EGender -> gender.hasValue(value) }.findFirst()
             return first.orElse(null)
         }
     }

@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.models.enums
 
-enum class AccessLevel {
+enum class EAccessLevel {
 
     PRIVATE,
     FRIENDS,

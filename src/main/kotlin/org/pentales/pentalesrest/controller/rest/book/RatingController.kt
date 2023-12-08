@@ -1,7 +1,9 @@
 package org.pentales.pentalesrest.controller.rest.book
 
+import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -10,7 +12,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/book/{bookId}/rating")
-class RatingController(private val service: IRatingServices, private val authenticationFacade: IAuthenticationFacade) {
+class RatingController(
+    private val ratingServices: IRatingServices,
+    private val ratingCommentServices: IRatingCommentServices,
+    private val activityShareServices: IActivityShareServices,
+    private val authenticationFacade: IAuthenticationFacade,
+) {
 
     companion object {
 
@@ -30,16 +37,10 @@ class RatingController(private val service: IRatingServices, private val authent
         @RequestParam(defaultValue = "ASC")
         direction: Sort.Direction?,
     ): ResponseEntity<Page<RatingDto>> {
-        val pageNumber = page ?: 0
-        val pageSize = size ?: 10
-        val sortDirection = direction ?: Sort.Direction.ASC
 
-        val pageRequest = if (sort.isNullOrEmpty()) {
-            PageRequest.of(pageNumber, pageSize.coerceAtMost(MAX_PAGE_SIZE))
-        } else {
-            PageRequest.of(pageNumber, pageSize.coerceAtMost(MAX_PAGE_SIZE), Sort.by(sortDirection, sort))
-        }
-        return ResponseEntity.ok(service.findByBookId(bookId, pageRequest).map { RatingDto(it) })
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+        val response = ratingServices.findByBookId(bookId, pageRequest).map { RatingDto(it) }
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{userId}")
@@ -49,7 +50,7 @@ class RatingController(private val service: IRatingServices, private val authent
         @PathVariable
         userId: Long
     ): ResponseEntity<RatingDto> {
-        val rating = service.findById(bookId = bookId, userId = userId)
+        val rating = ratingServices.findById(bookId = bookId, userId = userId)
         return ResponseEntity.ok(RatingDto(rating))
     }
 
@@ -63,7 +64,7 @@ class RatingController(private val service: IRatingServices, private val authent
         val book = Book(id = bookId)
         val user = authenticationFacade.currentUserMust
         val rating = ratingDto.toRating(book, user)
-        val savedRating = service.save(rating)
+        val savedRating = ratingServices.saveNew(rating)
         return ResponseEntity.ok(RatingDto(savedRating))
     }
 
@@ -74,7 +75,89 @@ class RatingController(private val service: IRatingServices, private val authent
         @PathVariable
         userId: Long
     ): ResponseEntity<Unit> {
-        service.deleteById(bookId = bookId, userId = userId)
+        ratingServices.deleteById(bookId = bookId, userId = userId)
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/{userId}/comments")
+    fun getRatingComments(
+        @PathVariable
+        bookId: Long,
+        @PathVariable
+        userId: Long,
+        @RequestParam(defaultValue = "0")
+        page: Int?,
+        @RequestParam(defaultValue = "10")
+        size: Int?,
+        @RequestParam(defaultValue = "")
+        sort: String?,
+        @RequestParam(defaultValue = "ASC")
+        direction: Sort.Direction?,
+    ): ResponseEntity<Page<RatingCommentDto>> {
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+        val response = ratingCommentServices.findAllByRating(
+            rating = Rating(id = UserBookKey(bookId = bookId, userId = userId)),
+            pageable = pageRequest,
+        ).map { RatingCommentDto(it) }
+        return ResponseEntity.ok(response)
+    }
+
+    @PostMapping("/{userId}/comments")
+    fun saveRatingComment(
+        @PathVariable
+        bookId: Long,
+        @PathVariable
+        userId: Long,
+        @RequestBody
+        ratingCommentDto: AddRatingCommentDto
+    ): ResponseEntity<RatingCommentDto> {
+        val user = authenticationFacade.currentUserMust
+        val rating = Rating(id = UserBookKey(bookId = bookId, userId = userId))
+        val ratingComment = ratingCommentDto.toRatingComment(user, rating)
+        val savedRatingComment = ratingCommentServices.saveNew(ratingComment)
+        return ResponseEntity.ok(RatingCommentDto(savedRatingComment))
+    }
+
+    @DeleteMapping("/{userId}/comments/{commentId}")
+    fun deleteRatingComment(
+        @PathVariable
+        commentId: Long
+    ): ResponseEntity<Unit> {
+        ratingCommentServices.deleteById(id = commentId)
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/{userId}/share/{shareId}")
+    fun getRatingShare(
+        @PathVariable
+        shareId: Long
+    ): ResponseEntity<ShareDto> {
+        val share = activityShareServices.getShareById(id = shareId)
+        return ResponseEntity.ok(ShareDto(share))
+    }
+
+    @PostMapping("/{userId}/share")
+    fun shareRating(
+        @PathVariable
+        bookId: Long,
+        @PathVariable
+        userId: Long,
+        @RequestBody
+        shareDto: AddShareDto
+    ): ResponseEntity<ShareDto> {
+        val user = authenticationFacade.currentUserMust
+        val rating = Rating(id = UserBookKey(bookId = bookId, userId = userId))
+        val share = shareDto.toActivityShare(rating = rating, user = user)
+        val savedShare = activityShareServices.saveNew(share)
+        return ResponseEntity.ok(ShareDto(savedShare))
+    }
+
+    @DeleteMapping("/{userId}/share/{shareId}")
+    fun unshareRating(
+        @PathVariable
+        shareId: Long
+    ): ResponseEntity<Unit> {
+        activityShareServices.deleteById(id = shareId)
         return ResponseEntity.ok().build()
     }
 
