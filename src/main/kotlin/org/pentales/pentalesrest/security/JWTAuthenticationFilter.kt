@@ -31,6 +31,7 @@ class JWTAuthenticationFilter(
 
     init {
         setFilterProcessesUrl(securityConfigProperties.loginUrl)
+        LOG.info("Login URL: ${securityConfigProperties.loginUrl}")
     }
 
     @Throws(AuthenticationException::class)
@@ -39,7 +40,14 @@ class JWTAuthenticationFilter(
         val authenticationToken = UsernamePasswordAuthenticationToken(
             credentials.username, credentials.password, listOf<GrantedAuthority>()
         )
-        return authenticationManager.authenticate(authenticationToken)
+        LOG.info("Attempting Authentication for ${credentials.username}")
+        val authentication = authenticationManager.authenticate(authenticationToken)
+        if (authentication.isAuthenticated) {
+            LOG.info("Authentication successful for ${credentials.username}")
+        } else {
+            LOG.info("Authentication failed for ${credentials.username}")
+        }
+        return authentication
     }
 
     @Throws(IOException::class, ServletException::class)
@@ -48,14 +56,22 @@ class JWTAuthenticationFilter(
     ) {
         val token = jwtService.generateToken(authResult.principal as User)
         response.addHeader(jwtProperties.header, jwtProperties.prefix + token)
+        val responseData = mapOf(
+            "message" to "Authentication successful",
+            "token" to token
+        )
+        val responseBody = ObjectMapper().writeValueAsString(responseData)
+        LOG.info("Authentication successful")
+        LOG.info(responseBody)
+        response.contentType = "application/json"
+        response.writer?.write(responseBody)
     }
 
     @Throws(IOException::class, ServletException::class)
     override fun unsuccessfulAuthentication(
         request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException
     ) {
-        LOG.error("UnSuccessful Authentication")
-        response.writer.println("{\"error:\": \"Invalid Credentials\"}")
+        LOG.error("Unsuccessful Authentication")
         super.unsuccessfulAuthentication(request, response, failed)
     }
 }

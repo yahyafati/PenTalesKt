@@ -32,21 +32,23 @@ class SecurityConfig(
         return http.cors(Customizer.withDefaults()).csrf { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
-            .addFilter(
+            .addFilterAfter(
                 JWTAuthorizationFilter(
                     authenticationManager(), securityConfigProperties, userService, jwtService
-                )
+                ), JWTAuthenticationFilter::class.java
             ).authorizeHttpRequests { auth ->
-                auth.requestMatchers(
-                    HttpMethod.POST,
-                    securityConfigProperties.loginUrl,
-                    securityConfigProperties.logoutUrl,
-                    securityConfigProperties.registerUrl,
-                ).permitAll().requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll().anyRequest()
-                    .authenticated()
+                auth
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        securityConfigProperties.loginUrl,
+                        securityConfigProperties.logoutUrl,
+                        securityConfigProperties.registerUrl,
+                    ).permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                    .anyRequest().authenticated()
             }
-//                .oauth2ResourceServer { oauth2 -> oauth2.jwt(Customizer.withDefaults()) }
-            .exceptionHandling(Customizer.withDefaults()).build()
+            .exceptionHandling(Customizer.withDefaults())
+            .build()
     }
 
     @Bean
@@ -56,7 +58,13 @@ class SecurityConfig(
 //        config.setAllowCredentials(true);
         config.addAllowedOrigin("*")
         config.addAllowedHeader("*")
+        config.addAllowedHeader(securityConfigProperties.jwt.header)
         config.addAllowedMethod("*")
+        config.maxAge = 3600L
+        config.exposedHeaders = listOf(
+            "x-xsrf-token", "Access-Control-Allow-Headers", "Origin", "Accept", "X-Requested-With",
+            "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+        )
         config.addExposedHeader(securityConfigProperties.jwt.header)
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
