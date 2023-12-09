@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.exceptions
 
 import org.slf4j.*
 import org.springframework.http.*
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.*
@@ -19,31 +20,63 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [Exception::class])
     protected fun handleConflict(ex: Exception, request: WebRequest?): ResponseEntity<GenericErrorModel> {
-        ex.printStackTrace()
         val bodyOfResponse = ex.message ?: "Unknown error"
-        val errorModel = GenericErrorModel(
-            bodyOfResponse, System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(), ex
-        )
+
         when (ex) {
-            is AuthenticationException -> return handleAuthenticationException(errorModel, request)
-            is GenericException -> return handleBadRequest(errorModel, request)
+            is AuthenticationException -> return handleAuthenticationException(ex, request)
+            is AccessDeniedException -> return handleAccessDenied(ex, request)
+            is GenericException -> return handleBadRequest(ex, request)
         }
+
+        LOG.error("Printing stack trace:")
+        ex.printStackTrace()
+        val errorModel = GenericErrorModel(
+            bodyOfResponse,
+            System.currentTimeMillis(),
+            HttpStatus.BAD_REQUEST.value(),
+            ex,
+        )
         return ResponseEntity(
             errorModel, HttpHeaders(), HttpStatus.BAD_REQUEST,
         )
     }
 
-    protected fun handleBadRequest(errorModel: GenericErrorModel, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+    protected fun handleBadRequest(exception: GenericException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message ?: "Bad Request",
+            System.currentTimeMillis(),
+            HttpStatus.BAD_REQUEST.value(),
+            exception,
+        )
         LOG.error(errorModel.message)
         return ResponseEntity(
             errorModel, HttpHeaders(), HttpStatus.BAD_REQUEST
         )
     }
 
-    protected fun handleAuthenticationException(errorModel: GenericErrorModel, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+    protected fun handleAuthenticationException(exception: AuthenticationException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message ?: "Unauthorized",
+            System.currentTimeMillis(),
+            HttpStatus.UNAUTHORIZED.value(),
+            exception,
+        )
         LOG.error(errorModel.message)
         return ResponseEntity(
             errorModel, HttpHeaders(), HttpStatus.UNAUTHORIZED
+        )
+    }
+
+    protected fun handleAccessDenied(exception: AccessDeniedException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message ?: "Access Denied",
+            System.currentTimeMillis(),
+            HttpStatus.FORBIDDEN.value(),
+            exception,
+        )
+        LOG.error(errorModel.message)
+        return ResponseEntity(
+            errorModel, HttpHeaders(), HttpStatus.FORBIDDEN
         )
     }
 }

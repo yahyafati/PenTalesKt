@@ -1,16 +1,18 @@
 package org.pentales.pentalesrest.security
 
 import com.auth0.jwt.exceptions.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.*
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.config.*
+import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.services.basic.*
 import org.slf4j.*
+import org.springframework.http.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.context.*
 import org.springframework.security.core.userdetails.*
-import org.springframework.security.web.authentication.www.*
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthorizationFilter(
@@ -36,14 +38,32 @@ class JWTAuthorizationFilter(
             chain.doFilter(request, response)
             return
         }
-        val authentication = getAuthentication(request)
-        if (authentication == null) {
-            LOG.warn("JWT token is invalid or expired")
-        } else {
-            LOG.info("JWT token is valid")
+        val authentication = try {
+            getAuthentication(request)
+        } catch (ex: JWTVerificationException) {
+            respondUnauthorized(response,  ex)
+            return
+        } catch (ex: UsernameNotFoundException) {
+            respondUnauthorized(response,  ex)
+            return
         }
         SecurityContextHolder.getContext().authentication = authentication
         chain.doFilter(request, response)
+    }
+
+    private fun respondUnauthorized(response: HttpServletResponse, ex: Exception) {
+        val objectMapper = ObjectMapper()
+        val errorModel = GenericErrorModel(
+            message = ex.message ?: "Unauthorized",
+            timestamp =  System.currentTimeMillis(),
+            statusCode = HttpStatus.UNAUTHORIZED.value(),
+            exception = ex,
+        )
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.status = HttpStatus.UNAUTHORIZED.value()
+        val outputStream = response.outputStream
+        objectMapper.writeValue(outputStream, errorModel)
+        outputStream.flush()
     }
 
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
@@ -59,9 +79,10 @@ class JWTAuthorizationFilter(
             )
         } catch (ex: JWTVerificationException) {
             LOG.error(ex.message)
+            throw ex
         } catch (ex: UsernameNotFoundException) {
             LOG.error(ex.message)
+            throw ex
         }
-        return null
     }
 }
