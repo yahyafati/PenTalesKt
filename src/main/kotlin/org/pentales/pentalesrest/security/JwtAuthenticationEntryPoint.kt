@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.exceptions.*
 import org.springframework.http.*
+import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.security.core.*
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 
@@ -20,10 +21,10 @@ class JwtAuthenticationEntryPoint : Http403ForbiddenEntryPoint() {
         response.status = status.value()
 
         val errorModel = GenericErrorModel(
-            authException?.message ?: "Authentication failed",
-            System.currentTimeMillis(),
-            status.value(),
-            authException!!,
+            message = authException?.message ?: "Authentication failed",
+            timestamp =  System.currentTimeMillis(),
+            statusCode = status.value(),
+            exception = authException,
         )
         val outputStream = response.outputStream
         val mapper = ObjectMapper()

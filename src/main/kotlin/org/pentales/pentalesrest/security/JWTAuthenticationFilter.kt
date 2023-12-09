@@ -61,8 +61,9 @@ class JWTAuthenticationFilter(
         val token = jwtService.generateToken(authResult.principal as User)
         response.addHeader(jwtProperties.header, jwtProperties.prefix + token)
         val responseData = mapOf(
-            "message" to "Authentication successful",
-            "token" to token
+            "title" to "Authentication successful",
+            "token" to token,
+            "status" to HttpServletResponse.SC_OK,
         )
         val responseBody = this.objectMapper.writeValueAsString(responseData)
         response.contentType = MediaType.APPLICATION_JSON_VALUE
@@ -76,7 +77,7 @@ class JWTAuthenticationFilter(
         LOG.error("Unsuccessful Authentication")
         val responseData = mapOf(
             "title" to "Authentication failed",
-            "error" to failed.message,
+            "message" to failed.message,
             "timestamp" to Date().time,
             "status" to HttpServletResponse.SC_UNAUTHORIZED,
         )
