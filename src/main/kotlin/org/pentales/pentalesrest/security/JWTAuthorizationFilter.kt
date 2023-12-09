@@ -33,18 +33,15 @@ class JWTAuthorizationFilter(
         val header = request.getHeader(jwtProperties.header)
         if (header == null || !header.startsWith(jwtProperties.prefix)) {
             LOG.warn("No JWT token found in request headers")
-            throw AuthenticationCredentialsNotFoundException("No JWT token found in request headers")
-//            response.status = HttpServletResponse.SC_UNAUTHORIZED
-//            chain.doFilter(request, response)
+            chain.doFilter(request, response)
+            return
         }
         val authentication = getAuthentication(request)
         if (authentication == null) {
             LOG.warn("JWT token is invalid or expired")
-            response.status = HttpServletResponse.SC_UNAUTHORIZED
-//            chain.doFilter(request, response)
-            throw AuthenticationCredentialsNotFoundException("JWT token is invalid or expired")
+        } else {
+            LOG.info("JWT token is valid")
         }
-        LOG.info("JWT token is valid")
         SecurityContextHolder.getContext().authentication = authentication
         chain.doFilter(request, response)
     }

@@ -1,7 +1,11 @@
 package org.pentales.pentalesrest.exceptions
 
-import org.springframework.http.*
+import com.fasterxml.jackson.annotation.JsonIgnore
 
 class GenericErrorModel(
-    val status: String, val message: String, val timestamp: Long, val statusCode: HttpStatusCode
+    val message: String,
+    val timestamp: Long,
+    val statusCode: Int,
+    @JsonIgnore
+    val exception: Exception,
 ) {}

@@ -36,7 +36,8 @@ class SecurityConfig(
                 JWTAuthorizationFilter(
                     authenticationManager(), securityConfigProperties, userService, jwtService
                 ), JWTAuthenticationFilter::class.java
-            ).authorizeHttpRequests { auth ->
+            )
+            .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(
                         HttpMethod.POST,
@@ -44,10 +45,14 @@ class SecurityConfig(
                         securityConfigProperties.logoutUrl,
                         securityConfigProperties.registerUrl,
                     ).permitAll()
+                    .requestMatchers("/test/unsecured").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                     .anyRequest().authenticated()
             }
-            .exceptionHandling(Customizer.withDefaults())
+            .anonymous { it.disable() }
+            .exceptionHandling {
+                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+            }
             .build()
     }
 

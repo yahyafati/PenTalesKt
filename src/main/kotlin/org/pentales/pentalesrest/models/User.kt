@@ -35,7 +35,7 @@ class User(
     private var isEnabled: Boolean = true
 
     @Enumerated(EnumType.STRING)
-    var role: ERole = ERole.GUEST
+    var role: ERole = ERole.USER
         set(value) {
             field = value
             this.setAuthorities(
