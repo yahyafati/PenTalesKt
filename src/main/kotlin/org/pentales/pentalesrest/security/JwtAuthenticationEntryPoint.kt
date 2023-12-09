@@ -20,7 +20,7 @@ class JwtAuthenticationEntryPoint : Http403ForbiddenEntryPoint() {
         response.status = status.value()
 
         val errorModel = GenericErrorModel(
-            status.reasonPhrase,
+            authException?.message ?: "Authentication failed",
             System.currentTimeMillis(),
             status.value(),
             authException!!,

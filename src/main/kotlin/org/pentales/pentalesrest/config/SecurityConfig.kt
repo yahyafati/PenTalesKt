@@ -49,7 +49,6 @@ class SecurityConfig(
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                     .anyRequest().authenticated()
             }
-            .anonymous { it.disable() }
             .exceptionHandling {
                 it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
             }

@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.exceptions
 
 import org.slf4j.*
 import org.springframework.http.*
-import org.springframework.security.authentication.*
+import org.springframework.security.core.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.*
 import org.springframework.web.servlet.config.annotation.*
@@ -17,7 +17,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         private val LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler::class.java)
     }
 
-    @ExceptionHandler(value = [AuthenticationCredentialsNotFoundException::class, GenericException::class])
+    @ExceptionHandler(value = [Exception::class])
     protected fun handleConflict(ex: Exception, request: WebRequest?): ResponseEntity<GenericErrorModel> {
         ex.printStackTrace()
         val bodyOfResponse = ex.message ?: "Unknown error"
@@ -25,7 +25,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
             bodyOfResponse, System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(), ex
         )
         when (ex) {
-            is AuthenticationCredentialsNotFoundException -> return handleUnauthorized(errorModel, request)
+            is AuthenticationException -> return handleAuthenticationException(errorModel, request)
             is GenericException -> return handleBadRequest(errorModel, request)
         }
         return ResponseEntity(
@@ -33,17 +33,17 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
-    protected fun handleUnauthorized(errorModel: GenericErrorModel, request: WebRequest?): ResponseEntity<GenericErrorModel> {
-        LOG.error(errorModel.message)
-        return ResponseEntity(
-            errorModel, HttpHeaders(), HttpStatus.UNAUTHORIZED
-        )
-    }
-
     protected fun handleBadRequest(errorModel: GenericErrorModel, request: WebRequest?): ResponseEntity<GenericErrorModel> {
         LOG.error(errorModel.message)
         return ResponseEntity(
             errorModel, HttpHeaders(), HttpStatus.BAD_REQUEST
+        )
+    }
+
+    protected fun handleAuthenticationException(errorModel: GenericErrorModel, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+        LOG.error(errorModel.message)
+        return ResponseEntity(
+            errorModel, HttpHeaders(), HttpStatus.UNAUTHORIZED
         )
     }
 }

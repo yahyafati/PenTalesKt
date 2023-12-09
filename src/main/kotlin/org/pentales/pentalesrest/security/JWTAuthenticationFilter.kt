@@ -9,6 +9,7 @@ import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
 import org.slf4j.*
+import org.springframework.http.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.*
 import org.springframework.security.web.authentication.*
@@ -21,6 +22,8 @@ class JWTAuthenticationFilter(
     securityConfigProperties: SecurityConfigProperties,
     private val jwtService: JwtService,
 ) : UsernamePasswordAuthenticationFilter() {
+
+    private var objectMapper: ObjectMapper = ObjectMapper()
 
     companion object {
 
@@ -54,16 +57,15 @@ class JWTAuthenticationFilter(
     override fun successfulAuthentication(
         request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication
     ) {
+        LOG.info("Authentication successful")
         val token = jwtService.generateToken(authResult.principal as User)
         response.addHeader(jwtProperties.header, jwtProperties.prefix + token)
         val responseData = mapOf(
             "message" to "Authentication successful",
             "token" to token
         )
-        val responseBody = ObjectMapper().writeValueAsString(responseData)
-        LOG.info("Authentication successful")
-        LOG.info(responseBody)
-        response.contentType = "application/json"
+        val responseBody = this.objectMapper.writeValueAsString(responseData)
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.writer?.write(responseBody)
     }
 
@@ -72,7 +74,17 @@ class JWTAuthenticationFilter(
         request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException
     ) {
         LOG.error("Unsuccessful Authentication")
-        super.unsuccessfulAuthentication(request, response, failed)
+        val responseData = mapOf(
+            "title" to "Authentication failed",
+            "error" to failed.message,
+            "timestamp" to Date().time,
+            "status" to HttpServletResponse.SC_UNAUTHORIZED,
+        )
+        val responseBody = this.objectMapper.writeValueAsString(responseData)
+
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.writer?.write(responseBody)
+        response.status = HttpServletResponse.SC_UNAUTHORIZED
     }
 }
 
