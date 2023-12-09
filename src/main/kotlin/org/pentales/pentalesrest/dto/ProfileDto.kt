@@ -5,6 +5,10 @@ import org.pentales.pentalesrest.models.enums.*
 
 class ProfileDto(
     var username: String = "",
+    var firstName: String = "",
+    var lastName: String = "",
+    var displayName: String = "",
+    var fullName: String = "",
     var email: String = "",
     var profilePicture: String? = "",
     var coverPicture: String? = "",
@@ -36,6 +40,10 @@ class ProfileDto(
 
     constructor(profile: UserProfile) : this(
         username = profile.user.username,
+        firstName = profile.firstName,
+        lastName = profile.lastName,
+        displayName = profile.displayName,
+        fullName = profile.displayName,
         email = profile.user.email,
         profilePicture = profile.profilePicture,
         coverPicture = profile.coverPicture,
@@ -45,7 +53,7 @@ class ProfileDto(
     )
 
     override fun toString(): String {
-        return "ProfileDto(username='$username', email='$email', profilePicture='$profilePicture', coverPicture='$coverPicture', bio='$bio', gender=$gender, socialMedia=$socialMedia)"
+        return "ProfileDto(username='$username', firstName='$firstName', lastName='$lastName', displayName='$displayName', fullName='$fullName', email='$email', profilePicture=$profilePicture, coverPicture=$coverPicture, bio='$bio', gender=$gender)"
     }
 
 }

@@ -12,7 +12,7 @@ class UserProfile(
     override var id: Long = 0L,
     var firstName: String = "",
     var lastName: String = "",
-    var displayName: String = "",
+    var displayName: String = "$firstName $lastName",
     var dateOfBirth: LocalDate = LocalDate.now(),
     var bio: String = "",
     @Enumerated(value = EnumType.STRING)
