@@ -20,6 +20,18 @@ class AuthController(private val authServices: IAuthServices) {
         return ResponseEntity.ok(UserDto(user))
     }
 
+    @PostMapping("/username-available")
+    fun isUsernameAvailable(
+        @Valid
+        @RequestBody
+        username: String
+    ): ResponseEntity<BasicResponseDto<Boolean>> {
+        val isAvailable = authServices.isUsernameAvailable(username)
+        val message = "$username is ${if (isAvailable) "available" else "not available"}"
+        return ResponseEntity.ok(BasicResponseDto.ok(isAvailable, message))
+    }
+
+
     @GetMapping("/current")
     fun getCurrentUser(): ResponseEntity<UserDto> {
         val user = authServices.getCurrentUser()

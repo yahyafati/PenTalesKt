@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.*
 import org.springframework.boot.context.properties.*
 
 @SpringBootApplication
-@EnableConfigurationProperties(SecurityConfigProperties::class)
+@EnableConfigurationProperties(SecurityConfigProperties.JwtProperties::class)
 class PenTalesRestApplication
 
 fun main(args: Array<String>) {

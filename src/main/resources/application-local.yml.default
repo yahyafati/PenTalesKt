@@ -20,6 +20,4 @@ org:
         header: Authorization # Header key for JWT
         prefix: "Bearer " # Prefix for JWT
         issuer: pen-tales # Issuer of the token
-      login-url: /api/auth/login # Login URL
-      register-url: /api/auth/register # Registration URL
 

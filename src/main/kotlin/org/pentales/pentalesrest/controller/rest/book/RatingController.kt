@@ -62,7 +62,7 @@ class RatingController(
         ratingDto: AddRatingDto
     ): ResponseEntity<RatingDto> {
         val book = Book(id = bookId)
-        val user = authenticationFacade.currentUserMust
+        val user = authenticationFacade.forcedCurrentUser
         val rating = ratingDto.toRating(book, user)
         val savedRating = ratingServices.saveNew(rating)
         return ResponseEntity.ok(RatingDto(savedRating))
@@ -111,7 +111,7 @@ class RatingController(
         @RequestBody
         ratingCommentDto: AddRatingCommentDto
     ): ResponseEntity<RatingCommentDto> {
-        val user = authenticationFacade.currentUserMust
+        val user = authenticationFacade.forcedCurrentUser
         val rating = Rating(id = UserBookKey(bookId = bookId, userId = userId))
         val ratingComment = ratingCommentDto.toRatingComment(user, rating)
         val savedRatingComment = ratingCommentServices.saveNew(ratingComment)
@@ -145,7 +145,7 @@ class RatingController(
         @RequestBody
         shareDto: AddShareDto
     ): ResponseEntity<ShareDto> {
-        val user = authenticationFacade.currentUserMust
+        val user = authenticationFacade.forcedCurrentUser
         val rating = Rating(id = UserBookKey(bookId = bookId, userId = userId))
         val share = shareDto.toActivityShare(rating = rating, user = user)
         val savedShare = activityShareServices.saveNew(share)

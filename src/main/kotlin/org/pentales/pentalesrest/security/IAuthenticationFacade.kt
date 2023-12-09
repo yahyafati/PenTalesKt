@@ -41,7 +41,7 @@ interface IAuthenticationFacade {
             return null
         }
 
-    val currentUserMust: User
+    val forcedCurrentUser: User
         get() {
             val principal = authentication?.principal
             if (principal is User) {

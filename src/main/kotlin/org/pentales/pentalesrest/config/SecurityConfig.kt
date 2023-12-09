@@ -44,6 +44,7 @@ class SecurityConfig(
                         securityConfigProperties.loginUrl,
                         securityConfigProperties.logoutUrl,
                         securityConfigProperties.registerUrl,
+                        securityConfigProperties.usernameAvailableUrl,
                     ).permitAll()
                     .requestMatchers("/test/unsecured").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()

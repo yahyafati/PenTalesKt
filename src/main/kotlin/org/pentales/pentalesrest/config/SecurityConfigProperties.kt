@@ -1,17 +1,20 @@
 package org.pentales.pentalesrest.config
 
 import org.springframework.boot.context.properties.*
+import org.springframework.stereotype.Component
 
-@ConfigurationProperties(prefix = "org.pen-tales.security")
+@Component
 data class SecurityConfigProperties(
     var jwt: JwtProperties = JwtProperties(),
-    var loginUrl: String = "/login",
-    var logoutUrl: String = "/logout",
-    var refreshUrl: String = "/refresh",
-    var registerUrl: String = "/register",
+    var loginUrl: String = "/api/auth/login",
+    var logoutUrl: String = "/api/auth/logout",
+    var refreshUrl: String = "/api/auth/refresh",
+    var registerUrl: String = "/api/auth/register",
+    var usernameAvailableUrl: String = "/api/auth/username-available",
 ) {
 
-    class JwtProperties(
+    @ConfigurationProperties(prefix = "org.pen-tales.security.jwt")
+    data class JwtProperties(
         var secret: String = "",
 //        var issuer: String = "",
 //        var audience: String = "",

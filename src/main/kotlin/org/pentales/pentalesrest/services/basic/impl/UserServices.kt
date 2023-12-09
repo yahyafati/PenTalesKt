@@ -22,6 +22,10 @@ class UserServices(private val userRepository: UserRepository) : IUserServices {
         return userRepository.findByUsername(username) ?: throw UsernameNotFoundException("User not found")
     }
 
+    override fun existsByUsername(username: String): Boolean {
+        return userRepository.existsByUsername(username)
+    }
+
     override fun deleteById(id: Long) {
         userRepository.deleteById(id)
     }

@@ -4,5 +4,5 @@ import org.pentales.pentalesrest.models.*
 
 interface UserProfileRepository : IRepoSpecification<UserProfile, Long> {
 
-    fun findByUserUsername(username: String): UserProfile
+    fun findByUserUsername(username: String): UserProfile?
 }
