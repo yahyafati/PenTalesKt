@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pen-tales
+    url: jdbc:postgresql://localhost:5432/reading-realm
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -8,6 +8,16 @@ spring:
     hibernate:
       ddl-auto: update # You can use "create" for initial setup or "update" for updates
     show-sql: true # Set to true to see SQL queries in the console
+  security:
+    oauth2:
+      client:
+        registration:
+          client-id:
+          client-secret:
+          redirect-uri:
+          scope:
+            - email
+            - profile
 server:
   port: 8080 # Specify the port on which your Spring Boot application will run
 
