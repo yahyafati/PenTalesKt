@@ -18,9 +18,10 @@ class UserProfileServices(
     private val authenticationFacade: IAuthenticationFacade,
 ) : IUserProfileServices {
 
-    override fun update(profile: UpdateProfileDto, updatedFields: List<String>): UserProfile? {
+    override fun update(profile: UpdateProfileDto, updatedFields: List<String>): UserProfile {
         val username = authenticationFacade.username ?: throw Exception("No user logged in")
-        val existingEntity = userProfileRepository.findByUserUsername(username) ?: throw UsernameNotFoundException("No profile found")
+        val existingEntity =
+            userProfileRepository.findByUserUsername(username) ?: throw UsernameNotFoundException("No profile found")
         val entity = profile.toUserProfile()
 
         entity.id = existingEntity.id
@@ -39,7 +40,6 @@ class UserProfileServices(
         }
 
         return save(existingEntity)
-
 
     }
 

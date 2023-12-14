@@ -24,7 +24,7 @@ class User(
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Email is required")
     var email: String = "",
-    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
     var profile: UserProfile? = null,
 ) : IModel(), UserDetails {
 
