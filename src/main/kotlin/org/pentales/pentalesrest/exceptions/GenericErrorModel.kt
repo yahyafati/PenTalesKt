@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.exceptions
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-class GenericErrorModel(
+data class GenericErrorModel(
     val message: String,
     val timestamp: Long = System.currentTimeMillis(),
     val statusCode: Int,
