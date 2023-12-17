@@ -5,7 +5,7 @@ import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 import java.time.*
 
@@ -21,7 +21,8 @@ class ProfilePageServices(
 ) : IProfilePageServices {
 
     override fun getProfilePage(username: String): Map<String, Any> {
-        val profile = profileRepository.findByUserUsername(username) ?: throw UsernameNotFoundException("No profile found")
+        val profile =
+            profileRepository.findByUserUsername(username) ?: throw UsernameNotFoundException("No profile found")
         val profileDto = ProfileDto(profile)
         val followerCount = followerService.countFollowersOf(profile.user)
         val followingCount = followerService.countFollowingsOf(profile.user)
