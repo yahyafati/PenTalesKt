@@ -30,7 +30,8 @@ class ProfilePageServices(
         val reviewCount = ratingRepository.countUserReviews(profile.user)
         val currentGoal = userGoalService.findByUserAndGoalYear(profile.user, Year.now().value)
         val nowReading = userBookStatusServices.getNowReadingBook(profile.user.id)
-        val startOfYear = Year.now().atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+        val year = Year.now()
+        val startOfYear = year.atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
         val readSoFar =
             userBookActivityServices.getBooksCountByStatusSince(profile.user.id, EUserBookReadStatus.READ, startOfYear)
 
@@ -51,6 +52,7 @@ class ProfilePageServices(
             map["currentGoal"] = mapOf(
                 "target" to currentGoal.target,
                 "readSoFar" to readSoFar,
+                "year" to year.value,
             )
         }
 
