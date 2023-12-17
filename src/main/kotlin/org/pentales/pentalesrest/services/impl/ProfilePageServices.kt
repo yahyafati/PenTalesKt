@@ -51,7 +51,7 @@ class ProfilePageServices(
         if (currentGoal != null) {
             map["currentGoal"] = mapOf(
                 "target" to currentGoal.target,
-                "readSoFar" to readSoFar,
+                "current" to readSoFar,
                 "year" to year.value,
             )
         }
