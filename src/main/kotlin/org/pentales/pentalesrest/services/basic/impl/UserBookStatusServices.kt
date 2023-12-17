@@ -14,11 +14,21 @@ class UserBookStatusServices(
     private val userBookStatusRepository: UserBookStatusRepository
 ) : IUserBookStatusServices {
 
-    override fun getBookStatus(userId: Long, bookId: Long): UserBookStatus? {
+    override fun updateBookStatus(userId: Long, bookId: Long, status: EUserBookReadStatus): UserBookStatus {
+        val id = UserBookKey(userId = userId, bookId = bookId)
+        val userBookStatus = UserBookStatus(id = id)
+        userBookStatus.status = status
+        userBookStatus.book = Book(id = bookId)
+        userBookStatus.user = User(id = userId)
+        return userBookStatusRepository.save(userBookStatus)
+    }
+
+    override fun getBookStatus(userId: Long, bookId: Long): EUserBookReadStatus {
         val key = UserBookKey(
             userId = userId, bookId = bookId
         )
-        return userBookStatusRepository.findById(key).orElse(null)
+        val status = userBookStatusRepository.findById(key).orElse(null) ?: return EUserBookReadStatus.NONE
+        return status.status
     }
 
     override fun getNowReadingBook(userId: Long): UserBookStatus? {
