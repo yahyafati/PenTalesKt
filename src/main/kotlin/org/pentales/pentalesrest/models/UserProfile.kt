@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
+import net.minidev.json.annotate.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.interfaces.*
 import java.time.*
@@ -30,6 +31,14 @@ class UserProfile(
     @OneToOne
     var user: User = User(),
 ) : IModel() {
+
+    @JsonIgnore
+    fun getFullName(): String {
+        if (this.displayName.isEmpty()) {
+            return displayName
+        }
+        return "${this.firstName} ${this.lastName}"
+    }
 
     override fun toString(): String {
         return "UserProfile(id=$id, firstName='$firstName', lastName='$lastName', displayName='$displayName', dateOfBirth=$dateOfBirth, bio='$bio', gender=$gender)"

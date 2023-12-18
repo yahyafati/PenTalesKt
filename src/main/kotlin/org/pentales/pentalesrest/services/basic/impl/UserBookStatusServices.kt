@@ -36,7 +36,7 @@ class UserBookStatusServices(
     }
 
     override fun getNowReadingBook(userId: Long): UserBookStatus? {
-        return userBookStatusRepository.findLastByUserAndStatusOrderByCreatedAt(
+        return userBookStatusRepository.findTopByUserAndStatusOrderByCreatedAtDesc(
             User(id = userId), EUserBookReadStatus.READING
         )
     }

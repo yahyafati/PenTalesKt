@@ -76,7 +76,7 @@ class BookPageServices(
 
                         "user" to mapOf(
                             "username" to rating.user?.username,
-                            "name" to rating.user?.profile?.displayName,
+                            "name" to rating.user?.profile?.getFullName(),
                             "profilePicture" to rating.user?.profile?.profilePicture
                         ),
 
