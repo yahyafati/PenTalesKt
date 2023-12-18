@@ -15,4 +15,6 @@ interface IUserBookActivityServices {
     ): List<UserBookActivity>
 
     fun getBooksCountByStatusSince(userId: Long, status: EUserBookReadStatus, since: Long): Int
+
+    fun getBooksCountByStatusInYear(userId: Long, status: EUserBookReadStatus, year: Int): Int
 }

@@ -17,4 +17,8 @@ interface UserBookActivityRepository : IRepoSpecification<UserBookActivity, Long
         userId: Long, status: EUserBookReadStatus, createdAt: Timestamp
     ): Int
 
+    fun countAllByUserIdAndStatusAndCreatedAtBetween(
+        userId: Long, status: EUserBookReadStatus, startTime: Timestamp, endTime: Timestamp
+    ): Int
+
 }
