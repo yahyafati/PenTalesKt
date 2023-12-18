@@ -6,6 +6,8 @@ import org.springframework.data.domain.*
 
 interface IUserBookActivityServices {
 
+    fun addBookActivity(userBookActivity: UserBookActivity): UserBookActivity
+
     fun getBooksByStatus(userId: Long, status: EUserBookReadStatus, pageable: Pageable): List<UserBookActivity>
     fun getBooksCountByStatus(userId: Long, status: EUserBookReadStatus): Int
     fun getBooksByStatusSince(

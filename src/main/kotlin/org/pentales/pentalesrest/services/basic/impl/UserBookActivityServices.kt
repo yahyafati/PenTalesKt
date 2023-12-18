@@ -13,6 +13,15 @@ class UserBookActivityServices(
     private val userBookActivityRepository: UserBookActivityRepository
 ) : IUserBookActivityServices {
 
+    fun save(userBookActivity: UserBookActivity): UserBookActivity {
+        return userBookActivityRepository.save(userBookActivity)
+    }
+
+    override fun addBookActivity(userBookActivity: UserBookActivity): UserBookActivity {
+        userBookActivity.id = 0L
+        return save(userBookActivity)
+    }
+
     override fun getBooksByStatus(
         userId: Long, status: EUserBookReadStatus, pageable: Pageable
     ): List<UserBookActivity> {

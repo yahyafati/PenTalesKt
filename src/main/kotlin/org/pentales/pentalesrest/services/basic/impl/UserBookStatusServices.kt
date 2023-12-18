@@ -11,7 +11,8 @@ import org.springframework.stereotype.*
 
 @Service
 class UserBookStatusServices(
-    private val userBookStatusRepository: UserBookStatusRepository
+    private val userBookStatusRepository: UserBookStatusRepository,
+    private val userBookActivityServices: IUserBookActivityServices,
 ) : IUserBookStatusServices {
 
     override fun updateBookStatus(userId: Long, bookId: Long, status: EUserBookReadStatus): UserBookStatus {
@@ -20,7 +21,10 @@ class UserBookStatusServices(
         userBookStatus.status = status
         userBookStatus.book = Book(id = bookId)
         userBookStatus.user = User(id = userId)
-        return userBookStatusRepository.save(userBookStatus)
+        val savedStatus = userBookStatusRepository.save(userBookStatus)
+        val userBookActivity = UserBookActivity(User(id = userId), Book(id = bookId), status = status)
+        userBookActivityServices.addBookActivity(userBookActivity)
+        return savedStatus
     }
 
     override fun getBookStatus(userId: Long, bookId: Long): EUserBookReadStatus {
