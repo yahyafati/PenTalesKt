@@ -2,12 +2,11 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.models.keys.*
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.query.*
 
-interface RatingRepository : IRepoSpecification<Rating, UserBookKey> {
+interface RatingRepository : IRepoSpecification<Rating, Long> {
 
     fun findAllByBook(book: Book, pageable: Pageable): Page<Rating>
     fun countAllByBook(book: Book): Long
@@ -23,6 +22,8 @@ interface RatingRepository : IRepoSpecification<Rating, UserBookKey> {
 
     fun findAllByUser(user: User, pageable: Pageable): Page<Rating>
     fun countAllByUser(user: User): Long
+
+    fun findTopByUserAndBookOrderByUpdatedAtDesc(user: User, book: Book): Rating?
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.user = :user AND r.review IS NOT NULL AND r.review != ''")
     fun countUserReviews(

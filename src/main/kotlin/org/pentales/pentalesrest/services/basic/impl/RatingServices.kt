@@ -2,7 +2,6 @@ package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -28,8 +27,7 @@ class RatingServices(
         return repository.findAllByUser(User(id = userId), pageable)
     }
 
-    override fun findById(bookId: Long, userId: Long): Rating {
-        val id = UserBookKey(bookId = bookId, userId = userId)
+    override fun findById(id: Long): Rating {
         return repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id.toString()) }
     }
 
@@ -47,8 +45,7 @@ class RatingServices(
     }
 
     @Transactional
-    override fun update(bookId: Long, userId: Long, entity: Rating, updatedFields: List<String>): Rating {
-        val id = UserBookKey(bookId = bookId, userId = userId)
+    override fun update(id: Long, entity: Rating, updatedFields: List<String>): Rating {
         val existingEntity: Rating =
             repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id.toString()) }
         entity.id = id
@@ -67,9 +64,10 @@ class RatingServices(
         return save(existingEntity)
     }
 
-    override fun deleteById(bookId: Long, userId: Long) {
-        val id = UserBookKey(bookId = bookId, userId = userId)
-        val affected = activityRepository.deleteByRating(Rating(id = id))
+    override fun deleteById(id: Long) {
+        val rating = Rating()
+        rating.id = id
+        val affected = activityRepository.deleteByRating(rating)
         if (affected == 0L) {
             repository.deleteById(id)
         }
@@ -82,4 +80,5 @@ class RatingServices(
     override fun deleteByUserId(userId: Long) {
         repository.deleteAllByUser(User(id = userId))
     }
+
 }
