@@ -12,10 +12,10 @@ class Rating(
 
     @MapsId("userId")
     @ManyToOne
-    var user: User? = null,
+    var user: User = User(),
     @MapsId("bookId")
     @ManyToOne
-    var book: Book? = null,
+    var book: Book = Book(),
 
     @field:Min(1)
     @field:Max(5)
