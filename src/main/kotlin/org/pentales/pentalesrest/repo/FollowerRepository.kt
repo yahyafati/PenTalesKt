@@ -11,4 +11,7 @@ interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
     fun countAllByFollowed(following: User): Int
     fun countAllByFollowedUsername(username: String): Int
 
+    fun findAllByFollowed(followed: User): List<Follower>
+    fun findAllByFollower(follower: User): List<Follower>
+
 }
