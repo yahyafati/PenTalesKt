@@ -73,30 +73,17 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(following))
     }
 
-    @PatchMapping("/follow/{followedId}")
+    @PatchMapping("/follow/{followedId}/toggle")
     fun followUser(
         @PathVariable
         followedId: Long
     ): ResponseEntity<BasicResponseDto<Boolean>> {
         val currentUserId = authenticationFacade.currentUserId
-        followerServices.follow(
+        val status = followerServices.toggleFollow(
             followerUser = User(id = currentUserId),
             followedUser = User(id = followedId),
         )
-        return ResponseEntity.ok(BasicResponseDto.ok(true))
-    }
-
-    @DeleteMapping("/follow/{followedId}")
-    fun unfollowUser(
-        @PathVariable
-        followedId: Long
-    ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val currentUserId = authenticationFacade.currentUserId
-        val unfollowed = followerServices.unfollow(
-            followerUser = User(id = currentUserId),
-            followedUser = User(id = followedId),
-        )
-        return ResponseEntity.ok(BasicResponseDto.ok(unfollowed))
+        return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
 }

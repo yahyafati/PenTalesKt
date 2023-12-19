@@ -40,18 +40,14 @@ class FollowerServices(
         return followerRepository.existsById(key)
     }
 
-    override fun follow(followerUser: User, followedUser: User): Follower {
-        val key = UserUserKey(followerId = followedUser.id, followedId = followedUser.id)
+    override fun toggleFollow(followerUser: User, followedUser: User): Boolean {
+        val key = UserUserKey(followerId = followerUser.id, followedId = followedUser.id)
         val follower = Follower(id = key, followed = followedUser, follower = followerUser)
-        return save(follower)
-    }
-
-    override fun unfollow(followerUser: User, followedUser: User): Boolean {
-        val key = UserUserKey(followerId = followedUser.id, followedId = followedUser.id)
-        if (!followerRepository.existsById(key)) {
+        if (followerRepository.existsById(key)) {
+            followerRepository.deleteById(key)
             return false
         }
-        followerRepository.deleteById(key)
+        save(follower)
         return true
     }
 

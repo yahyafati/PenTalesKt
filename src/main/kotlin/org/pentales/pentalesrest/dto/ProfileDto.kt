@@ -4,6 +4,7 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 
 data class ProfileDto(
+    var userId: Long = 0L,
     var firstName: String = "",
     val lastName: String = "",
     var username: String = "",
@@ -31,12 +32,10 @@ data class ProfileDto(
             }
         }
 
-        fun from(profile: UserProfile): ProfileDto {
-            return ProfileDto(profile)
-        }
     }
 
     constructor(profile: UserProfile) : this(
+        userId = profile.user.id,
         firstName = profile.firstName,
         lastName = profile.lastName,
         username = profile.user.username,
