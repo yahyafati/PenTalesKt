@@ -19,9 +19,12 @@ class ActivityController(
         page: Int?,
         @RequestParam
         size: Int?
-    ): ResponseEntity<Page<ActivityDto>> {
+    ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, "createdAt", Sort.Direction.DESC)
-        return ResponseEntity.ok(activityServices.getActivities(pageRequest).map { ActivityDto(it) })
+        return ResponseEntity.ok(
+            BasicResponseDto.ok(
+                activityServices.getActivities(pageRequest).map { ActivityDto(it) })
+        )
     }
 
     @GetMapping("/{id}")
