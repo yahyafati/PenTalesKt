@@ -6,8 +6,8 @@ class AddRatingCommentDto(
     var comment: String = "",
 ) {
 
-    fun toRatingComment(user: User, rating: Rating): RatingComment {
-        return RatingComment(
+    fun toRatingComment(user: User, rating: Rating): Comment {
+        return Comment(
             comment = comment,
             user = user,
             rating = rating,

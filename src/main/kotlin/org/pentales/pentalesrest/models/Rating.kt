@@ -17,5 +17,5 @@ class Rating(
     var review: String = "",
 
     @OneToMany(mappedBy = "rating", cascade = [CascadeType.REMOVE])
-    var comments: List<RatingComment> = listOf(),
+    var comments: List<Comment> = listOf(),
 ) : IModel()

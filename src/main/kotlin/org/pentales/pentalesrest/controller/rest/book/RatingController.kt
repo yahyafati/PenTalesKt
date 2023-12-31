@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/rating")
 class RatingController(
     private val ratingServices: IRatingServices,
-    private val activityShareServices: IActivityShareServices,
+    private val activityShareServices: IShareServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 

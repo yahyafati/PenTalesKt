@@ -8,7 +8,7 @@ class Activity(
     @ManyToOne(cascade = [CascadeType.REMOVE])
     var rating: Rating? = null,
     @ManyToOne(cascade = [CascadeType.REMOVE])
-    var ratingComment: RatingComment? = null,
+    var comment: Comment? = null,
     @ManyToOne(cascade = [CascadeType.REMOVE])
-    var share: ActivityShare? = null,
-) : IModel() {}
+    var share: Share? = null,
+) : IModel()

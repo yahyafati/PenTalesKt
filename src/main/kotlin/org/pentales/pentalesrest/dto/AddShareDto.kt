@@ -6,16 +6,16 @@ class AddShareDto(
     var quote: String? = "",
 ) {
 
-    constructor(activityShare: ActivityShare) : this(
-        quote = activityShare.shareQuote,
+    constructor(share: Share) : this(
+        quote = share.shareQuote,
     )
 
     fun toActivityShare(
         rating: Rating,
         user: User,
-    ): ActivityShare {
+    ): Share {
 
-        return ActivityShare(
+        return Share(
             shareQuote = quote,
             rating = rating,
             user = user,

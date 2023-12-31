@@ -16,21 +16,21 @@ data class ActivityDto(
 
     constructor(activity: Activity) : this() {
         this.id = activity.id
-        val rating = activity.rating ?: activity.ratingComment?.rating ?: activity.share?.rating
+        val rating = activity.rating ?: activity.comment?.rating ?: activity.share?.rating
         if (rating == null) {
             throw NullPointerException("Invalid Activity. Rating is null for all activity types. Can't resolve activity type.")
         }
         this.rating = ActivityRatingDto(rating)
         this.user = UserDto(rating.user)
         this.book = BookDTO(rating.book)
-        this.ratingComment = activity.ratingComment?.let { ActivityCommentDto(it) }
+        this.ratingComment = activity.comment?.let { ActivityCommentDto(it) }
         this.share = activity.share?.let { ActivityShareDto(it) }
         this.createdAt = activity.createdAt.time
 
         this.activityType = EActivityType.RATING
         if (activity.rating != null) {
             this.activityType = EActivityType.RATING
-        } else if (activity.ratingComment != null) {
+        } else if (activity.comment != null) {
             this.activityType = EActivityType.COMMENT
         } else if (activity.share != null) {
             this.activityType = EActivityType.SHARE

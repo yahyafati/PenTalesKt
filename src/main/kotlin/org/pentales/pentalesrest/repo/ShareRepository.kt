@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
 
-interface ActivityShareRepository : IRepoSpecification<ActivityShare, Long> {
+interface ShareRepository : IRepoSpecification<Share, Long> {
 
     fun countAllByRating(rating: Rating): Int
 

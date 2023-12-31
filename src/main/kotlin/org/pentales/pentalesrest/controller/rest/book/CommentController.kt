@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/comment")
-class RatingCommentController(
-    private val ratingCommentServices: IRatingCommentServices,
+class CommentController(
+    private val ratingCommentServices: ICommentServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
@@ -28,14 +28,14 @@ class RatingCommentController(
         sort: String?,
         @RequestParam(defaultValue = "ASC")
         direction: Sort.Direction?,
-    ): ResponseEntity<Page<RatingCommentDto>> {
+    ): ResponseEntity<Page<CommentDto>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
         val rating = Rating()
         rating.id = ratingId
         val response = ratingCommentServices.findAllByRating(
             rating = rating,
             pageable = pageRequest,
-        ).map { RatingCommentDto(it) }
+        ).map { CommentDto(it) }
         return ResponseEntity.ok(response)
     }
 
@@ -45,13 +45,13 @@ class RatingCommentController(
         ratingId: Long,
         @RequestBody
         ratingCommentDto: AddRatingCommentDto
-    ): ResponseEntity<RatingCommentDto> {
+    ): ResponseEntity<CommentDto> {
         val user = authenticationFacade.forcedCurrentUser
         val rating = Rating()
         rating.id = ratingId
         val ratingComment = ratingCommentDto.toRatingComment(user, rating)
         val savedRatingComment = ratingCommentServices.saveNew(ratingComment)
-        return ResponseEntity.ok(RatingCommentDto(savedRatingComment))
+        return ResponseEntity.ok(CommentDto(savedRatingComment))
     }
 
     @DeleteMapping("/comments")

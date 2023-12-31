@@ -8,18 +8,18 @@ class ShareDto(
     var user: UserDto? = null,
 ) {
 
-    constructor(activityShare: ActivityShare) : this(
-        id = activityShare.id,
-        quote = activityShare.shareQuote,
-        user = UserDto(activityShare.user),
+    constructor(share: Share) : this(
+        id = share.id,
+        quote = share.shareQuote,
+        user = UserDto(share.user),
     )
 
     fun toActivityShare(
         rating: Rating,
         user: User,
-    ): ActivityShare {
+    ): Share {
 
-        return ActivityShare(
+        return Share(
             shareQuote = quote,
             rating = rating,
             user = user,

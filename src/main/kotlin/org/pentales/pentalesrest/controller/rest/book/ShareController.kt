@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/share")
-class RatingShareController(
-    private val activityShareServices: IActivityShareServices,
+class ShareController(
+    private val activityShareServices: IShareServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 

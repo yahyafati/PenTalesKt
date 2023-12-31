@@ -6,7 +6,7 @@ data class ActivityShareDto(
     var quote: String? = "",
 ) {
 
-    constructor(activityShare: ActivityShare) : this(
-        quote = activityShare.shareQuote,
+    constructor(share: Share) : this(
+        quote = share.shareQuote,
     )
 }
