@@ -7,7 +7,6 @@ import org.springframework.data.repository.*
 interface IReadOnlyRepository<T, ID> : Repository<T, ID> {
 
     fun findAll(): List<T>
-    fun findAllById(ids: Iterable<ID>, pageable: Pageable): Page<T>
     fun findAll(pageable: Pageable): Page<T>
     fun findById(id: ID): T?
     fun existsById(id: ID): Boolean

@@ -9,7 +9,7 @@ import java.sql.*
 @Entity
 @Table(name = "activity")
 @Immutable
-data class Activity(
+data class ActivityView(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
