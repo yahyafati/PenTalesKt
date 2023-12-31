@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.dto
 
 import org.pentales.pentalesrest.models.*
 
-class CommentDto(
+data class CommentDto(
     var id: Long = 0,
     var comment: String = "",
     var user: UserDto = UserDto(),

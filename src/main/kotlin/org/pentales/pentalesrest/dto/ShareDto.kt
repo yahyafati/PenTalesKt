@@ -2,10 +2,10 @@ package org.pentales.pentalesrest.dto
 
 import org.pentales.pentalesrest.models.*
 
-class ShareDto(
+data class ShareDto(
     val id: Long? = 0,
     val quote: String? = "",
-    var user: UserDto? = null,
+    var user: UserDto = UserDto(),
 ) {
 
     constructor(share: Share) : this(

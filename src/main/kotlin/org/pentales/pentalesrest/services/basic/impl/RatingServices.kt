@@ -32,32 +32,13 @@ class RatingServices(
 
     @Transactional
     override fun save(entity: Rating): Rating {
+        val existing = repository.findByBookAndUser(entity.book, entity.user)
+        if (existing != null) {
+            existing.value = entity.value
+            existing.review = entity.review
+            return repository.save(existing)
+        }
         return repository.save(entity)
-    }
-
-    @Transactional
-    override fun saveNew(entity: Rating): Rating {
-        return save(entity)
-    }
-
-    @Transactional
-    override fun update(id: Long, entity: Rating, updatedFields: List<String>): Rating {
-        val existingEntity: Rating =
-            repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id.toString()) }
-        entity.id = id
-        if (updatedFields.isEmpty()) {
-            return save(entity)
-        }
-
-        modelProperties.forEach { property ->
-            if (updatedFields.contains(property.name)) {
-                if (property is KMutableProperty<*>) {
-                    property.setter.call(existingEntity, property.get(entity))
-                }
-            }
-        }
-
-        return save(existingEntity)
     }
 
     override fun deleteById(id: Long) {

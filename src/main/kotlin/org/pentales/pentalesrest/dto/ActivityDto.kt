@@ -1,25 +1,27 @@
 package org.pentales.pentalesrest.dto
 
+import com.fasterxml.jackson.annotation.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.view.*
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class ActivityDto(
     var id: Long = 0,
     var type: EActivityType = EActivityType.RATING,
     var updatedAt: Long = System.currentTimeMillis(),
+    var rating: RatingDto? = RatingDto(),
     var data: Any? = null,
 ) {
 
-    constructor(activityView: ActivityView) : this(
-
-        id = activityView.id,
-        type = activityView.type,
-        updatedAt = activityView.updatedAt.time,
-        data = when (activityView.type) {
-            EActivityType.RATING -> activityView.rating?.let { RatingDto(it) }
-            EActivityType.COMMENT -> activityView.comment?.let { CommentDto(it) }
-            EActivityType.SHARE -> activityView.share?.let { ShareDto(it) }
+    constructor(activityView: ActivityView) : this() {
+        id = activityView.id
+        type = activityView.type
+        updatedAt = activityView.updatedAt.time
+        rating = activityView.getEffectiveRating()?.let { RatingDto(it) }
+        data = when (type) {
+            EActivityType.RATING -> null
+            EActivityType.COMMENT -> CommentDto(activityView.comment!!)
+            EActivityType.SHARE -> ShareDto(activityView.share!!)
         }
-
-    )
+    }
 }

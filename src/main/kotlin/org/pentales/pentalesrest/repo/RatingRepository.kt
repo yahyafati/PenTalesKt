@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.repo.base.IRepoSpecification
+import org.pentales.pentalesrest.repo.base.*
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.query.*
@@ -11,6 +11,7 @@ interface RatingRepository : IRepoSpecification<Rating, Long> {
 
     fun findAllByBook(book: Book, pageable: Pageable): Page<Rating>
     fun countAllByBook(book: Book): Long
+    fun findByBookAndUser(book: Book, user: User): Rating?
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.book = :book AND r.review IS NOT NULL AND r.review != ''")
     fun countBookReviews(

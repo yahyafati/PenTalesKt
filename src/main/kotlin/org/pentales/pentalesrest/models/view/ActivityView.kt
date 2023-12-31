@@ -37,6 +37,14 @@ data class ActivityView(
     @Transient
     var share: Share? = null
 
+    fun getEffectiveRating(): Rating? {
+        return when (type) {
+            EActivityType.RATING -> rating
+            EActivityType.COMMENT -> comment?.rating
+            EActivityType.SHARE -> share?.rating
+        }
+    }
+
     init {
         when (type) {
             EActivityType.RATING -> {
