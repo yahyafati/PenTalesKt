@@ -13,7 +13,6 @@ import kotlin.reflect.full.*
 @Service
 class RatingServices(
     private val repository: RatingRepository,
-    private val activityRepository: ActivityRepository,
 ) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
@@ -38,10 +37,7 @@ class RatingServices(
 
     @Transactional
     override fun saveNew(entity: Rating): Rating {
-        val savedEntity = save(entity)
-        val activity = Activity(rating = savedEntity)
-        activityRepository.save(activity)
-        return savedEntity
+        return save(entity)
     }
 
     @Transactional
@@ -65,12 +61,7 @@ class RatingServices(
     }
 
     override fun deleteById(id: Long) {
-        val rating = Rating()
-        rating.id = id
-        val affected = activityRepository.deleteByRating(rating)
-        if (affected == 0L) {
-            repository.deleteById(id)
-        }
+        repository.deleteById(id)
     }
 
     override fun deleteByBookId(bookId: Long) {

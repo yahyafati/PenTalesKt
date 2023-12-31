@@ -8,37 +8,28 @@ import org.springframework.stereotype.*
 
 @Service
 class CommentServices(
-    private val commentRepository: CommentRepository,
-    private val activityRepository: ActivityRepository,
+    private val repository: CommentRepository,
 ) : ICommentServices {
 
     override fun findAllByRating(rating: Rating, pageable: Pageable): Page<Comment> {
-        return commentRepository.findAllByRating(rating, pageable)
+        return repository.findAllByRating(rating, pageable)
     }
 
     override fun countAllByRating(rating: Rating): Long {
-        return commentRepository.countAllByRating(rating)
+        return repository.countAllByRating(rating)
     }
 
     override fun save(comment: Comment): Comment {
-        return commentRepository.save(comment)
+        return repository.save(comment)
     }
 
     override fun saveNew(comment: Comment): Comment {
         comment.id = 0
-        val savedComment = commentRepository.save(comment)
-        val activity = Activity(comment = savedComment)
-        activityRepository.save(activity)
-        return savedComment
+        return save(comment)
     }
 
     override fun deleteById(id: Long) {
-        val comment = Comment()
-        comment.id = id
-        val affected = activityRepository.deleteByComment(comment)
-        if (affected == 0L) {
-            commentRepository.deleteById(id)
-        }
+        repository.deleteById(id)
     }
 
 }

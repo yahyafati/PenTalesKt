@@ -9,7 +9,6 @@ import org.springframework.stereotype.*
 @Service
 class ShareServices(
     private val shareRepository: ShareRepository,
-    private val activityRepository: ActivityRepository,
 ) : IShareServices {
 
     val entityName = "ActivityShare"
@@ -27,18 +26,10 @@ class ShareServices(
     }
 
     override fun saveNew(share: Share): Share {
-        val savedActivityShare = save(share)
-        val activity = Activity(share = savedActivityShare)
-        activityRepository.save(activity)
-        return savedActivityShare
+        return save(share)
     }
 
     override fun deleteById(id: Long) {
-        val share = Share()
-        share.id = id
-        val affected = activityRepository.deleteByShare(share)
-        if (affected == 0L) {
-            shareRepository.deleteById(id)
-        }
+        shareRepository.deleteById(id)
     }
 }
