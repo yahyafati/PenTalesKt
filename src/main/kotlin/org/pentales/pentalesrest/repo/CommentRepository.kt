@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.repo.base.*
 import org.springframework.data.domain.*
 
 interface CommentRepository : IRepoSpecification<Comment, Long> {

@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.repo.base.IRepoSpecification
 import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.stereotype.*

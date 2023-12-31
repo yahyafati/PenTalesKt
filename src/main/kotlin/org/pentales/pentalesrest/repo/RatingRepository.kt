@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.repo.base.IRepoSpecification
 import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.query.*
