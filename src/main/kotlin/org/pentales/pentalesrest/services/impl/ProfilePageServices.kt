@@ -35,7 +35,7 @@ class ProfilePageServices(
         val currentGoal = userGoalService.findByUserAndGoalYear(profile.user, Year.now().value)
         val nowReading = userBookStatusServices.getNowReadingBook(profile.user.id)
         val readSoFar = userBookActivityServices.getBooksCountByStatusInYear(
-            profile.user.id, EUserBookReadStatus.READ, Year.now().value,
+            profile.user.id, EUserBookReadStatus.READ, Year.now(ZoneId.of("UTC")).value
         )
 
         val map = mutableMapOf(
