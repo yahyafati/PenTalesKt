@@ -2,6 +2,8 @@ package org.pentales.pentalesrest.models.view
 
 import jakarta.persistence.*
 import jakarta.persistence.Id
+import jakarta.persistence.Transient
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.springframework.data.annotation.*
 import java.sql.*
@@ -21,4 +23,36 @@ data class ActivityView(
 
     @Column(name = "updated_at")
     var updatedAt: Timestamp = Timestamp(System.currentTimeMillis()),
-)
+
+    @Column(name = "created_at")
+    var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
+) {
+
+    @Transient
+    var rating: Rating? = null
+
+    @Transient
+    var comment: Comment? = null
+
+    @Transient
+    var share: Share? = null
+
+    init {
+        when (type) {
+            EActivityType.RATING -> {
+                rating = Rating()
+                rating?.id = id
+            }
+
+            EActivityType.COMMENT -> {
+                comment = Comment()
+                comment?.id = id
+            }
+
+            EActivityType.SHARE -> {
+                share = Share()
+                share?.id = id
+            }
+        }
+    }
+}
