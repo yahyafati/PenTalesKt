@@ -23,8 +23,6 @@ services:
     volumes:
       - gradle-cache:/root/.gradle
       - app-build:/app/build
-      #      - ./src/main/resources/application-local.yml:/app/src/main/resources/application-local.yml
-      #      - ./src/main/resources/application.yml:/app/src/main/resources/application.yml
     environment:
       SPRING_PROFILES_ACTIVE: local  # Set the active profile to "local"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_DOCKER_PORT}/reading-realm
