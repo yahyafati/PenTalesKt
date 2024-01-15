@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
+import org.pentales.pentalesrest.repo.base.IRepoSpecification
 
 interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
 
@@ -10,5 +11,8 @@ interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
 
     fun countAllByFollowed(following: User): Int
     fun countAllByFollowedUsername(username: String): Int
+
+    fun findAllByFollowed(followed: User): List<Follower>
+    fun findAllByFollower(follower: User): List<Follower>
 
 }

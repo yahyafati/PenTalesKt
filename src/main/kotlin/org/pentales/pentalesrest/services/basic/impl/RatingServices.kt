@@ -2,7 +2,6 @@ package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -14,7 +13,6 @@ import kotlin.reflect.full.*
 @Service
 class RatingServices(
     private val repository: RatingRepository,
-    private val activityRepository: ActivityRepository,
 ) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
@@ -28,51 +26,23 @@ class RatingServices(
         return repository.findAllByUser(User(id = userId), pageable)
     }
 
-    override fun findById(bookId: Long, userId: Long): Rating {
-        val id = UserBookKey(bookId = bookId, userId = userId)
+    override fun findById(id: Long): Rating {
         return repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id.toString()) }
     }
 
     @Transactional
     override fun save(entity: Rating): Rating {
+        val existing = repository.findByBookAndUser(entity.book, entity.user)
+        if (existing != null) {
+            existing.value = entity.value
+            existing.review = entity.review
+            return repository.save(existing)
+        }
         return repository.save(entity)
     }
 
-    @Transactional
-    override fun saveNew(entity: Rating): Rating {
-        val savedEntity = save(entity)
-        val activity = Activity(rating = savedEntity)
-        activityRepository.save(activity)
-        return savedEntity
-    }
-
-    @Transactional
-    override fun update(bookId: Long, userId: Long, entity: Rating, updatedFields: List<String>): Rating {
-        val id = UserBookKey(bookId = bookId, userId = userId)
-        val existingEntity: Rating =
-            repository.findById(id).orElseThrow { NoEntityWithIdException.create(entityName, id.toString()) }
-        entity.id = id
-        if (updatedFields.isEmpty()) {
-            return save(entity)
-        }
-
-        modelProperties.forEach { property ->
-            if (updatedFields.contains(property.name)) {
-                if (property is KMutableProperty<*>) {
-                    property.setter.call(existingEntity, property.get(entity))
-                }
-            }
-        }
-
-        return save(existingEntity)
-    }
-
-    override fun deleteById(bookId: Long, userId: Long) {
-        val id = UserBookKey(bookId = bookId, userId = userId)
-        val affected = activityRepository.deleteByRating(Rating(id = id))
-        if (affected == 0L) {
-            repository.deleteById(id)
-        }
+    override fun deleteById(id: Long) {
+        repository.deleteById(id)
     }
 
     override fun deleteByBookId(bookId: Long) {
@@ -82,4 +52,5 @@ class RatingServices(
     override fun deleteByUserId(userId: Long) {
         repository.deleteAllByUser(User(id = userId))
     }
+
 }

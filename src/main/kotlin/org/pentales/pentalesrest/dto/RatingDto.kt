@@ -2,35 +2,35 @@ package org.pentales.pentalesrest.dto
 
 import org.pentales.pentalesrest.models.*
 
-class RatingDto(
+data class RatingDto(
+    val id: Long = 0,
     var value: Int = 0,
     var review: String = "",
-    var userId: Long = 0,
-    var bookId: Long = 0,
+    var user: UserDto = UserDto(),
+    var book: BookDTO = BookDTO(),
     var createdAt: Long = 0,
     var updatedAt: Long = 0
 ) {
 
     constructor(rating: Rating) : this(
+        id = rating.id,
         value = rating.value,
         review = rating.review,
-        userId = rating.user?.id ?: 0,
-        bookId = rating.book?.id ?: 0,
+        user = UserDto(rating.user),
+        book = BookDTO(rating.book),
         createdAt = rating.createdAt.time,
         updatedAt = rating.updatedAt.time
     )
 
     fun toRating(): Rating {
-        return Rating(
+        val rating = Rating(
             value = value,
             review = review,
-            user = User(userId),
-            book = Book(bookId),
+            user = User(user.id),
+            book = Book(book.id),
         )
-    }
-
-    override fun toString(): String {
-        return "RatingDto(value=$value, review='$review', userId=$userId, bookId=$bookId)"
+        rating.id = id
+        return rating
     }
 
 }

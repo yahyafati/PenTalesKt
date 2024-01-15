@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    env_file: .env
+    ports:
+      - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  springboot-app:
+    build: .
+    container_name: springboot-app
+    env_file: .env
+    ports:
+      - ${SPRINGBOOT_LOCAL_PORT}:${SPRINGBOOT_DOCKER_PORT}
+    depends_on:
+      - postgres
+    volumes:
+      - gradle-cache:/root/.gradle
+      - app-build:/app/build
+    environment:
+      SPRING_PROFILES_ACTIVE: local  # Set the active profile to "local"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_DOCKER_PORT}/reading-realm
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    env_file: .env
+    ports:
+      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+
+volumes:
+  gradle-cache:
+  app-build:

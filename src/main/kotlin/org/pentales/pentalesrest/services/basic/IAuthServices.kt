@@ -8,4 +8,6 @@ interface IAuthServices {
     fun register(registerUser: RegisterUser): User
 
     fun getCurrentUser(): User
+
+    fun isUsernameAvailable(username: String): Boolean
 }

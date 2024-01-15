@@ -4,10 +4,11 @@ import jakarta.persistence.*
 import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
-class RatingComment(
-    var comment: String = "",
+class Share(
+    @Column(columnDefinition = "TEXT", nullable = true)
+    var shareQuote: String? = "",
     @ManyToOne
     var rating: Rating = Rating(),
     @ManyToOne
     var user: User = User(),
-) : IModel() {}
+) : IModel()

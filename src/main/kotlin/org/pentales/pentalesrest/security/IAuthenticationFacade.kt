@@ -13,6 +13,7 @@ interface IAuthenticationFacade {
             if (username1 == null || username2 == null) return false
             return username1.equals(username2, ignoreCase = true)
         }
+
     }
 
     fun equalsAuth(username1: String): Boolean {
@@ -41,7 +42,7 @@ interface IAuthenticationFacade {
             return null
         }
 
-    val currentUserMust: User
+    val forcedCurrentUser: User
         get() {
             val principal = authentication?.principal
             if (principal is User) {
@@ -49,4 +50,7 @@ interface IAuthenticationFacade {
             }
             throw Exception("User not found")
         }
+
+    val currentUserId: Long
+        get() = forcedCurrentUser.id
 }

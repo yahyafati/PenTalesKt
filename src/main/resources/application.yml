@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update # You can use "create" for initial setup or "update" for updates
+      ddl-auto: none # You can use "create" for initial setup or "update" for updates
     show-sql: true # Set to true to see SQL queries in the console
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   profiles:

@@ -16,13 +16,10 @@ interface IRatingServices {
 
     fun findByBookId(bookId: Long, pageable: Pageable): Page<Rating>
     fun findByUserId(userId: Long, pageable: Pageable): Page<Rating>
-    fun findById(bookId: Long, userId: Long): Rating
+    fun findById(id: Long): Rating
 
     fun save(entity: Rating): Rating
-    fun saveNew(entity: Rating): Rating
-    fun update(bookId: Long, userId: Long, entity: Rating, updatedFields: List<String> = emptyList()): Rating
-
-    fun deleteById(bookId: Long, userId: Long)
+    fun deleteById(id: Long)
     fun deleteByBookId(bookId: Long)
     fun deleteByUserId(userId: Long)
 

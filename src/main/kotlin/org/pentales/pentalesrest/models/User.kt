@@ -24,7 +24,7 @@ class User(
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Email is required")
     var email: String = "",
-    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
     var profile: UserProfile? = null,
 ) : IModel(), UserDetails {
 
@@ -35,7 +35,7 @@ class User(
     private var isEnabled: Boolean = true
 
     @Enumerated(EnumType.STRING)
-    var role: ERole = ERole.GUEST
+    var role: ERole = ERole.USER
         set(value) {
             field = value
             this.setAuthorities(

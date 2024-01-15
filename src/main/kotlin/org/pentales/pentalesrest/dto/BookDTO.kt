@@ -4,7 +4,7 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.pentales.pentalesrest.models.keys.*
 
-class BookDTO(
+data class BookDTO(
     var id: Long = 0L,
     var title: String = "",
     var description: String = "",
@@ -14,7 +14,8 @@ class BookDTO(
     var genres: List<Long> = ArrayList(),
     var languageCode: String = "",
     var publisher: String = "",
-    var coverImage: String = ""
+    var coverImage: String = "",
+    var averageRating: Double = 0.0,
 ) {
 
     constructor(book: Book) : this(
@@ -27,7 +28,8 @@ class BookDTO(
         genres = book.genres.map { it.genre.id },
         languageCode = book.languageCode,
         publisher = book.publisher,
-        coverImage = book.coverImage
+        coverImage = book.coverImage,
+        averageRating = book.__averageRating
     )
 
     fun toBook(): Book {
@@ -49,7 +51,4 @@ class BookDTO(
         )
     }
 
-    override fun toString(): String {
-        return "BookDTO(id=$id, title='$title', description='$description', ISBN='$ISBN', publicationYear=$publicationYear)"
-    }
 }

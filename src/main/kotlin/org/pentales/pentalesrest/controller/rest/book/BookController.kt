@@ -2,6 +2,8 @@ package org.pentales.pentalesrest.controller.rest.book
 
 import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
@@ -9,7 +11,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/book")
-class BookController(private val bookServices: IBookServices) {
+class BookController(
+    private val bookServices: IBookServices,
+    private val userBookStatusServices: IUserBookStatusServices,
+    private val authenticationFacade: IAuthenticationFacade,
+) {
 
     val service: IBookServices
         get() = bookServices
@@ -41,6 +47,30 @@ class BookController(private val bookServices: IBookServices) {
     ): ResponseEntity<BookDTO> {
         val book = service.findById(id)
         return ResponseEntity.ok(BookDTO(book))
+    }
+
+    @GetMapping("/{bookId}/status")
+    fun getBookStatusById(
+        @PathVariable
+        bookId: Long
+    ): ResponseEntity<BasicResponseDto<UserBookStatusDto>> {
+        val userId = authenticationFacade.forcedCurrentUser.id
+        val status = userBookStatusServices.getBookStatus(userId = userId, bookId = bookId)
+
+        return ResponseEntity.ok().body(BasicResponseDto.ok(UserBookStatusDto(bookId = bookId, status = status)))
+    }
+
+    @PatchMapping("/{bookId}/status")
+    fun updateBookStatusById(
+        @PathVariable
+        bookId: Long,
+        @RequestBody
+        statusString: String
+    ): ResponseEntity<BasicResponseDto<UserBookStatusDto>> {
+        val userId = authenticationFacade.forcedCurrentUser.id
+        val status = EUserBookReadStatus.valueOf(statusString)
+        val userBookStatus = userBookStatusServices.updateBookStatus(userId, bookId, status)
+        return ResponseEntity.ok(BasicResponseDto.ok(UserBookStatusDto(userBookStatus)))
     }
 
     @PostMapping("")
