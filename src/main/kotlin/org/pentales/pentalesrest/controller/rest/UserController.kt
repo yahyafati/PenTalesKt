@@ -2,8 +2,10 @@ package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: IUserServices,
     private val userProfileService: IUserProfileServices,
+    private val userBookActivityServices: IUserBookActivityServices,
     private val userGoalServices: IUserGoalServices,
     private val followerServices: IFollowerServices,
     private val authenticationFacade: IAuthenticationFacade,
@@ -38,6 +41,26 @@ class UserController(
             userId = userId, target = userGoalDto.target, year = userGoalDto.year
         )
         return ResponseEntity.ok(BasicResponseDto.ok(UserGoalDto(userGoal)))
+    }
+
+    @GetMapping("/target")
+    fun getGoalTarget(
+        @RequestParam(required = false)
+        year: Int?,
+    ): ResponseEntity<BasicResponseDto<GoalDto?>> {
+        val yearToLoad = year ?: TimeUtil.getCurrentYearUTC()
+        val userId = authenticationFacade.currentUserId
+        val userGoal = userGoalServices.findByUserAndGoalYear(User(id = userId), yearToLoad)
+        val readSoFar = userBookActivityServices.getBooksCountByStatusInYear(
+            userId, EUserBookReadStatus.READ, yearToLoad
+        )
+        return ResponseEntity.ok(BasicResponseDto.ok(userGoal?.let {
+            GoalDto(
+                target = it.target,
+                year = it.goal.year,
+                current = readSoFar,
+            )
+        }))
     }
 
     @GetMapping("/follow/{followerId}/followings")
