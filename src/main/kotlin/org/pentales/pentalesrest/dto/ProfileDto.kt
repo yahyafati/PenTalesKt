@@ -3,14 +3,17 @@ package org.pentales.pentalesrest.dto
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 
-class ProfileDto(
+data class ProfileDto(
+    var userId: Long = 0L,
+    var firstName: String = "",
+    val lastName: String = "",
     var username: String = "",
     var email: String = "",
     var profilePicture: String? = "",
     var coverPicture: String? = "",
     var bio: String = "",
     var gender: EGender = EGender.FEMALE,
-    var socialMedia: List<SocialMediaDto> = listOf(),
+    var socialMedias: List<SocialMediaDto> = listOf(),
 ) {
 
     companion object {
@@ -29,23 +32,19 @@ class ProfileDto(
             }
         }
 
-        fun from(profile: UserProfile): ProfileDto {
-            return ProfileDto(profile)
-        }
     }
 
     constructor(profile: UserProfile) : this(
+        userId = profile.user.id,
+        firstName = profile.firstName,
+        lastName = profile.lastName,
         username = profile.user.username,
         email = profile.user.email,
         profilePicture = profile.profilePicture,
         coverPicture = profile.coverPicture,
         bio = profile.bio,
         gender = profile.gender,
-        socialMedia = getSocialMedia(profile)
+        socialMedias = getSocialMedia(profile)
     )
-
-    override fun toString(): String {
-        return "ProfileDto(username='$username', email='$email', profilePicture='$profilePicture', coverPicture='$coverPicture', bio='$bio', gender=$gender, socialMedia=$socialMedia)"
-    }
 
 }

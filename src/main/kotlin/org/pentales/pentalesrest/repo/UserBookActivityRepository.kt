@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.repo.base.IRepoSpecification
 import org.springframework.data.domain.*
 import java.sql.*
 
@@ -15,6 +16,10 @@ interface UserBookActivityRepository : IRepoSpecification<UserBookActivity, Long
 
     fun countAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
         userId: Long, status: EUserBookReadStatus, createdAt: Timestamp
+    ): Int
+
+    fun countAllByUserIdAndStatusAndCreatedAtBetween(
+        userId: Long, status: EUserBookReadStatus, startTime: Timestamp, endTime: Timestamp
     ): Int
 
 }

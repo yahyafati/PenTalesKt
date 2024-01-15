@@ -9,6 +9,7 @@ import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*
 import org.slf4j.*
+import org.springframework.http.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.*
 import org.springframework.security.web.authentication.*
@@ -22,6 +23,8 @@ class JWTAuthenticationFilter(
     private val jwtService: JwtService,
 ) : UsernamePasswordAuthenticationFilter() {
 
+    private var objectMapper: ObjectMapper = ObjectMapper()
+
     companion object {
 
         private val LOG = LoggerFactory.getLogger(JWTAuthenticationFilter::class.java)
@@ -31,6 +34,7 @@ class JWTAuthenticationFilter(
 
     init {
         setFilterProcessesUrl(securityConfigProperties.loginUrl)
+        LOG.info("Login URL: ${securityConfigProperties.loginUrl}")
     }
 
     @Throws(AuthenticationException::class)
@@ -39,24 +43,49 @@ class JWTAuthenticationFilter(
         val authenticationToken = UsernamePasswordAuthenticationToken(
             credentials.username, credentials.password, listOf<GrantedAuthority>()
         )
-        return authenticationManager.authenticate(authenticationToken)
+        LOG.info("Attempting Authentication for ${credentials.username}")
+        val authentication = authenticationManager.authenticate(authenticationToken)
+        if (authentication.isAuthenticated) {
+            LOG.info("Authentication successful for ${credentials.username}")
+        } else {
+            LOG.info("Authentication failed for ${credentials.username}")
+        }
+        return authentication
     }
 
     @Throws(IOException::class, ServletException::class)
     override fun successfulAuthentication(
         request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication
     ) {
+        LOG.info("Authentication successful")
         val token = jwtService.generateToken(authResult.principal as User)
         response.addHeader(jwtProperties.header, jwtProperties.prefix + token)
+        val responseData = mapOf(
+            "title" to "Authentication successful",
+            "token" to token,
+            "status" to HttpServletResponse.SC_OK,
+        )
+        val responseBody = this.objectMapper.writeValueAsString(responseData)
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.writer?.write(responseBody)
     }
 
     @Throws(IOException::class, ServletException::class)
     override fun unsuccessfulAuthentication(
         request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException
     ) {
-        LOG.error("UnSuccessful Authentication")
-        response.writer.println("{\"error:\": \"Invalid Credentials\"}")
-        super.unsuccessfulAuthentication(request, response, failed)
+        LOG.error("Unsuccessful Authentication")
+        val responseData = mapOf(
+            "title" to "Authentication failed",
+            "message" to failed.message,
+            "timestamp" to Date().time,
+            "status" to HttpServletResponse.SC_UNAUTHORIZED,
+        )
+        val responseBody = this.objectMapper.writeValueAsString(responseData)
+
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.writer?.write(responseBody)
+        response.status = HttpServletResponse.SC_UNAUTHORIZED
     }
 }
 

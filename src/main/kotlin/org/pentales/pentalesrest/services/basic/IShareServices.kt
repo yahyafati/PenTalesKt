@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.models.*
 
-interface IActivityShareServices {
+interface IShareServices {
 
     fun getShareCountOf(
         rating: Rating
@@ -10,15 +10,15 @@ interface IActivityShareServices {
 
     fun getShareById(
         id: Long
-    ): ActivityShare
+    ): Share
 
     fun save(
-        activityShare: ActivityShare
-    ): ActivityShare
+        share: Share
+    ): Share
 
     fun saveNew(
-        activityShare: ActivityShare
-    ): ActivityShare
+        share: Share
+    ): Share
 
     fun deleteById(
         id: Long

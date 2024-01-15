@@ -2,18 +2,18 @@ package org.pentales.pentalesrest.dto
 
 import org.pentales.pentalesrest.models.*
 
-class RatingCommentDto(
+data class CommentDto(
     var id: Long = 0,
     var comment: String = "",
     var user: UserDto = UserDto(),
 ) {
 
     constructor(
-        ratingComment: RatingComment
+        comment: Comment
     ) : this(
-        id = ratingComment.id,
-        comment = ratingComment.comment,
-        user = UserDto(ratingComment.user),
+        id = comment.id,
+        comment = comment.comment,
+        user = UserDto(comment.user),
     )
 
     override fun toString(): String {

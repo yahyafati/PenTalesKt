@@ -21,6 +21,10 @@ class AuthServices(
     }
 
     override fun getCurrentUser(): User {
-        return authenticationFacade.currentUserMust
+        return authenticationFacade.forcedCurrentUser
+    }
+
+    override fun isUsernameAvailable(username: String): Boolean {
+        return !userServices.existsByUsername(username)
     }
 }

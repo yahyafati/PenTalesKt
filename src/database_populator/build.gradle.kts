@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
-    implementation("com.opencsv:opencsv:5.8")
+    implementation("com.opencsv:opencsv:5.9")
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     implementation("org.postgresql:postgresql:42.6.0")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml

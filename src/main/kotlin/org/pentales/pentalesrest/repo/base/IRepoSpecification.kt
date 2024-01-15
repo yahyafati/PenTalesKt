@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.repo
+package org.pentales.pentalesrest.repo.base
 
 import org.springframework.data.jpa.repository.*
 import org.springframework.data.repository.*

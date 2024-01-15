@@ -24,4 +24,16 @@ interface IFollowerServices {
         follower: User, followed: User
     ): Boolean
 
+    fun toggleFollow(
+        followerUser: User, followedUser: User
+    ): Boolean
+
+    fun getFollowings(
+        followerUser: User
+    ): List<User>
+
+    fun getFollowers(
+        followedUser: User
+    ): List<User>
+
 }

@@ -7,9 +7,13 @@ import org.pentales.pentalesrest.services.basic.*
 import org.springframework.stereotype.*
 
 @Service
-class FollowerService(
+class FollowerServices(
     private val followerRepository: FollowerRepository
 ) : IFollowerServices {
+
+    fun save(follower: Follower): Follower {
+        return followerRepository.save(follower)
+    }
 
     override fun countFollowersOf(user: User): Int {
         // We have to look for the cases where the user is followed
@@ -34,5 +38,26 @@ class FollowerService(
             followerId = follower.id, followedId = followed.id
         )
         return followerRepository.existsById(key)
+    }
+
+    override fun toggleFollow(followerUser: User, followedUser: User): Boolean {
+        val key = UserUserKey(followerId = followerUser.id, followedId = followedUser.id)
+        val follower = Follower(id = key, followed = followedUser, follower = followerUser)
+        if (followerRepository.existsById(key)) {
+            followerRepository.deleteById(key)
+            return false
+        }
+        save(follower)
+        return true
+    }
+
+    override fun getFollowings(followerUser: User): List<User> {
+        val followings = followerRepository.findAllByFollower(followerUser)
+        return followings.map { it.followed }
+    }
+
+    override fun getFollowers(followedUser: User): List<User> {
+        val followers = followerRepository.findAllByFollowed(followedUser)
+        return followers.map { it.follower }
     }
 }

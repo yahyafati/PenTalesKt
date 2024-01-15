@@ -11,18 +11,32 @@ import org.springframework.stereotype.*
 
 @Service
 class UserBookStatusServices(
-    private val userBookStatusRepository: UserBookStatusRepository
+    private val userBookStatusRepository: UserBookStatusRepository,
+    private val userBookActivityServices: IUserBookActivityServices,
 ) : IUserBookStatusServices {
 
-    override fun getBookStatus(userId: Long, bookId: Long): UserBookStatus? {
+    override fun updateBookStatus(userId: Long, bookId: Long, status: EUserBookReadStatus): UserBookStatus {
+        val id = UserBookKey(userId = userId, bookId = bookId)
+        val userBookStatus = UserBookStatus(id = id)
+        userBookStatus.status = status
+        userBookStatus.book = Book(id = bookId)
+        userBookStatus.user = User(id = userId)
+        val savedStatus = userBookStatusRepository.save(userBookStatus)
+        val userBookActivity = UserBookActivity(User(id = userId), Book(id = bookId), status = status)
+        userBookActivityServices.addBookActivity(userBookActivity)
+        return savedStatus
+    }
+
+    override fun getBookStatus(userId: Long, bookId: Long): EUserBookReadStatus {
         val key = UserBookKey(
             userId = userId, bookId = bookId
         )
-        return userBookStatusRepository.findById(key).orElse(null)
+        val status = userBookStatusRepository.findById(key).orElse(null) ?: return EUserBookReadStatus.NONE
+        return status.status
     }
 
     override fun getNowReadingBook(userId: Long): UserBookStatus? {
-        return userBookStatusRepository.findLastByUserAndStatusOrderByCreatedAt(
+        return userBookStatusRepository.findTopByUserAndStatusOrderByCreatedAtDesc(
             User(id = userId), EUserBookReadStatus.READING
         )
     }

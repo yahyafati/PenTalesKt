@@ -11,4 +11,6 @@ interface IUserGoalServices {
 
     fun save(userGoal: UserGoal): UserGoal
 
+    fun setYearsGoal(userId: Long, target: Int, year: Int): UserGoal
+
 }
