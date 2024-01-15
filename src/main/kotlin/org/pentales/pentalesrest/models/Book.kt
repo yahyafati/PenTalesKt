@@ -35,6 +35,9 @@ class Book(
     var ratings: List<Rating> = ArrayList(),
 ) : IModel() {
 
+    @Transient
+    var __averageRating: Double = 0.0
+
     override fun toString(): String {
         return "Book(id=$id, title='$title', description='$description', ISBN='$ISBN', publicationYear=$publicationYear)"
     }

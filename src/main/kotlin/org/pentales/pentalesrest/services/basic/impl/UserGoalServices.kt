@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.pentales.pentalesrest.models.keys.*
@@ -26,7 +27,7 @@ class UserGoalServices(
     }
 
     override fun setYearsGoal(userId: Long, target: Int, year: Int): UserGoal {
-        val goal = goalRepository.findGoalByYear(year)
+        val goal = goalRepository.findGoalByYear(year) ?: throw GenericException("Goal for year $year not found")
         val key = UserGoalKey(userId = userId, goalId = goal.id)
         val userGoal = UserGoal(id = key, target = target, user = User(userId), goal = goal)
         return save(userGoal)

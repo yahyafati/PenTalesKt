@@ -33,6 +33,18 @@ interface RatingRepository : IRepoSpecification<Rating, Long> {
         user: User
     ): Long
 
+    @Query("SELECT AVG(r.value) FROM Rating r WHERE r.book = :book")
+    fun findAverageRatingByBook(
+        @Param("book")
+        book: Book
+    ): Double?
+
+    @Query("SELECT AVG(r.value) FROM Rating r WHERE r.user = :user")
+    fun findAverageRatingByUser(
+        @Param("user")
+        user: User
+    ): Double?
+
     fun deleteAllByBook(book: Book)
     fun deleteAllByUser(user: User)
 

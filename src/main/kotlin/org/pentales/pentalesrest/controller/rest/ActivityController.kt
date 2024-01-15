@@ -20,8 +20,9 @@ class ActivityController(
         size: Int?
     ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, "createdAt", Sort.Direction.DESC)
+        val activities = activityViewServices.getActivities(pageRequest)
         return ResponseEntity.ok(
-            BasicResponseDto.ok(activityViewServices.getActivities(pageRequest).map { ActivityDto(it) })
+            BasicResponseDto.ok(activities.map { ActivityDto(it) })
         )
     }
 

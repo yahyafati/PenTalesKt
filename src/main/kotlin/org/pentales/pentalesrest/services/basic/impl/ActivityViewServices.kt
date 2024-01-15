@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.view.*
 import org.pentales.pentalesrest.repo.*
@@ -18,19 +19,32 @@ class ActivityViewServices(
     override fun getActivities(pageable: Pageable): Page<ActivityView> {
         val activities = activityViewRepository.findAll(pageable)
         activities.forEach { activity ->
+            var rating: Rating? = null
             when (activity.type) {
                 EActivityType.RATING -> {
-                    activity.rating = ratingRepository.findById(activity.id).orElse(null)
+                    rating = ratingRepository.findById(activity.id).orElse(null)
+                    activity.rating = rating
                 }
 
                 EActivityType.COMMENT -> {
-                    activity.comment = commentRepository.findById(activity.id).orElse(null)
+                    val comment = commentRepository.findById(activity.id).orElse(null)
+                    rating = comment.rating
+                    activity.comment = comment
                 }
 
                 EActivityType.SHARE -> {
-                    activity.share = shareRepository.findById(activity.id).orElse(null)
+                    val share = shareRepository.findById(activity.id).orElse(null)
+                    rating = share.rating
+                    activity.share = share
                 }
             }
+
+            if (rating != null) {
+                val book = rating.book
+                val averageRating = ratingRepository.findAverageRatingByBook(book) ?: 0.0
+                book.__averageRating = averageRating
+            }
+
         }
 
 
