@@ -36,24 +36,23 @@ class SecurityConfig(
                 JWTAuthorizationFilter(
                     authenticationManager(), securityConfigProperties, userService, jwtService
                 ), JWTAuthenticationFilter::class.java
-            )
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers(
+            ).authorizeHttpRequests { auth ->
+                auth.requestMatchers(
                         HttpMethod.POST,
                         securityConfigProperties.loginUrl,
                         securityConfigProperties.logoutUrl,
                         securityConfigProperties.registerUrl,
                         securityConfigProperties.usernameAvailableUrl,
                     ).permitAll()
+
                     .requestMatchers("/test/unsecured").permitAll()
+
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+
                     .anyRequest().authenticated()
-            }
-            .exceptionHandling {
+            }.exceptionHandling {
                 it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
-            }
-            .build()
+            }.build()
     }
 
     @Bean
@@ -67,8 +66,14 @@ class SecurityConfig(
         config.addAllowedMethod("*")
         config.maxAge = 3600L
         config.exposedHeaders = listOf(
-            "x-xsrf-token", "Access-Control-Allow-Headers", "Origin", "Accept", "X-Requested-With",
-            "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+            "x-xsrf-token",
+            "Access-Control-Allow-Headers",
+            "Origin",
+            "Accept",
+            "X-Requested-With",
+            "Content-Type",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
         )
         config.addExposedHeader(securityConfigProperties.jwt.header)
         source.registerCorsConfiguration("/**", config)

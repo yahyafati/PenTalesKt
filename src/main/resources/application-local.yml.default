@@ -8,6 +8,17 @@ spring:
     hibernate:
       ddl-auto: update # You can use "create" for initial setup or "update" for updates
     show-sql: true # Set to true to see SQL queries in the console
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            redirect-uri:
+            scope:
+              - email
+              - profile
 server:
   port: 8080 # Specify the port on which your Spring Boot application will run
 
@@ -20,4 +31,6 @@ org:
         header: Authorization # Header key for JWT
         prefix: "Bearer " # Prefix for JWT
         issuer: pen-tales # Issuer of the token
+      login-url: /api/auth/login # Login URL
+      register-url: /api/auth/register # Registration URL
 

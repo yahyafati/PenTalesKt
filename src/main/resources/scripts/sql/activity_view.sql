@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS activity;
 CREATE OR REPLACE VIEW activity AS
 SELECT 'RATING' AS type, r.id AS id, r.updated_at AS updated_at, r.created_at AS created_at
 FROM rating AS r
