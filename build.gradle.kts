@@ -58,3 +58,12 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks {
+
+    val buildWithoutTest by creating {
+        group = "build"
+        description = "Build without running tests"
+        dependsOn("clean", "assemble")
+    }
+}
