@@ -35,9 +35,18 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
     implementation("com.auth0:java-jwt:4.4.0")
+    // https://mvnrepository.com/artifact/de.codecentric/spring-boot-admin-starter-server
+    implementation("de.codecentric:spring-boot-admin-starter-server:3.2.1")
+    // https://mvnrepository.com/artifact/de.codecentric/spring-boot-admin-starter-client
+    implementation("de.codecentric:spring-boot-admin-starter-client:3.2.1")
+    // https://mvnrepository.com/artifact/de.codecentric/spring-boot-admin-server-ui-login
+    implementation("de.codecentric:spring-boot-admin-server-ui-login:1.5.7")
+
 
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-paranamer
+    implementation("com.fasterxml.jackson.module:jackson-module-paranamer:2.16.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

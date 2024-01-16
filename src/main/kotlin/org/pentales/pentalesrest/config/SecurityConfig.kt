@@ -1,19 +1,17 @@
 package org.pentales.pentalesrest.config
 
-import org.pentales.pentalesrest.security.*
+import de.codecentric.boot.admin.server.config.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.context.annotation.*
-import org.springframework.http.*
 import org.springframework.security.authentication.*
-import org.springframework.security.config.*
 import org.springframework.security.config.annotation.authentication.configuration.*
 import org.springframework.security.config.annotation.method.configuration.*
 import org.springframework.security.config.annotation.web.builders.*
 import org.springframework.security.config.annotation.web.configuration.*
-import org.springframework.security.config.http.*
 import org.springframework.security.crypto.bcrypt.*
 import org.springframework.security.crypto.password.*
 import org.springframework.security.web.*
+import org.springframework.security.web.authentication.*
 import org.springframework.web.cors.*
 import org.springframework.web.filter.*
 
@@ -24,35 +22,56 @@ class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
     private val securityConfigProperties: SecurityConfigProperties,
     private val userService: IUserServices,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val adminServerProperties: AdminServerProperties,
 ) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http.cors(Customizer.withDefaults()).csrf { it.disable() }
-            .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
-            .addFilterAfter(
-                JWTAuthorizationFilter(
-                    authenticationManager(), securityConfigProperties, userService, jwtService
-                ), JWTAuthenticationFilter::class.java
-            ).authorizeHttpRequests { auth ->
-                auth.requestMatchers(
-                        HttpMethod.POST,
-                        securityConfigProperties.loginUrl,
-                        securityConfigProperties.logoutUrl,
-                        securityConfigProperties.registerUrl,
-                        securityConfigProperties.usernameAvailableUrl,
-                    ).permitAll()
+        val successHandler = SavedRequestAwareAuthenticationSuccessHandler()
+        successHandler.setTargetUrlParameter("redirectTo")
+        successHandler.setDefaultTargetUrl(this.adminServerProperties.contextPath + "/")
+        val TOKEN_VALIDITY = 1209600 // 2 weeks
+        http.cors(org.springframework.security.config.Customizer.withDefaults()).csrf { it.disable() }
+            .authorizeHttpRequests { auth ->
+                auth.anyRequest().permitAll()
+            }
 
-                    .requestMatchers("/test/unsecured").permitAll()
-
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-
-                    .anyRequest().authenticated()
-            }.exceptionHandling {
-                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
-            }.build()
+        return http.build()
+//        return http.cors(Customizer.withDefaults()).csrf { it.disable() }
+//            .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+//            .authorizeHttpRequests { auth ->
+//                auth.requestMatchers(
+//                    adminServerProperties.contextPath + "/login",
+//                    adminServerProperties.contextPath + "/assets/**",
+//                ).permitAll()
+//            }.addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
+//            .addFilterAfter(
+//                JWTAuthorizationFilter(
+//                    authenticationManager(), securityConfigProperties, userService, jwtService
+//                ), JWTAuthenticationFilter::class.java
+//            ).authorizeHttpRequests { auth ->
+//                auth.requestMatchers(
+//                    HttpMethod.POST,
+//                    securityConfigProperties.loginUrl,
+//                    securityConfigProperties.logoutUrl,
+//                    securityConfigProperties.registerUrl,
+//                    securityConfigProperties.usernameAvailableUrl,
+//                ).permitAll()
+//
+//                    .requestMatchers("/test/unsecured").permitAll()
+//
+//                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+//
+//                    .anyRequest().authenticated()
+//            }.exceptionHandling {
+////                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+//            }.formLogin {
+//                it.loginPage(adminServerProperties.contextPath + "/login").successHandler(successHandler)
+//            }.logout { it.logoutUrl(adminServerProperties.contextPath + "/logout") }
+//            .httpBasic(Customizer.withDefaults()).rememberMe {
+//                it.key(UUID.randomUUID().toString()).tokenValiditySeconds(TOKEN_VALIDITY)
+//            }.build()
     }
 
     @Bean
