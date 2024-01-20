@@ -1,5 +1,6 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.ratingComment
 
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
 
 data class CommentDto(

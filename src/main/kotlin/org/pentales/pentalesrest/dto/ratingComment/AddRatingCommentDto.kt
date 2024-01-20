@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.ratingComment
 
 import org.pentales.pentalesrest.models.*
 

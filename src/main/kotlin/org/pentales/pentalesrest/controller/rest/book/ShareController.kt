@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.controller.rest.book
 
-import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.share.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*

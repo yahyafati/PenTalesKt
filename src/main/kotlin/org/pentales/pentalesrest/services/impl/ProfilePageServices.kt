@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.services.impl
 
-import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.book.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*

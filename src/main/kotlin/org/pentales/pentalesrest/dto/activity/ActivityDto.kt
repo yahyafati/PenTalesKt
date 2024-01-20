@@ -1,6 +1,9 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.activity
 
 import com.fasterxml.jackson.annotation.*
+import org.pentales.pentalesrest.dto.rating.*
+import org.pentales.pentalesrest.dto.ratingComment.*
+import org.pentales.pentalesrest.dto.share.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.view.*
 

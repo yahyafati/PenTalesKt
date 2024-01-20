@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.activity.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
 import org.springframework.http.*

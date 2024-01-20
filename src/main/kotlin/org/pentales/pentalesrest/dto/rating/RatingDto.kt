@@ -1,5 +1,7 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.rating
 
+import org.pentales.pentalesrest.dto.book.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
 
 data class RatingDto(

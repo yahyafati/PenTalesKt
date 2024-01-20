@@ -1,5 +1,6 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.book
 
+import org.pentales.pentalesrest.dto.author.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.pentales.pentalesrest.models.keys.*

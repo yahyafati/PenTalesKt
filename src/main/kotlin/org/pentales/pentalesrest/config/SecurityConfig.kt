@@ -38,12 +38,12 @@ class SecurityConfig(
                 ), JWTAuthenticationFilter::class.java
             ).authorizeHttpRequests { auth ->
                 auth.requestMatchers(
-                        HttpMethod.POST,
-                        securityConfigProperties.loginUrl,
-                        securityConfigProperties.logoutUrl,
-                        securityConfigProperties.registerUrl,
-                        securityConfigProperties.usernameAvailableUrl,
-                    ).permitAll()
+                    HttpMethod.POST,
+                    securityConfigProperties.loginUrl,
+                    securityConfigProperties.logoutUrl,
+                    securityConfigProperties.registerUrl,
+                    securityConfigProperties.usernameAvailableUrl,
+                ).permitAll()
 
                     .requestMatchers("/test/unsecured").permitAll()
 
@@ -51,7 +51,7 @@ class SecurityConfig(
 
                     .anyRequest().authenticated()
             }.exceptionHandling {
-                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+//                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
             }.build()
     }
 
