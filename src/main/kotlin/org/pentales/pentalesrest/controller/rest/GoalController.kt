@@ -1,12 +1,14 @@
 package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.dto.goal.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
+import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -65,6 +67,20 @@ class GoalController(
             userId = userId, target = userGoalDto.target, year = userGoalDto.year
         )
         return ResponseEntity.ok(BasicResponseDto.ok(UserGoalDto(userGoal)))
+    }
+
+    @GetMapping("/books-read")
+    fun getBooksRead(
+        @RequestParam(required = false)
+        year: Int?,
+    ): ResponseEntity<BasicResponseDto<Page<BookDTO>>> {
+        val userId = authenticationFacade.currentUserId
+        val yearToLoad = year ?: TimeUtil.getCurrentYearUTC()
+        val userBookActivities = userBookActivityServices.getBooksByStatusInYear(
+            userId, EUserBookReadStatus.READ, yearToLoad, PageRequest.of(0, 50)
+        )
+        val response = userBookActivities.map { BookDTO(it.book) }
+        return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 
     @GetMapping("/history")

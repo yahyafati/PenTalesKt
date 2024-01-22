@@ -35,9 +35,23 @@ class UserBookActivityServices(
 
     override fun getBooksByStatusSince(
         userId: Long, status: EUserBookReadStatus, since: Long, pageable: Pageable
-    ): List<UserBookActivity> {
+    ): Page<UserBookActivity> {
         return userBookActivityRepository.findAllByUserIdAndStatusAndCreatedAtGreaterThanEqual(
             userId, status, Timestamp(since), pageable
+        )
+    }
+
+    override fun getBooksByStatusInYear(
+        userId: Long, status: EUserBookReadStatus, year: Int, pageable: Pageable
+    ): Page<UserBookActivity> {
+        val yearStart = Year.of(year).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+        val yearEnd = Year.of(year + 1).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+        return userBookActivityRepository.findAllByUserIdAndStatusAndCreatedAtBetween(
+            userId = userId,
+            status = status,
+            startTime = Timestamp(yearStart),
+            endTime = Timestamp(yearEnd),
+            pageable = pageable,
         )
     }
 
