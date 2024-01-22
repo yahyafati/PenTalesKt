@@ -1,7 +1,7 @@
-package org.pentales.pentalesrest.config
+package org.pentales.pentalesrest.components
 
 import org.springframework.boot.context.properties.*
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.*
 
 @Component
 data class SecurityConfigProperties(

@@ -14,5 +14,6 @@ data class UserGoalDto(
         target = userGoal.target,
         year = userGoal.goal.year,
         goalId = userGoal.goal.id,
+        current = userGoal.__current,
     )
 }

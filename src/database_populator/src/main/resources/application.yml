@@ -2,8 +2,8 @@ url: jdbc:postgresql://localhost:5432/reading-realm
 username: postgres
 password: password
 driver-class-name: org.postgresql.Driver
-author-dataset-file-path: /Users/yahyahaji/Downloads/GoodReads/author_dataset.csv
-goodreads-dataset-file-path: /Users/yahyahaji/Downloads/GoodReads/goodreads_books.json.gz
+author-dataset-file-path: /Users/yahyahaji/Documents/GoodReads/author_dataset.csv
+goodreads-dataset-file-path: /Users/yahyahaji/Documents/GoodReads/goodreads_books.json.gz
 genres:
   Fantasy:
     - Fantasy

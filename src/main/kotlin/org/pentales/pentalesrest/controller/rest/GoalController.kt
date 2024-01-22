@@ -19,6 +19,11 @@ class GoalController(
     private val userGoalServices: IUserGoalServices,
 ) : IBasicControllerSkeleton<Goal, IGoalServices> {
 
+    companion object {
+
+        private const val DEFAULT_N = 5
+    }
+
     @GetMapping("/year")
     fun getGoalByYear(
         @RequestParam(defaultValue = "", required = false)
@@ -60,5 +65,16 @@ class GoalController(
             userId = userId, target = userGoalDto.target, year = userGoalDto.year
         )
         return ResponseEntity.ok(BasicResponseDto.ok(UserGoalDto(userGoal)))
+    }
+
+    @GetMapping("/history")
+    fun getYears(
+        @RequestParam(required = false)
+        lastN: Int?,
+    ): ResponseEntity<BasicResponseDto<List<UserGoalDto>>> {
+        val userId = authenticationFacade.currentUserId
+        val userGoals = userGoalServices.getHistory(userId, lastN ?: DEFAULT_N)
+        val response = userGoals.map { UserGoalDto(it) }
+        return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 }

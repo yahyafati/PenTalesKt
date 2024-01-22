@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.config
 
+import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.context.annotation.*
@@ -34,7 +35,7 @@ class SecurityConfig(
             .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
             .addFilterAfter(
                 JWTAuthorizationFilter(
-                    authenticationManager(), securityConfigProperties, userService, jwtService
+                    securityConfigProperties, userService, jwtService
                 ), JWTAuthenticationFilter::class.java
             ).authorizeHttpRequests { auth ->
                 auth.requestMatchers(

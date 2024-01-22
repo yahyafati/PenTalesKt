@@ -1,9 +1,10 @@
 package org.pentales.pentalesrest.security
 
 import com.auth0.jwt.exceptions.*
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.*
 import jakarta.servlet.*
 import jakarta.servlet.http.*
+import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.User
@@ -13,10 +14,9 @@ import org.springframework.http.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.context.*
 import org.springframework.security.core.userdetails.*
-import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.filter.*
 
 class JWTAuthorizationFilter(
-    authenticationManager: AuthenticationManager,
     securityConfigProperties: SecurityConfigProperties,
     private val userService: IUserServices,
     private val jwtService: JwtService
@@ -41,10 +41,10 @@ class JWTAuthorizationFilter(
         val authentication = try {
             getAuthentication(request)
         } catch (ex: JWTVerificationException) {
-            respondUnauthorized(response,  ex)
+            respondUnauthorized(response, ex)
             return
         } catch (ex: UsernameNotFoundException) {
-            respondUnauthorized(response,  ex)
+            respondUnauthorized(response, ex)
             return
         }
         SecurityContextHolder.getContext().authentication = authentication
@@ -55,7 +55,7 @@ class JWTAuthorizationFilter(
         val objectMapper = ObjectMapper()
         val errorModel = GenericErrorModel(
             message = ex.message ?: "Unauthorized",
-            timestamp =  System.currentTimeMillis(),
+            timestamp = System.currentTimeMillis(),
             statusCode = HttpStatus.UNAUTHORIZED.value(),
             exception = ex,
         )

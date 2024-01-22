@@ -21,5 +21,10 @@ class UserGoal(
     @MapsId("goalId")
     var goal: Goal = Goal()
 
-) : IAudit() {}
+) : IAudit() {
+
+    @Transient
+    var __current: Int = 0
+
+}
 
