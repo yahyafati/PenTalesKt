@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/reading-realm
-    username:
-    password:
+    username: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -11,6 +11,12 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     active: prod # Set the active profile here, e.g., "dev" or "prod"
+
+  flyway:
+    user: postgres
+    password: password
+
+
 
 server:
   port: 8080 # Specify the port on which your Spring Boot application will run
