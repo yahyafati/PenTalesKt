@@ -42,3 +42,4 @@ certs/
 *.pem
 logs/
 .env
+flyway.properties
