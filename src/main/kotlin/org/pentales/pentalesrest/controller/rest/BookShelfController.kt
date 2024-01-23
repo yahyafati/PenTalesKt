@@ -18,19 +18,24 @@ class BookShelfController(
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
-    fun validateAccess(bookShelf: BookShelf, requester: User) {
-        if (bookShelf.access == EAccessLevel.PRIVATE) {
-            if (bookShelf.owner.id != requester.id) {
-                throw ResponseStatusException(HttpStatus.NOT_FOUND, "BookShelf not found or not accessible")
+    companion object {
+
+        fun validateAccess(bookShelf: BookShelf, requester: User) {
+            if (bookShelf.access == EAccessLevel.PRIVATE) {
+                if (bookShelf.owner.id != requester.id) {
+                    throw ResponseStatusException(HttpStatus.NOT_FOUND, "BookShelf not found or not accessible")
+                }
             }
+            // TODO check for FRIENDS access level
         }
-        // TODO check for FRIENDS access level
     }
 
     @GetMapping
     fun getAll(
         @RequestParam(required = false)
         username: String?,
+        @RequestParam(required = false)
+        bookId: Long?,
         @RequestParam(required = false)
         page: Int?,
         @RequestParam(required = false)
@@ -40,8 +45,23 @@ class BookShelfController(
     ): ResponseEntity<BasicResponseDto<Page<BookShelfDto>>> {
         val currentUsername = authenticationFacade.forcedCurrentUser.username
         val pageable = PageRequest.of(page ?: 0, size ?: 10, Sort.by(sort ?: "id"))
-        val response =
-            bookShelfServices.findAllByOwnerUsername(username ?: currentUsername, pageable).map { BookShelfDto(it) }
+        val response = bookShelfServices.findAllByOwnerUsername(username ?: currentUsername, pageable)
+        val dtos = response.map { BookShelfDto(it) }
+        if (bookId != null) {
+            dtos.forEach { dto -> dto.bookAdded = dto.books.any { it.id == bookId } }
+        }
+        return ResponseEntity.ok(BasicResponseDto.ok(dtos))
+    }
+
+    @PostMapping
+    fun create(
+        @RequestBody
+        dto: BookShelfCreateDto
+    ): ResponseEntity<BasicResponseDto<BookShelfDto>> {
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val bookShelf = dto.toModel(currentUser)
+        val savedShelf = bookShelfServices.saveNew(bookShelf)
+        val response = BookShelfDto(savedShelf)
         return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 
@@ -73,5 +93,17 @@ class BookShelfController(
         validateAccess(bookShelf, currentUser)
         val dto = BookShelfDto(bookShelf)
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<Unit>> {
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val bookShelf = bookShelfServices.findById(id)
+        validateAccess(bookShelf, currentUser)
+        bookShelfServices.deleteById(id)
+        return ResponseEntity.ok(BasicResponseDto.ok(Unit))
     }
 }
