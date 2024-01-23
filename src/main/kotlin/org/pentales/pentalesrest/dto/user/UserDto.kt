@@ -9,6 +9,7 @@ data class UserDto(
     val firstName: String? = null,
     val lastName: String? = null,
     val profilePicture: String? = null,
+    val isFollowed: Boolean = false,
 ) {
 
     constructor(user: User) : this(
@@ -17,7 +18,8 @@ data class UserDto(
         email = user.email,
         firstName = user.profile?.firstName,
         lastName = user.profile?.lastName,
-        profilePicture = user.profile?.profilePicture
+        profilePicture = user.profile?.profilePicture,
+        isFollowed = user.__isFollowed,
     )
 
     fun toUser(): User {

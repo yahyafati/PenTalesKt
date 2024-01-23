@@ -14,9 +14,10 @@ class ActivityViewServices(
     private val shareRepository: ShareRepository,
     private val ratingRepository: RatingRepository,
     private val commentRepository: CommentRepository,
+    private val followerServices: IFollowerServices,
 ) : IActivityViewServices {
 
-    override fun getActivities(pageable: Pageable): Page<ActivityView> {
+    override fun getActivities(currentUser: User, pageable: Pageable): Page<ActivityView> {
         val activities = activityViewRepository.findAll(pageable)
         activities.forEach { activity ->
             var rating: Rating? = null
@@ -43,6 +44,7 @@ class ActivityViewServices(
                 val book = rating.book
                 val averageRating = ratingRepository.findAverageRatingByBook(book) ?: 0.0
                 book.__averageRating = averageRating
+                rating.user.__isFollowed = followerServices.isFollowing(currentUser, rating.user)
             }
 
         }

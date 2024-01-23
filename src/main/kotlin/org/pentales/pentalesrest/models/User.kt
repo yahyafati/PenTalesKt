@@ -28,6 +28,8 @@ class User(
     var profile: UserProfile? = null,
 ) : IModel(), UserDetails {
 
+    @Transient
+    var __isFollowed: Boolean = false
     private var isAccountNonExpired: Boolean = true
     private var isAccountNonLocked: Boolean = true
 

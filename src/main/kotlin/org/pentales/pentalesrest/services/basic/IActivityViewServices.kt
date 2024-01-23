@@ -1,10 +1,11 @@
 package org.pentales.pentalesrest.services.basic
 
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.view.*
 import org.springframework.data.domain.*
 
 interface IActivityViewServices {
 
-    fun getActivities(pageable: Pageable): Page<ActivityView>
+    fun getActivities(currentUser: User, pageable: Pageable): Page<ActivityView>
 
 }
