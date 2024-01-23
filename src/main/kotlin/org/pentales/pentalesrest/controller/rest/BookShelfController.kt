@@ -45,6 +45,18 @@ class BookShelfController(
         return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 
+    @PostMapping
+    fun create(
+        @RequestBody
+        dto: BookShelfCreateDto
+    ): ResponseEntity<BasicResponseDto<BookShelfDto>> {
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val bookShelf = dto.toModel(currentUser)
+        val savedShelf = bookShelfServices.saveNew(bookShelf)
+        val response = BookShelfDto(savedShelf)
+        return ResponseEntity.ok(BasicResponseDto.ok(response))
+    }
+
     @GetMapping("/{id}")
     fun getOne(
         @PathVariable
@@ -73,5 +85,17 @@ class BookShelfController(
         validateAccess(bookShelf, currentUser)
         val dto = BookShelfDto(bookShelf)
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<Unit>> {
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val bookShelf = bookShelfServices.findById(id)
+        validateAccess(bookShelf, currentUser)
+        bookShelfServices.deleteById(id)
+        return ResponseEntity.ok(BasicResponseDto.ok(Unit))
     }
 }

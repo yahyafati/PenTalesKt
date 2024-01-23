@@ -6,20 +6,24 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 
 data class BookShelfDto(
+    var id: Long = 0,
     var title: String = "",
     var description: String = "",
     var access: EAccessLevel = EAccessLevel.PRIVATE,
     var books: List<BookDTO> = listOf(),
     var owner: UserDto = UserDto(),
     var readLater: Boolean = false,
+    val shelfType: EShelfType = EShelfType.NORMAL,
 ) {
 
     constructor(bookShelf: BookShelf) : this(
+        id = bookShelf.id,
         title = bookShelf.title,
         description = bookShelf.description,
         access = bookShelf.access,
         books = bookShelf.books.map { BookDTO(it.book) },
         owner = UserDto(bookShelf.owner),
         readLater = bookShelf.readLater,
+        shelfType = if (bookShelf.readLater) EShelfType.READ_LATER else EShelfType.NORMAL
     )
 }
