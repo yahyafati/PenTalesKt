@@ -72,9 +72,6 @@ tasks {
 }
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/reading-realm"
-    user = "postgres"
-    password = "password"
-    locations = arrayOf("filesystem:src/main/resources/db/migration")
+    configFiles = arrayOf("flyway.properties")
 }
 

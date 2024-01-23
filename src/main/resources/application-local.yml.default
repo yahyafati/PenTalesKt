@@ -1,25 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pen-tales
-    username: postgres
-    password: password
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/reading_realm
+    username: <POSTGRES USERNAME> # Change to your username
+    password: <POSTGRES USERNAME> # Change to your password
   jpa:
-    hibernate:
-      ddl-auto: update # You can use "create" for initial setup or "update" for updates
     show-sql: true # Set to true to see SQL queries in the console
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: REPLACE-WITH-YOUR-GOOGLE-CLIENT-ID
+            client-secret: REPLACE-WITH-YOUR-GOOGLE-CLIENT-SECRET
+            redirect-uri: REPLACE-WITH-YOUR-REDIRECT-URI
+            scope:
+              - scope1
+              - scope2
 server:
   port: 8080 # Specify the port on which your Spring Boot application will run
 
-org:
-  pen-tales:
-    security:
-      jwt:
-        secret: secret # Secret key for JWT signing
-        expiration: 86400000 # Token validity time in milliseconds
-        header: Authorization # Header key for JWT
-        prefix: "Bearer " # Prefix for JWT
-        issuer: pen-tales # Issuer of the token
-      login-url: /api/auth/login # Login URL
-      register-url: /api/auth/register # Registration URL
 
