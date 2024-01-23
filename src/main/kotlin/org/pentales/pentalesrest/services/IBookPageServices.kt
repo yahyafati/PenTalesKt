@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.services
 
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.book.*
 import org.springframework.data.domain.*
 
 interface IBookPageServices {

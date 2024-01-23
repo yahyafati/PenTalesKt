@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.controller.rest.book
 
 import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*

@@ -1,17 +1,13 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.share
 
 import org.pentales.pentalesrest.models.*
 
-data class ShareDto(
-    val id: Long? = 0,
-    val quote: String? = "",
-    var user: UserDto = UserDto(),
+class AddShareDto(
+    var quote: String? = "",
 ) {
 
     constructor(share: Share) : this(
-        id = share.id,
         quote = share.shareQuote,
-        user = UserDto(share.user),
     )
 
     fun toActivityShare(

@@ -12,7 +12,11 @@ interface IUserBookActivityServices {
     fun getBooksCountByStatus(userId: Long, status: EUserBookReadStatus): Int
     fun getBooksByStatusSince(
         userId: Long, status: EUserBookReadStatus, since: Long, pageable: Pageable
-    ): List<UserBookActivity>
+    ): Page<UserBookActivity>
+
+    fun getBooksByStatusInYear(
+        userId: Long, status: EUserBookReadStatus, year: Int, pageable: Pageable
+    ): Page<UserBookActivity>
 
     fun getBooksCountByStatusSince(userId: Long, status: EUserBookReadStatus, since: Long): Int
 

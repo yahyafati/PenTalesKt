@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.config
 import com.auth0.jwt.*
 import com.auth0.jwt.algorithms.*
 import com.auth0.jwt.interfaces.*
+import org.pentales.pentalesrest.components.*
 import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 import java.time.*
@@ -37,8 +38,8 @@ class JwtService(securityConfigProperties: SecurityConfigProperties) {
         extraClaims.forEach { (key, value) -> jwtBuilder.withClaim(key, value.toString()) }
 
         return jwtBuilder.withArrayClaim(
-                "authorities", userDetails.authorities.map { it.authority }.toTypedArray<String?>()
-            ).withSubject(userDetails.username).withIssuedAt(Instant.now()).withIssuer(jwtProperties.issuer)
+            "authorities", userDetails.authorities.map { it.authority }.toTypedArray<String?>()
+        ).withSubject(userDetails.username).withIssuedAt(Instant.now()).withIssuer(jwtProperties.issuer)
             .withExpiresAt(Date(System.currentTimeMillis() + jwtProperties.expiration)).sign(getSignInKey())
     }
 

@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.user
 
 import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.*

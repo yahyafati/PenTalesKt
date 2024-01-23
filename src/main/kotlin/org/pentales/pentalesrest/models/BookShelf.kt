@@ -15,4 +15,10 @@ class BookShelf(
 
     @OneToMany(mappedBy = "bookShelf", cascade = [CascadeType.ALL], orphanRemoval = true)
     var books: MutableList<BookShelfBook> = mutableListOf(),
-) : IModel() {}
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    var owner: User = User(),
+) : IModel() {
+
+    var readLater: Boolean = false
+}

@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.services.basic.impl
 
-import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*

@@ -1,8 +1,10 @@
 package org.pentales.pentalesrest.controller.rest
 
 import jakarta.validation.*
+import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -24,9 +26,7 @@ class AuthController(
         val user = authServices.register(registerUser)
         val token = jwtService.generateToken(user)
         val headerToken = securityConfigProperties.jwt.header to securityConfigProperties.jwt.prefix + " " + token
-        return ResponseEntity
-            .ok()
-            .header(headerToken.first, headerToken.second)
+        return ResponseEntity.ok().header(headerToken.first, headerToken.second)
             .body(BasicResponseDto.ok(UserDto(user), "User registered successfully"))
     }
 
@@ -40,7 +40,6 @@ class AuthController(
         val message = "$username is ${if (isAvailable) "available" else "not available"}"
         return ResponseEntity.ok(BasicResponseDto.ok(isAvailable, message))
     }
-
 
     @GetMapping("/current")
     fun getCurrentUser(): ResponseEntity<UserDto> {

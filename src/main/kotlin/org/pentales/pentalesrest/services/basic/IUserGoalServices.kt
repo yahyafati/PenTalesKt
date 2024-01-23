@@ -13,4 +13,8 @@ interface IUserGoalServices {
 
     fun setYearsGoal(userId: Long, target: Int, year: Int): UserGoal
 
+    fun getUserGoalStatusByYear(userId: Long, year: Int): UserGoal?
+
+    fun getHistory(userId: Long, lastN: Int): List<UserGoal>
+
 }

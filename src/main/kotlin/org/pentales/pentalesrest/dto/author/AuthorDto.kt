@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.dto
+package org.pentales.pentalesrest.dto.author
 
 import org.pentales.pentalesrest.models.*
 
@@ -18,5 +18,5 @@ class AuthorDto(
             name = name,
         )
     }
-    
+
 }
