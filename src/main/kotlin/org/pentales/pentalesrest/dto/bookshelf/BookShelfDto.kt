@@ -14,6 +14,7 @@ data class BookShelfDto(
     var owner: UserDto = UserDto(),
     var readLater: Boolean = false,
     val shelfType: EShelfType = EShelfType.NORMAL,
+    var bookAdded: Boolean? = null,
 ) {
 
     constructor(bookShelf: BookShelf) : this(

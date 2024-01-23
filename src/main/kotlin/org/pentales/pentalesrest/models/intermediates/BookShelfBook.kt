@@ -7,7 +7,7 @@ import org.pentales.pentalesrest.models.keys.*
 @Entity
 class BookShelfBook(
     @EmbeddedId
-    var id: BookShelfBookKey = BookShelfBookKey(), var sortOrder: Int = 0,
+    var id: BookShelfBookKey = BookShelfBookKey(),
 
     @MapsId("bookId")
     @ManyToOne
@@ -15,5 +15,7 @@ class BookShelfBook(
 
     @MapsId("bookShelfId")
     @ManyToOne
-    var bookShelf: BookShelf = BookShelf()
-) {}
+    var bookShelf: BookShelf = BookShelf(),
+
+    var sortOrder: Int = 0,
+)

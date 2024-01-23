@@ -10,4 +10,5 @@ interface BookShelfRepository : IRepoSpecification<BookShelf, Long> {
     fun findAllByOwnerUsername(username: String, pageable: Pageable): Page<BookShelf>
     fun findByOwnerAndReadLaterIsTrue(owner: User): BookShelf
     fun findByOwnerUsernameAndReadLaterIsTrue(username: String): BookShelf
+    fun existsByOwnerAndId(owner: User, id: Long): Boolean
 }

@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.controller.rest.book
 import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
@@ -16,6 +17,7 @@ class BookController(
     private val bookServices: IBookServices,
     private val userBookStatusServices: IUserBookStatusServices,
     private val authenticationFacade: IAuthenticationFacade,
+    private val bookShelfServices: IBookShelfServices,
 ) {
 
     val service: IBookServices
@@ -104,6 +106,22 @@ class BookController(
         val book = bookDTO.toBook()
         val updatedBook = service.update(id, book, includeFields ?: emptyList())
         return ResponseEntity.ok(BookDTO(updatedBook))
+    }
+
+    @PostMapping("/{id}/add-to-shelf")
+    fun addToShelf(
+        @PathVariable
+        id: Long,
+        @RequestBody
+        list: Set<Long>
+    ): ResponseEntity<Unit> {
+        val user = authenticationFacade.forcedCurrentUser
+        bookShelfServices.addBookToShelves(user, Book(id = id), list.map {
+            val shelf = BookShelf()
+            shelf.id = it
+            shelf
+        }, true)
+        return ResponseEntity.ok().build()
     }
 
     @DeleteMapping("/{id}")
