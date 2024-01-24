@@ -11,7 +11,8 @@ import java.time.*
 
 @Service
 class UserBookActivityServices(
-    private val userBookActivityRepository: UserBookActivityRepository
+    private val userBookActivityRepository: UserBookActivityRepository,
+    private val ratingRepository: RatingRepository,
 ) : IUserBookActivityServices {
 
     fun save(userBookActivity: UserBookActivity): UserBookActivity {
@@ -46,13 +47,19 @@ class UserBookActivityServices(
     ): Page<UserBookActivity> {
         val yearStart = Year.of(year).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
         val yearEnd = Year.of(year + 1).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
-        return userBookActivityRepository.findAllByUserIdAndStatusAndCreatedAtBetween(
+        val booksRead = userBookActivityRepository.findAllByUserIdAndStatusAndCreatedAtBetween(
             userId = userId,
             status = status,
             startTime = Timestamp(yearStart),
             endTime = Timestamp(yearEnd),
             pageable = pageable,
         )
+        booksRead.forEach {
+            it.book.__averageRating = ratingRepository.findAverageRatingByBook(Book(id = it.book.id)) ?: 0.0
+            it.book.__ratingCount = ratingRepository.countAllByBook(Book(id = it.book.id))
+        }
+
+        return booksRead
     }
 
     override fun getBooksCountByStatusSince(userId: Long, status: EUserBookReadStatus, since: Long): Int {

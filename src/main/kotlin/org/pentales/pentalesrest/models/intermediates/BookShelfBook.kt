@@ -11,7 +11,7 @@ class BookShelfBook(
 
     @MapsId("bookId")
     @ManyToOne
-    var book: Book = Book(),
+    var book: ActivityBook = ActivityBook(),
 
     @MapsId("bookShelfId")
     @ManyToOne

@@ -73,13 +73,13 @@ class GoalController(
     fun getBooksRead(
         @RequestParam(required = false)
         year: Int?,
-    ): ResponseEntity<BasicResponseDto<Page<BookDTO>>> {
+    ): ResponseEntity<BasicResponseDto<Page<ActivityBookDto>>> {
         val userId = authenticationFacade.currentUserId
         val yearToLoad = year ?: TimeUtil.getCurrentYearUTC()
         val userBookActivities = userBookActivityServices.getBooksByStatusInYear(
             userId, EUserBookReadStatus.READ, yearToLoad, PageRequest.of(0, 50)
         )
-        val response = userBookActivities.map { BookDTO(it.book) }
+        val response = userBookActivities.map { ActivityBookDto(it.book) }
         return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 

@@ -9,8 +9,8 @@ class UserBookActivity(
     @ManyToOne
     var user: User = User(),
     @ManyToOne
-    var book: Book = Book(),
+    var book: ActivityBook = ActivityBook(),
 
     @Enumerated(EnumType.STRING)
     var status: EUserBookReadStatus = EUserBookReadStatus.NONE,
-) : IModel() {}
+) : IModel()

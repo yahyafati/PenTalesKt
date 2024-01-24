@@ -17,6 +17,7 @@ import kotlin.reflect.full.*
 class BookShelfServices(
     private val bookShelfRepository: BookShelfRepository,
     private val bookShelfBookRepository: IBookshelfBookRepository,
+    private val ratingRepository: RatingRepository,
 ) : IBookShelfServices {
 
     fun filterShelvesByOwner(shelves: List<BookShelf>, user: User): List<BookShelf> {
@@ -36,7 +37,13 @@ class BookShelfServices(
     }
 
     override fun findReadLater(username: String): BookShelf {
-        return bookShelfRepository.findByOwnerUsernameAndReadLaterIsTrue(username)
+        val readLater = bookShelfRepository.findByOwnerUsernameAndReadLaterIsTrue(username)
+        readLater.books.forEach { shelfBook ->
+            shelfBook.book.__averageRating =
+                ratingRepository.findAverageRatingByBook(Book(id = shelfBook.book.id)) ?: 0.0
+            shelfBook.book.__ratingCount = ratingRepository.countAllByBook(Book(id = shelfBook.book.id))
+        }
+        return readLater
     }
 
     @Transactional
@@ -49,10 +56,11 @@ class BookShelfServices(
         if (removeExisting) {
             removeBookFromAllShelves(user, book)
         }
+        val activityBook = ActivityBook(book)
         val filteredShelves = filterShelvesByOwner(shelves, user)
         val bookShelfBooks = filteredShelves.map {
             val key = BookShelfBookKey(it.id, book.id)
-            BookShelfBook(key, book, it)
+            BookShelfBook(key, activityBook, it)
         }
         val saved = bookShelfBookRepository.saveAll(bookShelfBooks)
         return saved.size

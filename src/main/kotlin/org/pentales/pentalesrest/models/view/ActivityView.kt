@@ -37,6 +37,9 @@ data class ActivityView(
     @Transient
     var share: Share? = null
 
+    @Transient
+    var activityBook: ActivityBook? = null
+
     fun getEffectiveRating(): Rating? {
         return when (type) {
             EActivityType.RATING -> rating
@@ -62,5 +65,7 @@ data class ActivityView(
                 share?.id = id
             }
         }
+
+        activityBook = ActivityBook()
     }
 }
