@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.dto.activity
 
 import com.fasterxml.jackson.annotation.*
+import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.dto.ratingComment.*
 import org.pentales.pentalesrest.dto.share.*
@@ -12,7 +13,8 @@ data class ActivityDto(
     var id: Long = 0,
     var type: EActivityType = EActivityType.RATING,
     var updatedAt: Long = System.currentTimeMillis(),
-    var rating: RatingDto? = RatingDto(),
+    var rating: ActivityRatingDto? = ActivityRatingDto(),
+    var book: ActivityBookDto? = ActivityBookDto(),
     var data: Any? = null,
 ) {
 
@@ -20,7 +22,8 @@ data class ActivityDto(
         id = activityView.id
         type = activityView.type
         updatedAt = activityView.updatedAt.time
-        rating = activityView.getEffectiveRating()?.let { RatingDto(it) }
+        rating = activityView.getEffectiveRating()?.let { ActivityRatingDto(it) }
+        book = activityView.activityBook?.let { ActivityBookDto(it) }
         data = when (type) {
             EActivityType.RATING -> null
             EActivityType.COMMENT -> CommentDto(activityView.comment!!)

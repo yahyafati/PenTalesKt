@@ -22,7 +22,7 @@ class UserBookStatusServices(
         userBookStatus.book = Book(id = bookId)
         userBookStatus.user = User(id = userId)
         val savedStatus = userBookStatusRepository.save(userBookStatus)
-        val userBookActivity = UserBookActivity(User(id = userId), Book(id = bookId), status = status)
+        val userBookActivity = UserBookActivity(User(id = userId), ActivityBook(id = bookId), status = status)
         userBookActivityServices.addBookActivity(userBookActivity)
         return savedStatus
     }

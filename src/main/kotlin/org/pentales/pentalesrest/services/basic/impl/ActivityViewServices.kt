@@ -42,8 +42,10 @@ class ActivityViewServices(
 
             if (rating != null) {
                 val book = rating.book
-                val averageRating = ratingRepository.findAverageRatingByBook(book) ?: 0.0
-                book.__averageRating = averageRating
+                val activityBook = ActivityBook(book)
+                activityBook.__averageRating = ratingRepository.findAverageRatingByBook(book) ?: 0.0
+                activityBook.__ratingCount = ratingRepository.countAllByBook(book)
+                activity.activityBook = activityBook
                 rating.user.__isFollowed = followerServices.isFollowing(currentUser, rating.user)
             }
 

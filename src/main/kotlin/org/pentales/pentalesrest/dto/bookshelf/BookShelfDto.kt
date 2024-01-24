@@ -10,7 +10,7 @@ data class BookShelfDto(
     var title: String = "",
     var description: String = "",
     var access: EAccessLevel = EAccessLevel.PRIVATE,
-    var books: List<BookDTO> = listOf(),
+    var books: List<ActivityBookDto> = listOf(),
     var owner: UserDto = UserDto(),
     var readLater: Boolean = false,
     val shelfType: EShelfType = EShelfType.NORMAL,
@@ -22,7 +22,7 @@ data class BookShelfDto(
         title = bookShelf.title,
         description = bookShelf.description,
         access = bookShelf.access,
-        books = bookShelf.books.map { BookDTO(it.book) },
+        books = bookShelf.books.map { ActivityBookDto(it.book) },
         owner = UserDto(bookShelf.owner),
         readLater = bookShelf.readLater,
         shelfType = if (bookShelf.readLater) EShelfType.READ_LATER else EShelfType.NORMAL
