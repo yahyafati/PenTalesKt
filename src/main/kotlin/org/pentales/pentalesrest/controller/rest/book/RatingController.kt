@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/rating")
 class RatingController(
     private val ratingServices: IRatingServices,
-    private val activityShareServices: IShareServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
@@ -48,6 +47,26 @@ class RatingController(
         val rating = ratingDto.toRating(book, user)
         val savedRating = ratingServices.save(rating)
         return ResponseEntity.ok(BasicResponseDto.ok(RatingDto(savedRating)))
+    }
+
+    @PatchMapping("/{id}/like")
+    fun likeRating(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val like = ratingServices.likeRating(Rating(id = id), user)
+        return ResponseEntity.ok(BasicResponseDto.ok(like))
+    }
+
+    @PatchMapping("/{id}/unlike")
+    fun unlikeRating(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val like = ratingServices.unlikeRating(Rating(id = id), user)
+        return ResponseEntity.ok(BasicResponseDto.ok(like))
     }
 
     @DeleteMapping("/{id}")

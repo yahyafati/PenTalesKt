@@ -11,7 +11,9 @@ data class RatingDto(
     var user: UserDto = UserDto(),
     var book: BookDTO = BookDTO(),
     var createdAt: Long = 0,
-    var updatedAt: Long = 0
+    var updatedAt: Long = 0,
+    var likes: Long = 0,
+    var isLiked: Boolean = false,
 ) {
 
     constructor(rating: Rating) : this(
@@ -21,17 +23,22 @@ data class RatingDto(
         user = UserDto(rating.user),
         book = BookDTO(rating.book),
         createdAt = rating.createdAt.time,
-        updatedAt = rating.updatedAt.time
+        updatedAt = rating.updatedAt.time,
+        likes = rating.__likes,
+        isLiked = rating.__isLiked,
     )
 
     fun toRating(): Rating {
         val rating = Rating(
+            id = id,
             value = value,
             review = review,
             user = User(user.id),
             book = Book(book.id),
         )
-        rating.id = id
+        rating.__likes = likes
+        rating.__isLiked = isLiked
+
         return rating
     }
 

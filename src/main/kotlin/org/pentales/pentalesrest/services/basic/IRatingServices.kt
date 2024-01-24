@@ -24,4 +24,7 @@ interface IRatingServices {
     fun deleteByBookId(bookId: Long)
     fun deleteByUserId(userId: Long)
 
+    fun likeRating(rating: Rating, user: User): Boolean
+    fun unlikeRating(rating: Rating, user: User): Boolean
+
 }
