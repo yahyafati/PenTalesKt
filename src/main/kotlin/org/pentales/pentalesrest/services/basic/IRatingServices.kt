@@ -19,6 +19,7 @@ interface IRatingServices {
     fun findById(id: Long): Rating
 
     fun save(entity: Rating): Rating
+    fun saveValue(value: Int, book: Book, user: User): Rating
     fun deleteById(id: Long)
     fun deleteByBookId(bookId: Long)
     fun deleteByUserId(userId: Long)

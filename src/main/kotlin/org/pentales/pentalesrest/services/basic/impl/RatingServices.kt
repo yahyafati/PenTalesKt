@@ -41,6 +41,16 @@ class RatingServices(
         return repository.save(entity)
     }
 
+    override fun saveValue(value: Int, book: Book, user: User): Rating {
+        val existing = repository.findByBookAndUser(book, user)
+        if (existing != null) {
+            existing.value = value
+            return repository.save(existing)
+        }
+        val rating = Rating(book = book, user = user, value = value)
+        return repository.save(rating)
+    }
+
     override fun deleteById(id: Long) {
         repository.deleteById(id)
     }

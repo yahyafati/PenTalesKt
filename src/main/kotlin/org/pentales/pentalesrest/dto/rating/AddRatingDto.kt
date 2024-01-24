@@ -2,8 +2,9 @@ package org.pentales.pentalesrest.dto.rating
 
 import org.pentales.pentalesrest.models.*
 
-class AddRatingDto(
-    var value: Int = 0, var review: String = ""
+data class AddRatingDto(
+    var value: Int = 0,
+    var review: String = "",
 ) {
 
     constructor(rating: Rating) : this(rating.value, rating.review)
