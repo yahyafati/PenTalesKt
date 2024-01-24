@@ -1,11 +1,10 @@
 package org.pentales.pentalesrest.controller.rest.book
 
-import org.pentales.pentalesrest.controller.rest.*
+import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
-import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -22,25 +21,6 @@ class RatingController(
         const val MAX_PAGE_SIZE = 50
     }
 
-    @GetMapping("/{bookId}")
-    fun getAll(
-        @PathVariable
-        bookId: Long,
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "")
-        sort: String?,
-        @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?,
-    ): ResponseEntity<Page<RatingDto>> {
-
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val response = ratingServices.findByBookId(bookId, pageRequest).map { RatingDto(it) }
-        return ResponseEntity.ok(response)
-    }
-
     @GetMapping("/{id}")
     fun getRatingById(
         @PathVariable
@@ -55,13 +35,19 @@ class RatingController(
         @PathVariable
         bookId: Long,
         @RequestBody
-        ratingDto: AddRatingDto
-    ): ResponseEntity<RatingDto> {
+        ratingDto: AddRatingDto,
+        @RequestParam(defaultValue = "false")
+        valueOnly: Boolean? = false
+    ): ResponseEntity<BasicResponseDto<RatingDto>> {
         val book = Book(id = bookId)
         val user = authenticationFacade.forcedCurrentUser
+        if (valueOnly == true) {
+            val savedRating = ratingServices.saveValue(ratingDto.value, book, user)
+            return ResponseEntity.ok(BasicResponseDto.ok(RatingDto(savedRating)))
+        }
         val rating = ratingDto.toRating(book, user)
         val savedRating = ratingServices.save(rating)
-        return ResponseEntity.ok(RatingDto(savedRating))
+        return ResponseEntity.ok(BasicResponseDto.ok(RatingDto(savedRating)))
     }
 
     @DeleteMapping("/{id}")

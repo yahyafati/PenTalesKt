@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.repo
 
-import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.base.*
 import org.springframework.data.domain.*
@@ -19,7 +19,7 @@ interface RatingRepository : IRepoSpecification<Rating, Long> {
         book: Book
     ): Long
 
-    @Query("SELECT new org.pentales.pentalesrest.dto.RatingDistribution(r.value, COUNT(r)) FROM Rating r WHERE r.book = :book GROUP BY r.value")
+    @Query("SELECT new org.pentales.pentalesrest.dto.rating.RatingDistribution(r.value, COUNT(r)) FROM Rating r WHERE r.book = :book GROUP BY r.value")
     fun findRatingDistributionByBook(book: Book): List<RatingDistribution>
 
     fun findAllByUser(user: User, pageable: Pageable): Page<Rating>

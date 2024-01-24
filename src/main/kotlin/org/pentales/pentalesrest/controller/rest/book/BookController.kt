@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.controller.rest.book
 import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
+import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
@@ -54,10 +55,71 @@ class BookController(
     @GetMapping("/{id}")
     fun getBookById(
         @PathVariable
-        id: Long
-    ): ResponseEntity<BookDTO> {
+        id: Long,
+    ): ResponseEntity<BasicResponseDto<BookDTO>> {
         val book = service.findById(id)
-        return ResponseEntity.ok(BookDTO(book))
+        return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(book)))
+    }
+
+    @GetMapping("/{id}/rating-info")
+    fun getBookRatingById(
+        @PathVariable
+        id: Long,
+    ): ResponseEntity<BasicResponseDto<BookRatingInfoDto>> {
+        val rating = bookServices.getBookRatingInfo(id)
+        return ResponseEntity.ok(BasicResponseDto.ok(BookRatingInfoDto(rating)))
+    }
+
+    @GetMapping("/{bookId}/rating/user")
+    fun getBookRatingByUserId(
+        @PathVariable
+        bookId: Long,
+        @RequestParam(required = false)
+        userId: Long?,
+    ): ResponseEntity<BasicResponseDto<RatingDto?>> {
+        val currentUserId = authenticationFacade.forcedCurrentUser.id
+        val rating = bookServices.getBookRatingByUser(bookId = bookId, userId = userId ?: currentUserId)
+        return ResponseEntity.ok(BasicResponseDto.ok(rating?.let { RatingDto(it) }))
+    }
+
+    @GetMapping("/{id}/rating")
+    fun getBookRatingById(
+        @PathVariable
+        id: Long,
+        @RequestParam(defaultValue = "0")
+        page: Int?,
+        @RequestParam(defaultValue = "10")
+        size: Int?,
+        @RequestParam(defaultValue = "")
+        sort: String?,
+        @RequestParam(defaultValue = "ASC")
+        direction: Sort.Direction?,
+    ): ResponseEntity<BasicResponseDto<Page<RatingDto>>> {
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(
+            page, size, sort, direction
+        )
+        val ratings = bookServices.getBookRatings(id, pageRequest)
+        return ResponseEntity.ok(BasicResponseDto.ok(ratings.map { RatingDto(it) }))
+    }
+
+    @GetMapping("/{bookId}/related")
+    fun getRelatedBooks(
+        @PathVariable
+        bookId: Long,
+        @RequestParam(defaultValue = "0")
+        page: Int?,
+        @RequestParam(defaultValue = "10")
+        size: Int?,
+        @RequestParam(defaultValue = "")
+        sort: String?,
+        @RequestParam(defaultValue = "ASC")
+        direction: Sort.Direction?,
+    ): ResponseEntity<BasicResponseDto<Page<BookDTO>>> {
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(
+            page, size, sort, direction
+        )
+        val books = bookServices.getRelatedBooks(bookId, pageRequest)
+        return ResponseEntity.ok(BasicResponseDto.ok(books.map { BookDTO(it) }))
     }
 
     @GetMapping("/{bookId}/status")
