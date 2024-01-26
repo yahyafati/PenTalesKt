@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest
 
-import org.pentales.pentalesrest.controller.rest.book.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.security.*
@@ -20,7 +19,7 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
             direction: Sort.Direction?,
         ): PageRequest {
             val pageNumber = (page ?: 0).coerceAtLeast(0)
-            val pageSize = (size ?: 10).coerceAtMost(RatingController.MAX_PAGE_SIZE).coerceAtLeast(1)
+            val pageSize = (size ?: 10).coerceIn(1, MAX_PAGE_SIZE)
             val sortDirection = direction ?: Sort.Direction.ASC
 
             val pageRequest = if (sort.isNullOrEmpty()) {
@@ -33,7 +32,8 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
             return pageRequest
         }
 
-        const val MAX_PAGE_SIZE = 50
+        private const val MAX_PAGE_SIZE = 50
+
     }
 
     val service: Service

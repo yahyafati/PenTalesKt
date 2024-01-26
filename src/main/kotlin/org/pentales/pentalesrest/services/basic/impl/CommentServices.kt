@@ -1,15 +1,21 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
+import org.springframework.transaction.annotation.*
 
 @Service
 class CommentServices(
     private val repository: CommentRepository,
 ) : ICommentServices {
+
+    override fun getCommentById(id: Long): Comment {
+        return repository.findById(id).orElseThrow { NoEntityWithIdException.create("Comment", id) }
+    }
 
     override fun findAllByRating(rating: Rating, pageable: Pageable): Page<Comment> {
         return repository.findAllByRating(rating, pageable)
@@ -28,8 +34,13 @@ class CommentServices(
         return save(comment)
     }
 
-    override fun deleteById(id: Long) {
-        repository.deleteById(id)
+    @Transactional
+    override fun deleteById(id: Long, user: User): Long {
+        return repository.deleteCommentByIdAndUser(id, user)
+    }
+
+    override fun updateComment(comment: Comment): Comment {
+        TODO("Not yet implemented")
     }
 
 }

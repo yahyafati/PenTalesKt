@@ -16,5 +16,13 @@ enum class EActivityType {
                 else -> throw IllegalArgumentException()
             }
         }
+
+        fun fromString(value: String, default: EActivityType): EActivityType {
+            return try {
+                fromString(value)
+            } catch (e: Exception) {
+                default
+            }
+        }
     }
 }

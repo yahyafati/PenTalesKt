@@ -11,6 +11,7 @@ import org.pentales.pentalesrest.models.view.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ActivityDto(
     var id: Long = 0,
+    var activityId: Long = 0,
     var type: EActivityType = EActivityType.RATING,
     var updatedAt: Long = System.currentTimeMillis(),
     var rating: ActivityRatingDto? = ActivityRatingDto(),
@@ -20,6 +21,7 @@ data class ActivityDto(
 
     constructor(activityView: ActivityView) : this() {
         id = activityView.id
+        activityId = activityView.activityId
         type = activityView.type
         updatedAt = activityView.updatedAt.time
         rating = activityView.getEffectiveRating()?.let { ActivityRatingDto(it) }

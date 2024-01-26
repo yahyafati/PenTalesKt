@@ -2,11 +2,11 @@ package org.pentales.pentalesrest.dto.ratingComment
 
 import org.pentales.pentalesrest.models.*
 
-class AddRatingCommentDto(
+class AddCommentDto(
     var comment: String = "",
 ) {
 
-    fun toRatingComment(user: User, rating: Rating): Comment {
+    fun toComment(user: User, rating: Rating): Comment {
         return Comment(
             comment = comment,
             user = user,
