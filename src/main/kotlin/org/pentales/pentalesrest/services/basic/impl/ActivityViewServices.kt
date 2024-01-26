@@ -15,6 +15,7 @@ class ActivityViewServices(
     private val ratingRepository: RatingRepository,
     private val commentRepository: CommentRepository,
     private val followerServices: IFollowerServices,
+    private val ratingLikeRepository: RatingLikeRepository,
 ) : IActivityViewServices {
 
     override fun getActivities(currentUser: User, pageable: Pageable): Page<ActivityView> {
@@ -47,6 +48,8 @@ class ActivityViewServices(
                 activityBook.__ratingCount = ratingRepository.countAllByBook(book)
                 activity.activityBook = activityBook
                 rating.user.__isFollowed = followerServices.isFollowing(currentUser, rating.user)
+                rating.__likes = ratingLikeRepository.countAllByRating(rating)
+                rating.__isLiked = ratingLikeRepository.existsByRatingAndUser(rating, currentUser)
             }
 
         }

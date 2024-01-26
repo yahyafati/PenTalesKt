@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -13,6 +14,7 @@ import kotlin.reflect.full.*
 @Service
 class RatingServices(
     private val repository: RatingRepository,
+    private val ratingLikeRepository: RatingLikeRepository,
 ) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
@@ -61,6 +63,25 @@ class RatingServices(
 
     override fun deleteByUserId(userId: Long) {
         repository.deleteAllByUser(User(id = userId))
+    }
+
+    override fun likeRating(rating: Rating, user: User): Boolean {
+        val key = UserRatingKey(userId = user.id, ratingId = rating.id)
+        if (ratingLikeRepository.existsById(key)) {
+            return true
+        }
+        val ratingLike = RatingLike(id = key, rating = rating, user = user)
+        ratingLikeRepository.save(ratingLike)
+        return true
+    }
+
+    override fun unlikeRating(rating: Rating, user: User): Boolean {
+        val key = UserRatingKey(userId = user.id, ratingId = rating.id)
+        if (!ratingLikeRepository.existsById(key)) {
+            return false
+        }
+        ratingLikeRepository.deleteById(key)
+        return false
     }
 
 }

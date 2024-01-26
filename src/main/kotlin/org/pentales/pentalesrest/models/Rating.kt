@@ -6,6 +6,10 @@ import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
 class Rating(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    override var id: Long = 0L,
+
     @ManyToOne
     var user: User = User(),
     @ManyToOne
@@ -18,4 +22,11 @@ class Rating(
 
     @OneToMany(mappedBy = "rating", cascade = [CascadeType.REMOVE])
     var comments: List<Comment> = listOf(),
-) : IModel()
+) : IModel() {
+
+    @Transient
+    var __likes: Long = 0
+
+    @Transient
+    var __isLiked: Boolean = false
+}

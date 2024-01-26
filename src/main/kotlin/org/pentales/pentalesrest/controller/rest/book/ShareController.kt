@@ -14,26 +14,29 @@ class ShareController(
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
-    @GetMapping
+    @GetMapping("/{id}")
     fun getRatingShare(
-        @RequestParam(required = true)
+        @PathVariable
         id: Long
     ): ResponseEntity<ShareDto> {
         val share = activityShareServices.getShareById(id = id)
         return ResponseEntity.ok(ShareDto(share))
     }
 
-    @PostMapping
+    @PostMapping("/rating/{ratingId}")
     fun shareRating(
-        @RequestParam(required = true)
+        @PathVariable
         ratingId: Long,
-        @RequestBody
-        shareDto: AddShareDto
+        @RequestBody(required = false)
+        shareDto: AddShareDto?
     ): ResponseEntity<ShareDto> {
         val user = authenticationFacade.forcedCurrentUser
-        val rating = Rating()
-        rating.id = ratingId
-        val share = shareDto.toActivityShare(rating = rating, user = user)
+        val rating = Rating(id = ratingId)
+
+        val share = shareDto?.toActivityShare(rating = rating, user = user) ?: Share(
+            rating = rating,
+            user = user,
+        )
         val savedShare = activityShareServices.saveNew(share)
         return ResponseEntity.ok(ShareDto(savedShare))
     }
