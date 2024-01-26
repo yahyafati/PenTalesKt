@@ -13,9 +13,9 @@ import java.sql.*
 @Immutable
 data class ActivityView(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     var id: Long = 0,
+    
+    var activityId: Long = 0,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")

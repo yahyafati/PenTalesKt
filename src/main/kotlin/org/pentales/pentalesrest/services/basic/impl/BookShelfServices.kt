@@ -48,7 +48,7 @@ class BookShelfServices(
 
     @Transactional
     override fun removeBookFromAllShelves(user: User, book: Book): Int {
-        return bookShelfBookRepository.deleteAllByBookShelfOwnerAndBook(user, book)
+        return bookShelfBookRepository.deleteAllByBookShelfOwnerAndBook(user, ActivityBook(book))
     }
 
     @Transactional

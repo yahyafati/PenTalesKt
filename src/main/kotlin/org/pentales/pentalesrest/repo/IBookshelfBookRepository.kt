@@ -7,5 +7,5 @@ import org.pentales.pentalesrest.repo.base.*
 
 interface IBookshelfBookRepository : IRepoSpecification<BookShelfBook, BookShelfBookKey> {
 
-    fun deleteAllByBookShelfOwnerAndBook(owner: User, book: Book): Int
+    fun deleteAllByBookShelfOwnerAndBook(owner: User, book: ActivityBook): Int
 }

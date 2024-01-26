@@ -8,4 +8,5 @@ interface CommentRepository : IRepoSpecification<Comment, Long> {
 
     fun findAllByRating(rating: Rating, pageable: Pageable): Page<Comment>
     fun countAllByRating(rating: Rating): Long
+    fun deleteCommentByIdAndUser(id: Long, user: User): Long
 }
