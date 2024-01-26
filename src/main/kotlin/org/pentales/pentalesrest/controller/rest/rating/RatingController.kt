@@ -69,7 +69,8 @@ class RatingController(
         @PathVariable
         id: Long
     ): ResponseEntity<Unit> {
-        ratingServices.deleteById(id)
+        val user = authenticationFacade.forcedCurrentUser
+        ratingServices.deleteById(id, user)
         return ResponseEntity.ok().build()
     }
 

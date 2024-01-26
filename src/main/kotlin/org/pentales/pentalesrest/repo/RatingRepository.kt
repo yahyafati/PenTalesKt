@@ -47,5 +47,6 @@ interface RatingRepository : IRepoSpecification<Rating, Long> {
 
     fun deleteAllByBook(book: Book)
     fun deleteAllByUser(user: User)
+    fun deleteByIdAndUser(id: Long, user: User): Long
 
 }
