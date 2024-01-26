@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.controller.rest.rating
 
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.dto.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/rating")
 class RatingController(
     private val ratingServices: IRatingServices,
+    private val reportServices: IReportServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
@@ -62,6 +64,19 @@ class RatingController(
         val user = authenticationFacade.forcedCurrentUser
         val like = ratingServices.unlikeRating(Rating(id = id), user)
         return ResponseEntity.ok(BasicResponseDto.ok(like))
+    }
+
+    @PatchMapping("/{id}/report")
+    fun reportRating(
+        @PathVariable
+        id: Long,
+        @RequestBody
+        reportDto: AddReportDto
+    ): ResponseEntity<BasicResponseDto<ReportDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val report = reportDto.toReport(ratingId = id, user = user, commentId = null)
+        val savedReport = reportServices.saveNew(report)
+        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(savedReport)))
     }
 
     @DeleteMapping("/{id}")

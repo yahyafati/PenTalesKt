@@ -1,20 +1,29 @@
 package org.pentales.pentalesrest.controller.rest.rating
 
-import org.pentales.pentalesrest.controller.rest.*
-import org.pentales.pentalesrest.dto.*
-import org.pentales.pentalesrest.dto.ratingComment.*
-import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
-import org.springframework.data.domain.*
-import org.springframework.http.*
+import org.pentales.pentalesrest.controller.rest.IBasicControllerSkeleton
+import org.pentales.pentalesrest.dto.BasicResponseDto
+import org.pentales.pentalesrest.dto.dto.AddReportDto
+import org.pentales.pentalesrest.dto.dto.ReportDto
+import org.pentales.pentalesrest.dto.ratingComment.AddCommentDto
+import org.pentales.pentalesrest.dto.ratingComment.CommentDto
+import org.pentales.pentalesrest.models.Comment
+import org.pentales.pentalesrest.models.Rating
+import org.pentales.pentalesrest.models.User
+import org.pentales.pentalesrest.security.IAuthenticationFacade
+import org.pentales.pentalesrest.services.basic.ICommentServices
+import org.pentales.pentalesrest.services.basic.IReportServices
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.*
+import org.springframework.web.server.ResponseStatusException
 
 @RequestMapping("/api/comment")
 @RestController
 class CommentController(
     private val commentServices: ICommentServices,
+    private val reportServices: IReportServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
@@ -78,6 +87,19 @@ class CommentController(
         val savedComment = commentServices.save(updatedComment)
         val dto = CommentDto(savedComment)
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
+    }
+
+    @PatchMapping("/{commentId}/report")
+    fun reportComment(
+        @PathVariable
+        commentId: Long,
+        @RequestBody
+        reportDto: AddReportDto
+    ): ResponseEntity<BasicResponseDto<ReportDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val report = reportDto.toReport(user = user, commentId = commentId, ratingId = null)
+        val reported = reportServices.saveNew(report)
+        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(reported)))
     }
 
     @DeleteMapping("/{commentId}")
