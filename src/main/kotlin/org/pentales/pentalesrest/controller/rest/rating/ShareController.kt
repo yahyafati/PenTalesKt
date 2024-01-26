@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest.book
+package org.pentales.pentalesrest.controller.rest.rating
 
 import org.pentales.pentalesrest.dto.share.*
 import org.pentales.pentalesrest.models.*

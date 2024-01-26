@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest.book
+package org.pentales.pentalesrest.controller.rest.rating
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.rating.*
@@ -14,11 +14,6 @@ class RatingController(
     private val ratingServices: IRatingServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
-
-    companion object {
-
-        const val MAX_PAGE_SIZE = 50
-    }
 
     @GetMapping("/{id}")
     fun getRatingById(
