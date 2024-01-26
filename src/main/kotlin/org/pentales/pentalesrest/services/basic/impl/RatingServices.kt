@@ -53,8 +53,9 @@ class RatingServices(
         return repository.save(rating)
     }
 
-    override fun deleteById(id: Long) {
-        repository.deleteById(id)
+    @Transactional
+    override fun deleteById(id: Long, user: User): Long {
+        return repository.deleteByIdAndUser(id, user)
     }
 
     override fun deleteByBookId(bookId: Long) {

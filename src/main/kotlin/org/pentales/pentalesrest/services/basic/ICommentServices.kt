@@ -11,7 +11,6 @@ interface ICommentServices {
     fun save(comment: Comment): Comment
     fun saveNew(comment: Comment): Comment
     fun deleteById(id: Long, user: User): Long
-
     fun updateComment(comment: Comment): Comment
 
 }
