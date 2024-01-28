@@ -43,3 +43,5 @@ certs/
 logs/
 .env
 flyway.properties
+goodreads_books.json.gz
+downloaded
