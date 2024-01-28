@@ -6,9 +6,6 @@ import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.interfaces.*
 
 @Entity
-@Table(
-    indexes = [Index(name = "author_goodreads_author_id_idx", columnList = "goodReadsAuthorId", unique = true)]
-)
 class Author(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

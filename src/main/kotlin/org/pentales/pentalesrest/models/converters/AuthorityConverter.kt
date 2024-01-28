@@ -3,19 +3,19 @@ package org.pentales.pentalesrest.models.converters
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.*
 
-class AuthorityConverter : AttributeConverter<List<Authority>, String> {
+class AuthorityConverter : AttributeConverter<Authority, String> {
 
-    override fun convertToDatabaseColumn(attribute: List<Authority>?): String {
+    override fun convertToDatabaseColumn(attribute: Authority?): String {
         if (attribute == null) {
             return ""
         }
-        return attribute.joinToString(",") { it.authority }
+        return attribute.authority
     }
 
-    override fun convertToEntityAttribute(dbData: String?): List<Authority> {
+    override fun convertToEntityAttribute(dbData: String?): Authority {
         if (dbData == null) {
-            return emptyList()
+            return Authority("")
         }
-        return dbData.split(",").map { Authority(it) }
+        return Authority(dbData)
     }
 }

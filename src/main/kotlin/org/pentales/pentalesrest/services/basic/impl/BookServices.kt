@@ -81,6 +81,19 @@ class BookServices(
     }
 
     @Transactional
+    override fun save(entity: Book): Book {
+        if (entity.id == 0L) {
+            throw NoEntityWithIdException("No entity with id 0 found, use saveNew instead")
+        }
+        val savedBookGenres = saveBookGenres(entity)
+        entity.genres = savedBookGenres
+        val savedBookAuthors = saveBookAuthors(entity)
+        entity.authors = savedBookAuthors
+        val savedBook: Book = super.save(entity)
+        return savedBook
+    }
+
+    @Transactional
     override fun saveNew(entity: Book): Book {
         val savedBook: Book = super.saveNew(entity)
         val savedBookGenres = saveBookGenres(savedBook)

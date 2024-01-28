@@ -6,38 +6,37 @@ enum class ERole(private val permissions: List<EPermission>) { GUEST(emptyList()
     CUSTOM(emptyList()),
     USER(
         listOf(
-            EPermission.USER_READ,
-            EPermission.USER_UPDATE,
-            EPermission.USER_CREATE,
-            EPermission.USER_DELETE,
+            *EPermission.getUserPermissions(),
+        )
+    ),
+    MODERATOR(
+        listOf(
+            *EPermission.getUserPermissions(),
+            *EPermission.getModeratorPermissions(),
         )
     ),
     MANAGER(
         listOf(
-            EPermission.USER_READ,
-            EPermission.USER_UPDATE,
-            EPermission.USER_CREATE,
-            EPermission.USER_DELETE,
-            EPermission.MANAGER_READ,
-            EPermission.MANAGER_UPDATE,
-            EPermission.MANAGER_CREATE,
-            EPermission.MANAGER_DELETE,
+            *EPermission.getUserPermissions(),
+            *EPermission.getModeratorPermissions(),
+            *EPermission.getManagerPermissions(),
         )
     ),
     ADMIN(
         listOf(
-            EPermission.USER_READ,
-            EPermission.USER_UPDATE,
-            EPermission.USER_CREATE,
-            EPermission.USER_DELETE,
-            EPermission.MANAGER_READ,
-            EPermission.MANAGER_UPDATE,
-            EPermission.MANAGER_CREATE,
-            EPermission.MANAGER_DELETE,
-            EPermission.ADMIN_READ,
-            EPermission.ADMIN_UPDATE,
-            EPermission.ADMIN_CREATE,
-            EPermission.ADMIN_DELETE,
+            *EPermission.getUserPermissions(),
+            *EPermission.getModeratorPermissions(),
+            *EPermission.getManagerPermissions(),
+            *EPermission.getAdminPermissions(),
+        )
+    ),
+    SUPER_ADMIN(
+        listOf(
+            *EPermission.getUserPermissions(),
+            *EPermission.getModeratorPermissions(),
+            *EPermission.getManagerPermissions(),
+            *EPermission.getAdminPermissions(),
+//            *EPermission.getSuperAdminPermissions(),
         )
     );
 

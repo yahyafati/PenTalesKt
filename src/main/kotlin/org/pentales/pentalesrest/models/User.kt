@@ -46,13 +46,13 @@ class User(
         }
 
     @Convert(converter = AuthorityConverter::class)
-    private var authorities: MutableCollection<out GrantedAuthority> = mutableListOf()
+    private var authorities: MutableCollection<out GrantedAuthority> = role.getPermittedAuthorities().toMutableList()
     override fun toString(): String {
         return "User(id=$id, username='$username', email='$email', password='$password')"
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf()
+        return authorities
     }
 
     fun setAuthorities(authorities: MutableCollection<out GrantedAuthority>) {
