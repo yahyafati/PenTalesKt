@@ -3,19 +3,19 @@ package org.pentales.pentalesrest.models.converters
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.enums.*
 
-class ReasonsConverter : AttributeConverter<List<EContentReportReason>, String> {
+class ReasonsConverter : AttributeConverter<EContentReportReason, String> {
 
-    override fun convertToDatabaseColumn(attribute: List<EContentReportReason>?): String {
+    override fun convertToDatabaseColumn(attribute: EContentReportReason?): String {
         if (attribute == null) {
             return ""
         }
-        return attribute.joinToString { it.name }
+        return attribute.name
     }
 
-    override fun convertToEntityAttribute(dbData: String?): List<EContentReportReason> {
+    override fun convertToEntityAttribute(dbData: String?): EContentReportReason {
         if (dbData == null) {
-            return emptyList()
+            return EContentReportReason.SPAM_OR_PHISHING
         }
-        return dbData.split(",").map { EContentReportReason.valueOf(it) }
+        return EContentReportReason.valueOf(dbData)
     }
 }
