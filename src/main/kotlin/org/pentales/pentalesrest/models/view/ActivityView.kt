@@ -7,14 +7,18 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.springframework.data.annotation.*
 import java.sql.*
+import java.util.*
 
 @Entity
 @Table(name = "activity")
 @Immutable
 data class ActivityView(
     @Id
-    var id: Long = 0,
-    
+    var id: UUID = UUID.randomUUID(),
+
+    @Column(name = "rating_id")
+    var ratingId: Long = 0,
+
     var activityId: Long = 0,
 
     @Enumerated(EnumType.STRING)
@@ -52,17 +56,17 @@ data class ActivityView(
         when (type) {
             EActivityType.RATING -> {
                 rating = Rating()
-                rating?.id = id
+                rating?.id = activityId
             }
 
             EActivityType.COMMENT -> {
                 comment = Comment()
-                comment?.id = id
+                comment?.id = activityId
             }
 
             EActivityType.SHARE -> {
                 share = Share()
-                share?.id = id
+                share?.id = activityId
             }
         }
 

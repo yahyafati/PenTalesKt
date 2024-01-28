@@ -20,7 +20,7 @@ data class ActivityDto(
 ) {
 
     constructor(activityView: ActivityView) : this() {
-        id = activityView.id
+        id = activityView.ratingId
         activityId = activityView.activityId
         type = activityView.type
         updatedAt = activityView.updatedAt.time
