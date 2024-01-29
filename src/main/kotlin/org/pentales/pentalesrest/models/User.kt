@@ -2,8 +2,6 @@ package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
-import org.pentales.pentalesrest.models.converters.*
-import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.interfaces.*
 import org.springframework.security.core.*
 import org.springframework.security.core.userdetails.*
@@ -37,26 +35,23 @@ class User(
     private var isEnabled: Boolean = true
 
     @Enumerated(EnumType.STRING)
-    var role: ERole = ERole.USER
-        set(value) {
-            field = value
-            this.setAuthorities(
-                value.getPermittedAuthorities().toMutableList()
-            )
-        }
+    @ManyToOne
+    var role: Role = Role()
 
-    @Convert(converter = AuthorityConverter::class)
-    private var authorities: MutableCollection<out GrantedAuthority> = role.getPermittedAuthorities().toMutableList()
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @JoinTable(
+        name = "authority_user",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "authority_id")]
+    )
+    var authorities: MutableSet<Authority> = mutableSetOf()
+
     override fun toString(): String {
         return "User(id=$id, username='$username', email='$email', password='$password')"
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return authorities
-    }
-
-    fun setAuthorities(authorities: MutableCollection<out GrantedAuthority>) {
-        this.authorities = authorities
+        return authorities.toMutableList()
     }
 
     override fun getPassword(): String {

@@ -1,28 +1,31 @@
 package org.pentales.pentalesrest.models.enums
 
-import org.pentales.pentalesrest.models.*
+enum class ERole(val id: Long, private val permissions: List<EPermission>) {
 
-enum class ERole(private val permissions: List<EPermission>) { GUEST(emptyList()),
-    CUSTOM(emptyList()),
-    USER(
+    ROLE_CUSTOM(1, emptyList()),
+    ROLE_USER(
+        2,
         listOf(
             *EPermission.getUserPermissions(),
         )
     ),
-    MODERATOR(
+    ROLE_MODERATOR(
+        3,
         listOf(
             *EPermission.getUserPermissions(),
             *EPermission.getModeratorPermissions(),
         )
     ),
-    MANAGER(
+    ROLE_MANAGER(
+        4,
         listOf(
             *EPermission.getUserPermissions(),
             *EPermission.getModeratorPermissions(),
             *EPermission.getManagerPermissions(),
         )
     ),
-    ADMIN(
+    ROLE_ADMIN(
+        5,
         listOf(
             *EPermission.getUserPermissions(),
             *EPermission.getModeratorPermissions(),
@@ -30,7 +33,8 @@ enum class ERole(private val permissions: List<EPermission>) { GUEST(emptyList()
             *EPermission.getAdminPermissions(),
         )
     ),
-    SUPER_ADMIN(
+    ROLE_SUPER_ADMIN(
+        6,
         listOf(
             *EPermission.getUserPermissions(),
             *EPermission.getModeratorPermissions(),
@@ -48,7 +52,4 @@ enum class ERole(private val permissions: List<EPermission>) { GUEST(emptyList()
         return this.permissions
     }
 
-    fun getPermittedAuthorities(): Collection<Authority> {
-        return this.permissions.map { Authority(it) }
-    }
 }

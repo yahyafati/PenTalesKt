@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.repo.*
@@ -45,25 +46,48 @@ class UserServices(private val userRepository: UserRepository) : IUserServices {
     }
 
     override fun getModerators(page: Pageable): Page<User> {
-        return userRepository.findAllByRole(ERole.MODERATOR, page)
+        return userRepository.findAllByAuthoritiesContaining(Authority(permission = EPermission.MODERATOR_ACCESS), page)
+    }
+
+    override fun findAllByRole(role: ERole, pageable: Pageable): Page<User> {
+        val roleEntity = Role(role = role)
+        return userRepository.findAllByRole(roleEntity, pageable)
     }
 
     override fun toggleModerator(user: User): Boolean {
-        user.role = if (user.role == ERole.MODERATOR) ERole.USER else ERole.MODERATOR
+        user.role =
+            if (user.role.role == ERole.ROLE_MODERATOR) Role(role = ERole.ROLE_USER)
+            else Role(role = ERole.ROLE_MODERATOR)
         save(user)
-        return user.role == ERole.MODERATOR
+        return user.role.role == ERole.ROLE_MODERATOR
     }
 
     override fun makeModerator(user: User): Boolean {
-        user.role = ERole.MODERATOR
-        save(user)
-        return user.role == ERole.MODERATOR
+        return changeRole(user, ERole.ROLE_MODERATOR)
     }
 
     override fun removeModerator(user: User): Boolean {
-        user.role = ERole.USER
+        return changeRole(user, ERole.ROLE_USER)
+    }
+
+    override fun changeRole(user: User, role: ERole): Boolean {
+        user.role = Role(role = role)
         save(user)
-        return user.role == ERole.USER
+        return user.role.role == role
+    }
+
+    override fun addPermissions(user: User, permissions: Set<EPermission>): Boolean {
+        val addedAuthorities = permissions.map { Authority(permission = it) }.toSet()
+        user.authorities.addAll(addedAuthorities)
+        save(user)
+        return user.authorities.containsAll(addedAuthorities)
+    }
+
+    override fun removePermissions(user: User, permissions: Set<EPermission>): Boolean {
+        val removedAuthorities = permissions.map { Authority(permission = it) }.toSet()
+        user.authorities.removeAll(removedAuthorities)
+        save(user)
+        return !user.authorities.containsAll(removedAuthorities)
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {
