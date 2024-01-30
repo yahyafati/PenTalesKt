@@ -15,7 +15,7 @@ data class ReportDto(
     var reasons: List<EContentReportReason> = listOf(),
     var description: String = "",
     var status: EReportStatus = EReportStatus.PENDING,
-    var approvedBy: User? = null,
+    var approvedBy: UserDto? = null,
 ) {
 
     constructor(report: Report) : this(
@@ -27,7 +27,7 @@ data class ReportDto(
         reasons = report.eReasons,
         description = report.description,
         status = report.status,
-        approvedBy = report.approvedBy,
+        approvedBy = report.approvedBy?.let { UserDto(it) },
     )
 
     fun toReport(): Report = Report(
@@ -39,6 +39,6 @@ data class ReportDto(
         reasons = Report.joinReasons(reasons),
         description = description,
         status = status,
-        approvedBy = approvedBy,
+        approvedBy = approvedBy?.toUser(),
     )
 }

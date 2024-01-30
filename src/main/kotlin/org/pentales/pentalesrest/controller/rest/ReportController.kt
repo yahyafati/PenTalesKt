@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.controller.rest
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.report.*
+import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/report")
 @PreAuthorize("hasPermission('MODERATOR', 'MODERATOR_ACCESS')")
 class ReportController(
-    private val reportService: IReportServices
+    private val reportService: IReportServices,
+    private val authenticationFacade: IAuthenticationFacade,
 ) {
 
     @GetMapping("")
@@ -32,5 +34,25 @@ class ReportController(
         val reports = reportService.getAllReports(pageRequest, search)
         val dto = reports.map { ReportDto(it) }
         return ResponseEntity.ok(BasicResponseDto.ok(data = dto))
+    }
+
+    @PatchMapping("/{id}/approve")
+    fun approveReport(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<ReportDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val report = reportService.approve(id, user)
+        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report)))
+    }
+
+    @PatchMapping("/{id}/reject")
+    fun rejectReport(
+        @PathVariable
+        id: Long
+    ): ResponseEntity<BasicResponseDto<ReportDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val report = reportService.reject(id, user)
+        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report)))
     }
 }
