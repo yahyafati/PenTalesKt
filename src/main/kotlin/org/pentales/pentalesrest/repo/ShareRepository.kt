@@ -7,4 +7,6 @@ interface ShareRepository : IRepoSpecification<Share, Long> {
 
     fun countAllByRating(rating: Rating): Int
 
+    fun deleteAllByRating(rating: Rating)
+
 }
