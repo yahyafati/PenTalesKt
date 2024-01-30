@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.dto.dto
+package org.pentales.pentalesrest.dto.report
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
@@ -15,7 +15,7 @@ data class AddReportDto(
         ratingId = report.rating?.id,
         commentId = report.comment?.id,
         type = report.type,
-        reasons = report.reasons,
+        reasons = report.eReasons,
         description = report.description,
     )
 
@@ -29,7 +29,7 @@ data class AddReportDto(
             },
             rating = ratingId?.let { Rating(id = it) },
             type = type,
-            reasons = reasons,
+            reasons = Report.joinReasons(reasons),
             description = description,
         )
     }

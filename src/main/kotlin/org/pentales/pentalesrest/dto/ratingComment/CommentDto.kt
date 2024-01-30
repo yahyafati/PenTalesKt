@@ -22,4 +22,15 @@ data class CommentDto(
         updatedAt = comment.updatedAt.time,
     )
 
+    fun toComment(): Comment {
+        val comment = Comment(
+            comment = comment,
+            user = user.toUser(),
+        )
+        comment.id = id
+        comment.createdAt = Timestamp(createdAt)
+        comment.updatedAt = Timestamp(updatedAt)
+        return comment
+    }
+
 }

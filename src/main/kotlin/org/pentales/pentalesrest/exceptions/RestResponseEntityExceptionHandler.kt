@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.exceptions
 
 import org.slf4j.*
 import org.springframework.http.*
-import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.access.*
 import org.springframework.security.core.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.*
@@ -25,6 +25,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         when (ex) {
             is AuthenticationException -> return handleAuthenticationException(ex, request)
             is AccessDeniedException -> return handleAccessDenied(ex, request)
+            is NoEntityWithIdException -> return handleNoEntityWithIdException(ex, request)
             is GenericException -> return handleBadRequest(ex, request)
         }
 
@@ -41,7 +42,26 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
-    protected fun handleBadRequest(exception: GenericException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+    protected fun handleNoEntityWithIdException(
+        exception: NoEntityWithIdException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message ?: "No entity with id",
+            System.currentTimeMillis(),
+            HttpStatus.NOT_FOUND.value(),
+            exception,
+        )
+        LOG.error(errorModel.message)
+        return ResponseEntity(
+            errorModel, HttpHeaders(), HttpStatus.NOT_FOUND
+        )
+    }
+
+    protected fun handleBadRequest(
+        exception: GenericException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
         val errorModel = GenericErrorModel(
             exception.message ?: "Bad Request",
             System.currentTimeMillis(),
@@ -54,7 +74,10 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
-    protected fun handleAuthenticationException(exception: AuthenticationException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+    protected fun handleAuthenticationException(
+        exception: AuthenticationException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
         val errorModel = GenericErrorModel(
             exception.message ?: "Unauthorized",
             System.currentTimeMillis(),
@@ -67,7 +90,10 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
-    protected fun handleAccessDenied(exception: AccessDeniedException, request: WebRequest?): ResponseEntity<GenericErrorModel> {
+    protected fun handleAccessDenied(
+        exception: AccessDeniedException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
         val errorModel = GenericErrorModel(
             exception.message ?: "Access Denied",
             System.currentTimeMillis(),

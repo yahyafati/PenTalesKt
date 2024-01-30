@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.controller.rest
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -91,8 +92,10 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
-    @GetMapping("/moderator")
-    fun getModerator(
+    @GetMapping("/role/{role}")
+    fun getUserByRole(
+        @PathVariable
+        role: ERole,
         @RequestParam(required = false, defaultValue = "0")
         page: Int?,
         @RequestParam(required = false, defaultValue = "10")
@@ -103,27 +106,59 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val moderator = userService.getModerators(pageRequest)
-        return ResponseEntity.ok(BasicResponseDto.ok(moderator.map { UserSecurityDto(it) }))
+        val users = userService.findAllByRole(role, pageRequest).map { UserSecurityDto(it) }
+        return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
-    @PatchMapping("/moderator/{username}/enable")
-    fun makeUserModerator(
+    @PatchMapping("/role/{username}")
+    fun changeRole(
         @PathVariable
-        username: String
+        username: String,
+        @RequestParam
+        role: ERole,
     ): ResponseEntity<BasicResponseDto<Boolean>> {
         val user = userService.findByUsername(username)
-        val status = userService.makeModerator(user)
+        val status = userService.changeRole(user, role)
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
-    @PatchMapping("/moderator/{username}/disable")
-    fun makeUserNotModerator(
+    @GetMapping("/moderators")
+    fun getModerators(
+        @RequestParam(required = false, defaultValue = "0")
+        page: Int?,
+        @RequestParam(required = false, defaultValue = "10")
+        size: Int?,
+        @RequestParam(required = false, defaultValue = "id")
+        sort: String?,
+        @RequestParam(required = false, defaultValue = "ASC")
+        direction: Sort.Direction?,
+    ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
+        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+        val users = userService.getModerators(pageRequest).map { UserSecurityDto(it) }
+        return ResponseEntity.ok(BasicResponseDto.ok(users))
+    }
+
+    @PatchMapping("/permission/{username}/add")
+    fun addPermissions(
         @PathVariable
-        username: String
+        username: String,
+        @RequestBody
+        permissions: Set<EPermission>,
     ): ResponseEntity<BasicResponseDto<Boolean>> {
         val user = userService.findByUsername(username)
-        val status = userService.removeModerator(user)
+        val status = userService.addPermissions(user, permissions)
+        return ResponseEntity.ok(BasicResponseDto.ok(status))
+    }
+
+    @PatchMapping("/permission/{username}/remove")
+    fun removePermissions(
+        @PathVariable
+        username: String,
+        @RequestBody
+        permissions: Set<EPermission>,
+    ): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = userService.findByUsername(username)
+        val status = userService.removePermissions(user, permissions)
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 

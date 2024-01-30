@@ -38,6 +38,10 @@ class RatingServices(
         if (existing != null) {
             existing.value = entity.value
             existing.review = entity.review
+            if (existing.hidden) {
+                existing.hidden = false
+                existing.review = ""
+            }
             return repository.save(existing)
         }
         return repository.save(entity)
@@ -47,6 +51,10 @@ class RatingServices(
         val existing = repository.findByBookAndUser(book, user)
         if (existing != null) {
             existing.value = value
+            if (existing.hidden) {
+                existing.hidden = false
+                existing.review = ""
+            }
             return repository.save(existing)
         }
         val rating = Rating(book = book, user = user, value = value)

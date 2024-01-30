@@ -9,7 +9,7 @@ data class UserSecurityDto(
     var lastName: String? = "",
     var username: String = "",
     var email: String = "",
-    var role: ERole = ERole.USER,
+    var role: ERole = ERole.ROLE_USER,
     var permissions: Collection<EPermission> = listOf(),
     var profilePicture: String? = "",
 ) {
@@ -19,8 +19,8 @@ data class UserSecurityDto(
         firstName = user.profile?.firstName,
         lastName = user.profile?.lastName,
         username = user.username,
-        role = user.role,
-        permissions = user.role.getPermissions(),
+        role = user.role.role,
+        permissions = user.authorities.map { it.permission },
         email = user.email,
         profilePicture = user.profile?.profilePicture,
     )

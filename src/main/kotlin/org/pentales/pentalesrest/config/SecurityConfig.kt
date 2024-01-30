@@ -5,6 +5,8 @@ import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.context.annotation.*
 import org.springframework.http.*
+import org.springframework.security.access.expression.method.*
+import org.springframework.security.access.hierarchicalroles.*
 import org.springframework.security.authentication.*
 import org.springframework.security.config.*
 import org.springframework.security.config.annotation.authentication.configuration.*
@@ -27,6 +29,31 @@ class SecurityConfig(
     private val userService: IUserServices,
     private val jwtService: JwtService
 ) {
+
+    @Bean
+    fun roleHierarchy(): RoleHierarchy {
+        val hierarchy = RoleHierarchyImpl()
+        hierarchy.setHierarchy(
+            """
+            ROLE_SUPER_ADMIN > ROLE_ADMIN
+            ROLE_ADMIN > ROLE_MODERATOR
+            ROLE_MODERATOR > ROLE_USER
+            ROLE_USER > ROLE_GUEST
+            """.trimIndent()
+        )
+        return hierarchy
+    }
+
+    @Bean
+    fun methodSecurityExpressionHandler(
+        roleHierarchy: RoleHierarchy?,
+        permissionEvaluator: CustomPermissionEvaluator
+    ): MethodSecurityExpressionHandler? {
+        val handler = DefaultMethodSecurityExpressionHandler()
+        handler.setRoleHierarchy(roleHierarchy)
+        handler.setPermissionEvaluator(permissionEvaluator)
+        return handler
+    }
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {

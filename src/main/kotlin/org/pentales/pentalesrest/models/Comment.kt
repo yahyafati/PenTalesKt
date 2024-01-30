@@ -10,4 +10,5 @@ class Comment(
     var rating: Rating = Rating(),
     @ManyToOne
     var user: User = User(),
+    var hidden: Boolean = false,
 ) : IModel()

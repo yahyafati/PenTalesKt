@@ -19,6 +19,7 @@ class Rating(
     @field:Max(5)
     var value: Int = 3,
     var review: String = "",
+    var hidden: Boolean = false,
 
     @OneToMany(mappedBy = "rating", cascade = [CascadeType.REMOVE])
     var comments: List<Comment> = listOf(),
