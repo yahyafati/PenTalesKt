@@ -56,7 +56,7 @@ class JWTAuthorizationFilter(
         val errorModel = GenericErrorModel(
             message = ex.message ?: "Unauthorized",
             timestamp = System.currentTimeMillis(),
-            statusCode = HttpStatus.UNAUTHORIZED.value(),
+            status = HttpStatus.UNAUTHORIZED.value(),
             exception = ex,
         )
         response.contentType = MediaType.APPLICATION_JSON_VALUE

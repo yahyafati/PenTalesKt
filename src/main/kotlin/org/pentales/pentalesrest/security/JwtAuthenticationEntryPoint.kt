@@ -1,19 +1,18 @@
 package org.pentales.pentalesrest.security
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.*
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.exceptions.*
 import org.springframework.http.*
-import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.security.core.*
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
+import org.springframework.security.web.authentication.*
 
 class JwtAuthenticationEntryPoint : Http403ForbiddenEntryPoint() {
 
     override fun commence(
         request: HttpServletRequest?, response: HttpServletResponse?, authException: AuthenticationException?
     ) {
-        if (response  == null) throw GenericException("Response is null")
+        if (response == null) throw GenericException("Response is null")
 
         val status = HttpStatus.UNAUTHORIZED
 
@@ -22,8 +21,8 @@ class JwtAuthenticationEntryPoint : Http403ForbiddenEntryPoint() {
 
         val errorModel = GenericErrorModel(
             message = authException?.message ?: "Authentication failed",
-            timestamp =  System.currentTimeMillis(),
-            statusCode = status.value(),
+            timestamp = System.currentTimeMillis(),
+            status = status.value(),
             exception = authException,
         )
         val outputStream = response.outputStream
