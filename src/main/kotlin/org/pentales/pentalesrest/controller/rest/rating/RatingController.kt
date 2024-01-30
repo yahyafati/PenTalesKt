@@ -1,8 +1,8 @@
 package org.pentales.pentalesrest.controller.rest.rating
 
 import org.pentales.pentalesrest.dto.*
-import org.pentales.pentalesrest.dto.dto.*
 import org.pentales.pentalesrest.dto.rating.*
+import org.pentales.pentalesrest.dto.report.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*

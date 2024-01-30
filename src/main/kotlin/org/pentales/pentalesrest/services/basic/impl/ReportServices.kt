@@ -4,7 +4,9 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
+import org.springframework.data.domain.*
 import org.springframework.stereotype.*
+import org.springframework.transaction.annotation.*
 
 @Service
 class ReportServices(
@@ -36,5 +38,14 @@ class ReportServices(
 
     override fun delete(id: Long) {
         reportRepository.deleteById(id)
+    }
+
+    @Transactional
+    override fun getAllReports(pageRequest: PageRequest, search: String?): Page<Report> {
+        return if (search.isNullOrEmpty()) {
+            reportRepository.findAll(pageRequest)
+        } else {
+            reportRepository.findAllByDescriptionIgnoreCase(search, pageRequest)
+        }
     }
 }
