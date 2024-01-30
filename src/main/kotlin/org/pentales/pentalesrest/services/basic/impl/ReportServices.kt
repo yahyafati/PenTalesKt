@@ -43,6 +43,7 @@ class ReportServices(
             rating.hidden = true
             ratingRepository.save(rating)
             shareRepository.deleteAllByRating(rating)
+            commentRepository.hideByRating(rating)
         }
         return save(report)
     }
