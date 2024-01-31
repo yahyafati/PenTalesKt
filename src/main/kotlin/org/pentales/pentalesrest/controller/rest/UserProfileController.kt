@@ -32,4 +32,20 @@ class UserProfileController(
         val updatedProfile = userProfileService.uploadProfilePicture(profile, imageUploadDto)
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile)))
     }
+
+    @PostMapping(
+        "/cover",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun uploadProfileCover(
+        @RequestBody
+        file: MultipartFile,
+    ): ResponseEntity<BasicResponseDto<ProfileDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val imageUploadDto = ImageUploadDto(file = file)
+        val profile = user.profile ?: throw GenericException("No profile found")
+        val updatedProfile = userProfileService.uploadProfileCover(profile, imageUploadDto)
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile)))
+    }
 }

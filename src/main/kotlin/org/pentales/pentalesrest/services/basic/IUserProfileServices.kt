@@ -12,4 +12,6 @@ interface IUserProfileServices {
 
     fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile
 
+    fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile
+
 }

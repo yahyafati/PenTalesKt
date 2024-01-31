@@ -27,6 +27,26 @@ class UserProfileServices(
 
     val UPLOAD_PATH = fileConfigProperties.upload.path
 
+    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): Path {
+        if (uploadDto.file == null) {
+            throw GenericException("File cannot be null")
+        }
+        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "")
+        val allowedExtensions = listOf("jpg", "jpeg", "png")
+        if (!allowedExtensions.contains(extension)) {
+            throw GenericException("File extension (.$extension) not allowed")
+        }
+        val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
+
+        val uniqueFileName = fileName + UUID.randomUUID().toString() + "." + extension
+        val path = Paths.get(UPLOAD_PATH, parent, uniqueFileName)
+        if (!Files.exists(path.parent)) {
+            Files.createDirectories(path.parent)
+        }
+
+        return path
+    }
+
     fun findById(id: Long): UserProfile {
         return userProfileRepository.findById(id).orElseThrow {
             NoEntityWithIdException.create(
@@ -66,25 +86,19 @@ class UserProfileServices(
 
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
-        if (uploadDto.file == null) {
-            throw GenericException("File cannot be null")
-        }
-        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "")
-        val allowedExtensions = listOf("jpg", "jpeg", "png")
-        if (!allowedExtensions.contains(extension)) {
-            throw GenericException("File extension (.$extension) not allowed")
-        }
-        val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
-
-        val uniqueFileName = fileName + UUID.randomUUID().toString() + "." + extension
-        val path = Paths.get(UPLOAD_PATH, "profile", uniqueFileName)
-        // TODO: This can be done once at the start of the application
-        if (!Files.exists(path.parent)) {
-            Files.createDirectories(path.parent)
-        }
-        uploadDto.file.transferTo(path)
+        val path = getUploadPath("profile", uploadDto)
+        uploadDto.file!!.transferTo(path)
         val absolutePath: String = path.toAbsolutePath().toString()
         userProfileRepository.updateProfilePicture(userProfile, absolutePath)
+        return findById(userProfile.id)
+    }
+
+    @Transactional
+    override fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
+        val path = getUploadPath("cover", uploadDto)
+        uploadDto.file!!.transferTo(path)
+        val absolutePath: String = path.toAbsolutePath().toString()
+        userProfileRepository.updateCoverPicture(userProfile, absolutePath)
         return findById(userProfile.id)
     }
 }
