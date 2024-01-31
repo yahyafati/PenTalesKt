@@ -45,3 +45,4 @@ logs/
 flyway.properties
 goodreads_books.json.gz
 downloaded
+uploads

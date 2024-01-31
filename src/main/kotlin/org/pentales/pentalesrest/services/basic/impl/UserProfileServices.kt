@@ -1,13 +1,19 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
+import org.springframework.transaction.annotation.*
+import java.nio.file.*
+import java.util.*
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 
@@ -16,7 +22,18 @@ class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
     private val bookIntermediatesServices: IBookIntermediatesServices,
     private val authenticationFacade: IAuthenticationFacade,
+    private val fileConfigProperties: FileConfigProperties
 ) : IUserProfileServices {
+
+    val UPLOAD_PATH = fileConfigProperties.upload.path
+
+    fun findById(id: Long): UserProfile {
+        return userProfileRepository.findById(id).orElseThrow {
+            NoEntityWithIdException.create(
+                "UserProfile", id
+            )
+        }
+    }
 
     override fun update(profile: UpdateProfileDto, updatedFields: List<String>): UserProfile {
         val username = authenticationFacade.username ?: throw Exception("No user logged in")
@@ -45,5 +62,29 @@ class UserProfileServices(
 
     override fun save(profile: UserProfile): UserProfile {
         return userProfileRepository.save(profile)
+    }
+
+    @Transactional
+    override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
+        if (uploadDto.file == null) {
+            throw GenericException("File cannot be null")
+        }
+        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "")
+        val allowedExtensions = listOf("jpg", "jpeg", "png")
+        if (!allowedExtensions.contains(extension)) {
+            throw GenericException("File extension (.$extension) not allowed")
+        }
+        val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
+
+        val uniqueFileName = fileName + UUID.randomUUID().toString() + "." + extension
+        val path = Paths.get(UPLOAD_PATH, "profile", uniqueFileName)
+        // TODO: This can be done once at the start of the application
+        if (!Files.exists(path.parent)) {
+            Files.createDirectories(path.parent)
+        }
+        uploadDto.file.transferTo(path)
+        val absolutePath: String = path.toAbsolutePath().toString()
+        userProfileRepository.updateProfilePicture(userProfile, absolutePath)
+        return findById(userProfile.id)
     }
 }
