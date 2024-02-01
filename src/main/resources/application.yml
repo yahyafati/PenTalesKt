@@ -8,6 +8,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     active: prod # Set the active profile here, e.g., "dev" or "prod"
+  servlet:
+    multipart:
+      enabled: true
   security:
     oauth2:
       client:
@@ -38,3 +41,7 @@ org:
         default:
           title: Embrace the Pages
           description: A Year of Literary Exploration
+
+    file:
+      upload:
+        path: uploads # Path to the directory where the uploaded files will be stored

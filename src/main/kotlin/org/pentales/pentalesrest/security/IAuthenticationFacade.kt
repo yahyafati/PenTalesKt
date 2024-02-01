@@ -1,7 +1,8 @@
 package org.pentales.pentalesrest.security
 
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.User
 import org.springframework.security.core.*
+import org.springframework.security.core.userdetails.*
 
 interface IAuthenticationFacade {
 
@@ -14,14 +15,6 @@ interface IAuthenticationFacade {
             return username1.equals(username2, ignoreCase = true)
         }
 
-    }
-
-    fun equalsAuth(username1: String): Boolean {
-        return equals(username1, username)
-    }
-
-    fun equalsAuth(user: User?): Boolean {
-        return equals(user?.username, username)
     }
 
     val username: String?
@@ -48,7 +41,7 @@ interface IAuthenticationFacade {
             if (principal is User) {
                 return principal
             }
-            throw Exception("User not found")
+            throw UsernameNotFoundException("No user logged in")
         }
 
     val currentUserId: Long
