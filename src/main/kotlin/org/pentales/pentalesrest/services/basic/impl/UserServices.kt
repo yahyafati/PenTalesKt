@@ -10,9 +10,16 @@ import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 
 @Service
-class UserServices(private val userRepository: UserRepository) : IUserServices {
+class UserServices(
+    private val userRepository: UserRepository,
+    private val roleRepository: RoleRepository,
+) : IUserServices {
 
     override fun save(user: User): User {
+        user.role =
+            roleRepository.findById(user.role.id).orElseThrow {
+                throw IllegalArgumentException("Role (id=${user.role.id}, role=${user.role.role}) not found")
+            }
         return userRepository.save(user)
     }
 
