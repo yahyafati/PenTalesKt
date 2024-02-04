@@ -34,11 +34,10 @@ class User(
     //    private var isCredentialsNonExpired: Boolean = true
     private var isEnabled: Boolean = true
 
-    @Enumerated(EnumType.STRING)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
     var role: Role = Role()
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "authority_user",
         joinColumns = [JoinColumn(name = "user_id")],
