@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.components
+package org.pentales.pentalesrest.components.configProperties
 
 import org.springframework.boot.context.properties.*
 import org.springframework.stereotype.*

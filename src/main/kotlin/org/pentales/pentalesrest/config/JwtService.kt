@@ -3,7 +3,7 @@ package org.pentales.pentalesrest.config
 import com.auth0.jwt.*
 import com.auth0.jwt.algorithms.*
 import com.auth0.jwt.interfaces.*
-import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.models.*
 import org.springframework.stereotype.*
 import java.time.*

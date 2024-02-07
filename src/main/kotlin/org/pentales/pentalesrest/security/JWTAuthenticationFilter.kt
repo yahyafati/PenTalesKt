@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.*
 import jakarta.servlet.*
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.*

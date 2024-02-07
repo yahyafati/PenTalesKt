@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.services.basic.impl
 
-import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.models.intermediates.*
