@@ -11,6 +11,7 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.*
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,7 +34,9 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val users = userService.findAll(pageRequest).map { UserSecurityDto(it) }
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+
+        val users = userService.findAll(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
@@ -112,7 +115,9 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val users = userService.findAllByRole(role, pageRequest).map { UserSecurityDto(it) }
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+        val users =
+            userService.findAllByRole(role, pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
@@ -140,7 +145,8 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val users = userService.getModerators(pageRequest).map { UserSecurityDto(it) }
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+        val users = userService.getModerators(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
