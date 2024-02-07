@@ -20,14 +20,16 @@ import kotlin.reflect.full.*
 @Service
 class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
-    private val bookIntermediatesServices: IBookIntermediatesServices,
     private val authenticationFacade: IAuthenticationFacade,
-    private val fileConfigProperties: FileConfigProperties
+    private val s3Service: S3Service,
 ) : IUserProfileServices {
 
-    val UPLOAD_PATH = fileConfigProperties.upload.path
+    companion object {
 
-    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): Path {
+        const val MAX_FILE_NAME_LENGTH = 20
+    }
+
+    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
         if (uploadDto.file == null) {
             throw GenericException("File cannot be null")
         }
@@ -38,13 +40,14 @@ class UserProfileServices(
         }
         val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
 
-        val uniqueFileName = fileName + UUID.randomUUID().toString() + "." + extension
-        val path = Paths.get(UPLOAD_PATH, parent, uniqueFileName)
-        if (!Files.exists(path.parent)) {
-            Files.createDirectories(path.parent)
+        val shortFileName = if (fileName.length > MAX_FILE_NAME_LENGTH) {
+            fileName.substring(0, MAX_FILE_NAME_LENGTH) + "~"
+        } else {
+            fileName
         }
 
-        return path
+        val uniqueFileName = shortFileName + "_" + UUID.randomUUID().toString() + "." + extension
+        return Paths.get("uploads", parent, uniqueFileName).toString()
     }
 
     fun findById(id: Long): UserProfile {
@@ -87,18 +90,23 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("profile", uploadDto)
-        uploadDto.file!!.transferTo(path)
-        val absolutePath: String = path.toAbsolutePath().toString()
-        userProfileRepository.updateProfilePicture(userProfile, absolutePath)
-        return findById(userProfile.id)
+
+        s3Service.uploadFile(path, uploadDto.file!!.bytes)
+        if (userProfile.profilePicture != null) {
+            s3Service.deleteFile(userProfile.profilePicture!!)
+        }
+        userProfileRepository.updateProfilePicture(userProfile, path)
+        return userProfile
     }
 
     @Transactional
     override fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("cover", uploadDto)
-        uploadDto.file!!.transferTo(path)
-        val absolutePath: String = path.toAbsolutePath().toString()
-        userProfileRepository.updateCoverPicture(userProfile, absolutePath)
-        return findById(userProfile.id)
+        s3Service.uploadFile(path, uploadDto.file!!.bytes)
+        if (userProfile.coverPicture != null) {
+            s3Service.deleteFile(userProfile.coverPicture!!)
+        }
+        userProfileRepository.updateCoverPicture(userProfile, path)
+        return userProfile
     }
 }

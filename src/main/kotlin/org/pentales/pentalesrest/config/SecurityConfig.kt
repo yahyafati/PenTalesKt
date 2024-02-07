@@ -73,6 +73,7 @@ class SecurityConfig(
                     securityConfigProperties.usernameAvailableUrl,
                 ).permitAll()
 
+                    .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
                     .requestMatchers("/test/unsecured").permitAll()
 
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
