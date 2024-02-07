@@ -9,9 +9,11 @@ import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
+import org.springframework.web.context.request.*
 
 @Service
 class BookPageServices(
@@ -41,6 +43,7 @@ class BookPageServices(
         val currentUser = authenticationFacade.forcedCurrentUser
         val currentUserRating = ratingRepository.findTopByUserAndBookOrderByUpdatedAtDesc(currentUser, book)
         val bookDto = BookDTO(book)
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
 
         var averageRating: Double = String.format("%.2f", ratings.map { it.value }.average()).toDouble()
 
@@ -68,7 +71,7 @@ class BookPageServices(
 
                 "reviewCount" to reviewCount,
 
-                "allRatings" to ratings.map { RatingDto(it) },
+                "allRatings" to ratings.map { RatingDto(it, ServletUtil.getBaseURL(request)) },
 
                 "distribution" to ratingRepository.findRatingDistributionByBook(book).map { ratingDistribution ->
                     mapOf(

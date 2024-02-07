@@ -4,10 +4,12 @@ import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.report.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.security.access.prepost.*
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.*
 
 @RestController
 @RequestMapping("/api/report")
@@ -32,7 +34,8 @@ class ReportController(
     ): ResponseEntity<BasicResponseDto<Page<ReportDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, sortDirection)
         val reports = reportService.getAllReports(pageRequest, search)
-        val dto = reports.map { ReportDto(it) }
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+        val dto = reports.map { ReportDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(data = dto))
     }
 
@@ -43,7 +46,8 @@ class ReportController(
     ): ResponseEntity<BasicResponseDto<ReportDto>> {
         val user = authenticationFacade.forcedCurrentUser
         val report = reportService.approve(id, user)
-        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report)))
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report, ServletUtil.getBaseURL(request))))
     }
 
     @PatchMapping("/{id}/reject")
@@ -53,6 +57,7 @@ class ReportController(
     ): ResponseEntity<BasicResponseDto<ReportDto>> {
         val user = authenticationFacade.forcedCurrentUser
         val report = reportService.reject(id, user)
-        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report)))
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+        return ResponseEntity.ok(BasicResponseDto.ok(data = ReportDto(report, ServletUtil.getBaseURL(request))))
     }
 }

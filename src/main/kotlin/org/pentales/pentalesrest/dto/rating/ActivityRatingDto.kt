@@ -14,11 +14,11 @@ data class ActivityRatingDto(
     var updatedAt: Long = 0
 ) {
 
-    constructor(rating: Rating) : this(
+    constructor(rating: Rating, baseURL: String) : this(
         id = rating.id,
         value = rating.value,
         review = rating.review,
-        user = UserDto(rating.user),
+        user = UserDto(rating.user, baseURL),
         likes = rating.__likes,
         isLiked = rating.__isLiked,
         createdAt = rating.createdAt.time,

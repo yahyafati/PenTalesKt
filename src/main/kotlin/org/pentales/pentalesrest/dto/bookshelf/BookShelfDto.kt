@@ -17,13 +17,13 @@ data class BookShelfDto(
     var bookAdded: Boolean? = null,
 ) {
 
-    constructor(bookShelf: BookShelf) : this(
+    constructor(bookShelf: BookShelf, baseURL: String) : this(
         id = bookShelf.id,
         title = bookShelf.title,
         description = bookShelf.description,
         access = bookShelf.access,
         books = bookShelf.books.map { ActivityBookDto(it.book) },
-        owner = UserDto(bookShelf.owner),
+        owner = UserDto(bookShelf.owner, baseURL),
         readLater = bookShelf.readLater,
         shelfType = if (bookShelf.readLater) EShelfType.READ_LATER else EShelfType.NORMAL
     )

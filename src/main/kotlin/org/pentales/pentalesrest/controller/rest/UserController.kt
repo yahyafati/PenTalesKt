@@ -1,11 +1,13 @@
 package org.pentales.pentalesrest.controller.rest
 
+import jakarta.servlet.http.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -49,20 +51,24 @@ class UserController(
     @GetMapping("/follow/{followerId}/followings")
     fun getFollowingsOfCurrentUser(
         @PathVariable
-        followerId: Long
+        followerId: Long,
+        request: HttpServletRequest
     ): ResponseEntity<BasicResponseDto<List<UserDto>>> {
         val followedUser = User(id = followerId)
-        val followings = followerServices.getFollowings(followedUser).map { UserDto(it) }
+        val followings =
+            followerServices.getFollowings(followedUser).map { UserDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
     @GetMapping("/follow/{followedId}/followers")
     fun getFollowersOfCurrentUser(
         @PathVariable
-        followedId: Long
+        followedId: Long,
+        request: HttpServletRequest
     ): ResponseEntity<BasicResponseDto<List<UserDto>>> {
         val followedUser = User(id = followedId)
-        val followings = followerServices.getFollowers(followedUser).map { UserDto(it) }
+        val followings =
+            followerServices.getFollowers(followedUser).map { UserDto(it, ServletUtil.getBaseURL(request)) }
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
