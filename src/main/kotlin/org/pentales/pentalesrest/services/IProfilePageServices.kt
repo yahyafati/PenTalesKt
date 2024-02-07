@@ -1,9 +1,12 @@
 package org.pentales.pentalesrest.services
 
+import jakarta.servlet.http.*
+
 interface IProfilePageServices {
 
     fun getProfilePage(
-        username: String
+        username: String,
+        request: HttpServletRequest
     ): Map<String, Any>
 
 }

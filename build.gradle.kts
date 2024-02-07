@@ -51,6 +51,9 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.21.1"))
     implementation("software.amazon.awssdk:s3")
+
+    //    org.apache.tika:tika-core:1.14
+    implementation("org.apache.tika:tika-core:2.5.0")
 }
 
 tasks.withType<KotlinCompile> {

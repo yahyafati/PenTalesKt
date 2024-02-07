@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.impl
 
+import jakarta.servlet.http.*
 import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
@@ -8,6 +9,7 @@ import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.stereotype.*
 import java.time.*
 
@@ -23,13 +25,13 @@ class ProfilePageServices(
     private val authenticationFacade: IAuthenticationFacade,
 ) : IProfilePageServices {
 
-    override fun getProfilePage(username: String): Map<String, Any> {
+    override fun getProfilePage(username: String, request: HttpServletRequest): Map<String, Any> {
         val currentUser = authenticationFacade.forcedCurrentUser
         val profile =
             profileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException(
                 "User with username $username not found"
             )
-        val profileDto = ProfileDto(profile)
+        val profileDto = ProfileDto(profile, ServletUtil.getBaseURL(request))
         val followerCount = followerService.countFollowersOf(profile.user)
         val followingCount = followerService.countFollowingsOf(profile.user)
         val isFollowed = followerService.isFollowing(follower = currentUser, followed = profile.user)

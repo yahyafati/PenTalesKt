@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.components
 
 import org.pentales.pentalesrest.components.configProperties.*
 import org.slf4j.*
+import org.springframework.context.annotation.*
 import org.springframework.stereotype.*
 import software.amazon.awssdk.core.*
 import software.amazon.awssdk.core.sync.*
@@ -10,13 +11,14 @@ import software.amazon.awssdk.services.s3.*
 import software.amazon.awssdk.services.s3.model.*
 
 @Service
-class S3Service(
+@Profile("prod")
+class S3FileService(
     private val awsConfigProperties: AWSConfigProperties
-) {
+) : IFileService {
 
     companion object {
 
-        private val LOG = LoggerFactory.getLogger(S3Service::class.java)
+        private val LOG = LoggerFactory.getLogger(S3FileService::class.java)
     }
 
     private val client = S3Client.builder()
@@ -38,9 +40,9 @@ class S3Service(
         LOG.info("File uploaded to S3 with key $key")
     }
 
-    fun uploadFile(key: String, file: ByteArray) {
+    override fun uploadFile(key: String, bytes: ByteArray) {
         try {
-            uploadFileInner(key, file)
+            uploadFileInner(key, bytes)
         } catch (e: Exception) {
             LOG.error("Error uploading file to S3 with key: $key", e)
             throw e
@@ -59,9 +61,10 @@ class S3Service(
         return response
     }
 
-    fun downloadFile(key: String): ResponseInputStream<GetObjectResponse> {
+    override fun downloadFile(key: String): FileData {
         return try {
-            downloadFileInner(key)
+            val response = downloadFileInner(key)
+            FileData(response.response().contentType(), response.readAllBytes())
         } catch (e: Exception) {
             LOG.error("Error downloading file from S3 with key: $key", e)
             throw e
@@ -79,7 +82,7 @@ class S3Service(
         LOG.info("File deleted from S3 with key $key")
     }
 
-    fun deleteFile(key: String) {
+    override fun deleteFile(key: String) {
         try {
             deleteFileInner(key)
         } catch (e: Exception) {

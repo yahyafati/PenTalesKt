@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
@@ -21,13 +22,16 @@ import kotlin.reflect.full.*
 class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
     private val authenticationFacade: IAuthenticationFacade,
-    private val s3Service: S3Service,
+    private val fileService: IFileService,
+    fileConfigProperties: FileConfigProperties
 ) : IUserProfileServices {
 
     companion object {
 
         const val MAX_FILE_NAME_LENGTH = 20
     }
+
+    val UPLOAD_PATH = fileConfigProperties.upload.path
 
     fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
         if (uploadDto.file == null) {
@@ -47,7 +51,7 @@ class UserProfileServices(
         }
 
         val uniqueFileName = shortFileName + "_" + UUID.randomUUID().toString() + "." + extension
-        return Paths.get("uploads", parent, uniqueFileName).toString()
+        return Paths.get(UPLOAD_PATH, parent, uniqueFileName).toString()
     }
 
     fun findById(id: Long): UserProfile {
@@ -91,9 +95,9 @@ class UserProfileServices(
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("profile", uploadDto)
 
-        s3Service.uploadFile(path, uploadDto.file!!.bytes)
+        fileService.uploadFile(path, uploadDto.file!!.bytes)
         if (userProfile.profilePicture != null) {
-            s3Service.deleteFile(userProfile.profilePicture!!)
+            fileService.deleteFile(userProfile.profilePicture!!)
         }
         userProfileRepository.updateProfilePicture(userProfile, path)
         return userProfile
@@ -102,9 +106,9 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("cover", uploadDto)
-        s3Service.uploadFile(path, uploadDto.file!!.bytes)
+        fileService.uploadFile(path, uploadDto.file!!.bytes)
         if (userProfile.coverPicture != null) {
-            s3Service.deleteFile(userProfile.coverPicture!!)
+            fileService.deleteFile(userProfile.coverPicture!!)
         }
         userProfileRepository.updateCoverPicture(userProfile, path)
         return userProfile
