@@ -12,6 +12,7 @@ data class FileConfigProperties(
     @Component
     data class UploadProperties(
         var path: String = "",
+        var allowedExtensions: List<String> = emptyList(),
     )
 
 }

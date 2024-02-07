@@ -23,7 +23,7 @@ class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
     private val authenticationFacade: IAuthenticationFacade,
     private val fileService: IFileService,
-    fileConfigProperties: FileConfigProperties
+    private val fileConfigProperties: FileConfigProperties
 ) : IUserProfileServices {
 
     companion object {
@@ -31,15 +31,14 @@ class UserProfileServices(
         const val MAX_FILE_NAME_LENGTH = 20
     }
 
-    val UPLOAD_PATH = fileConfigProperties.upload.path
-
     fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
         if (uploadDto.file == null) {
             throw GenericException("File cannot be null")
         }
-        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "")
-        val allowedExtensions = listOf("jpg", "jpeg", "png")
-        if (!allowedExtensions.contains(extension)) {
+        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "").lowercase()
+
+        val allowedExtensions = fileConfigProperties.upload.allowedExtensions
+        if (extension !in allowedExtensions) {
             throw GenericException("File extension (.$extension) not allowed")
         }
         val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
@@ -51,7 +50,11 @@ class UserProfileServices(
         }
 
         val uniqueFileName = shortFileName + "_" + UUID.randomUUID().toString() + "." + extension
-        return Paths.get(UPLOAD_PATH, parent, uniqueFileName).toString()
+        return Paths.get(
+            fileConfigProperties.upload.path,
+            parent,
+            uniqueFileName
+        ).toString()
     }
 
     fun findById(id: Long): UserProfile {
