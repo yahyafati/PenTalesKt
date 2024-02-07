@@ -27,51 +27,61 @@ class S3Service(
         LOG.info("S3 Service initialized")
     }
 
+    private fun uploadFileInner(key: String, file: ByteArray) {
+        LOG.info("Uploading file to S3 with key: $key")
+        val putObjectRequest = PutObjectRequest.builder()
+            .bucket(awsConfigProperties.s3.bucket)
+            .key(key)
+            .build()
+
+        client.putObject(putObjectRequest, RequestBody.fromBytes(file))
+        LOG.info("File uploaded to S3 with key $key")
+    }
+
     fun uploadFile(key: String, file: ByteArray) {
         try {
-            LOG.info("Uploading file to S3 with key: $key")
-            val putObjectRequest = PutObjectRequest.builder()
-                .bucket(awsConfigProperties.s3.bucket)
-                .key(key)
-                .build()
-
-            client.putObject(putObjectRequest, RequestBody.fromBytes(file))
-            LOG.info("File uploaded to S3 with key $key")
+            uploadFileInner(key, file)
         } catch (e: Exception) {
             LOG.error("Error uploading file to S3 with key: $key", e)
             throw e
         }
     }
 
-    fun downloadFile(key: String): ResponseInputStream<GetObjectResponse> {
-        val response = try {
-            LOG.info("Downloading file from S3 with key: $key")
-            val getObjectRequest = GetObjectRequest.builder()
-                .bucket(awsConfigProperties.s3.bucket)
-                .key(key)
-                .build()
+    private fun downloadFileInner(key: String): ResponseInputStream<GetObjectResponse> {
+        LOG.info("Downloading file from S3 with key: $key")
+        val getObjectRequest = GetObjectRequest.builder()
+            .bucket(awsConfigProperties.s3.bucket)
+            .key(key)
+            .build()
 
-            val res = client.getObject(getObjectRequest)
-            LOG.info("File downloaded from S3 with key $key")
-            res
+        val response = client.getObject(getObjectRequest)
+        LOG.info("File downloaded from S3 with key $key")
+        return response
+    }
+
+    fun downloadFile(key: String): ResponseInputStream<GetObjectResponse> {
+        return try {
+            downloadFileInner(key)
         } catch (e: Exception) {
             LOG.error("Error downloading file from S3 with key: $key", e)
             throw e
         }
+    }
 
-        return response
+    private fun deleteFileInner(key: String) {
+        LOG.info("Deleting file from S3 with key: $key")
+        val deleteObjectRequest = DeleteObjectRequest.builder()
+            .bucket(awsConfigProperties.s3.bucket)
+            .key(key)
+            .build()
+
+        client.deleteObject(deleteObjectRequest)
+        LOG.info("File deleted from S3 with key $key")
     }
 
     fun deleteFile(key: String) {
         try {
-            LOG.info("Deleting file from S3 with key: $key")
-            val deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(awsConfigProperties.s3.bucket)
-                .key(key)
-                .build()
-
-            client.deleteObject(deleteObjectRequest)
-            LOG.info("File deleted from S3 with key $key")
+            deleteFileInner(key)
         } catch (e: Exception) {
             LOG.error("Error deleting file from S3 with key: $key", e)
             throw e
