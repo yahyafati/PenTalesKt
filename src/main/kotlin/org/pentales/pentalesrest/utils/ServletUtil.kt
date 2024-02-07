@@ -7,7 +7,7 @@ class ServletUtil {
 
     companion object {
 
-        fun getBaseURL(request: HttpServletRequest): String {
+        private fun getBaseURL(request: HttpServletRequest): String {
             return request.requestURL.toString().substringBefore(request.requestURI)
         }
 

@@ -11,7 +11,6 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.*
 import org.springframework.web.server.*
 
 @RequestMapping("/api/comment")
@@ -48,8 +47,7 @@ class CommentController(
 
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, Sort.Direction.DESC)
         val response = commentServices.findAllByRating(rating, pageRequest)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        val dto = response.map { CommentDto(it, ServletUtil.getBaseURL(request)) }
+        val dto = response.map { CommentDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -64,8 +62,7 @@ class CommentController(
         val rating = Rating(id = ratingId)
         val comment = addCommentDto.toComment(rating = rating, user = user)
         val savedComment = commentServices.saveNew(comment)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        val dto = CommentDto(savedComment, ServletUtil.getBaseURL(request))
+        val dto = CommentDto(savedComment, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -82,8 +79,7 @@ class CommentController(
         val updatedComment = updateCommentDto.toComment(rating = comment.rating, user = user)
         updatedComment.id = commentId
         val savedComment = commentServices.save(updatedComment)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        val dto = CommentDto(savedComment, ServletUtil.getBaseURL(request))
+        val dto = CommentDto(savedComment, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -97,8 +93,7 @@ class CommentController(
         val user = authenticationFacade.forcedCurrentUser
         val report = reportDto.toReport(user = user, commentId = commentId, ratingId = null)
         val reported = reportServices.saveNew(report)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(reported, ServletUtil.getBaseURL(request))))
+        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(reported, ServletUtil.getBaseURLFromCurrentRequest())))
     }
 
     @DeleteMapping("/{commentId}")

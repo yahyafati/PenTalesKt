@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller
 
-import jakarta.servlet.http.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
@@ -17,10 +16,9 @@ class ProfilePageController(
     fun getProfilePage(
         @RequestParam(required = false, name = "username")
         usernameParam: String?,
-        request: HttpServletRequest,
     ): BasicResponseDto<Map<String, Any>> {
         val username = usernameParam ?: authenticationFacade.forcedCurrentUser.username
-        val response = profilePageServices.getProfilePage(username, request)
+        val response = profilePageServices.getProfilePage(username)
         return BasicResponseDto.ok(response)
     }
 

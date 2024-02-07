@@ -10,7 +10,6 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.*
 import org.springframework.web.server.*
 
 @RestController
@@ -48,9 +47,8 @@ class BookShelfController(
         val currentUsername = authenticationFacade.forcedCurrentUser.username
         val pageable = PageRequest.of(page ?: 0, size ?: 10, Sort.by(sort ?: "id"))
         val response = bookShelfServices.findAllByOwnerUsername(username ?: currentUsername, pageable)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
 
-        val dtos = response.map { BookShelfDto(it, ServletUtil.getBaseURL(request)) }
+        val dtos = response.map { BookShelfDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         if (bookId != null) {
             dtos.forEach { dto -> dto.bookAdded = dto.books.any { it.id == bookId } }
         }
@@ -62,11 +60,10 @@ class BookShelfController(
         @RequestBody
         dto: BookShelfCreateDto
     ): ResponseEntity<BasicResponseDto<BookShelfDto>> {
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
         val currentUser = authenticationFacade.forcedCurrentUser
         val bookShelf = dto.toModel(currentUser)
         val savedShelf = bookShelfServices.saveNew(bookShelf)
-        val response = BookShelfDto(savedShelf, ServletUtil.getBaseURL(request))
+        val response = BookShelfDto(savedShelf, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 
@@ -75,11 +72,10 @@ class BookShelfController(
         @PathVariable
         id: Long
     ): ResponseEntity<BasicResponseDto<BookShelfDto>> {
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
         val currentUser = authenticationFacade.forcedCurrentUser
         val bookShelf = bookShelfServices.findById(id)
         validateAccess(bookShelf, currentUser)
-        val dto = BookShelfDto(bookShelf, ServletUtil.getBaseURL(request))
+        val dto = BookShelfDto(bookShelf, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -94,11 +90,10 @@ class BookShelfController(
         @RequestParam(required = false)
         sort: String?,
     ): ResponseEntity<BasicResponseDto<BookShelfDto>> {
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
         val currentUser = authenticationFacade.forcedCurrentUser
         val bookShelf = bookShelfServices.findReadLater(username ?: currentUser.username)
         validateAccess(bookShelf, currentUser)
-        val dto = BookShelfDto(bookShelf, ServletUtil.getBaseURL(request))
+        val dto = BookShelfDto(bookShelf, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 

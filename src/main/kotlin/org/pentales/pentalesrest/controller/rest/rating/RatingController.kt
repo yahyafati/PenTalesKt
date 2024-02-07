@@ -9,7 +9,6 @@ import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.*
 
 @RestController
 @RequestMapping("/api/rating")
@@ -25,8 +24,7 @@ class RatingController(
         id: Long
     ): ResponseEntity<RatingDto> {
         val rating = ratingServices.findById(id)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        return ResponseEntity.ok(RatingDto(rating, ServletUtil.getBaseURL(request)))
+        return ResponseEntity.ok(RatingDto(rating, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 
     @PostMapping("/{bookId}")
@@ -38,17 +36,23 @@ class RatingController(
         @RequestParam(defaultValue = "false")
         valueOnly: Boolean? = false
     ): ResponseEntity<BasicResponseDto<RatingDto>> {
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
         val book = Book(id = bookId)
         val user = authenticationFacade.forcedCurrentUser
         if (valueOnly == true) {
             val savedRating = ratingServices.saveValue(ratingDto.value, book, user)
-            return ResponseEntity.ok(BasicResponseDto.ok(RatingDto(savedRating, ServletUtil.getBaseURL(request))))
+            return ResponseEntity.ok(
+                BasicResponseDto.ok(
+                    RatingDto(
+                        savedRating,
+                        ServletUtil.getBaseURLFromCurrentRequest()
+                    )
+                )
+            )
         }
         val rating = ratingDto.toRating(book, user)
         val savedRating = ratingServices.save(rating)
         return ResponseEntity.ok(
-            BasicResponseDto.ok(RatingDto(savedRating, ServletUtil.getBaseURL(request)))
+            BasicResponseDto.ok(RatingDto(savedRating, ServletUtil.getBaseURLFromCurrentRequest()))
         )
     }
 
@@ -82,9 +86,8 @@ class RatingController(
         val user = authenticationFacade.forcedCurrentUser
         val report = reportDto.toReport(ratingId = id, user = user, commentId = null)
         val savedReport = reportServices.saveNew(report)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
         return ResponseEntity.ok(
-            BasicResponseDto.ok(ReportDto(savedReport, ServletUtil.getBaseURL(request)))
+            BasicResponseDto.ok(ReportDto(savedReport, ServletUtil.getBaseURLFromCurrentRequest()))
         )
     }
 

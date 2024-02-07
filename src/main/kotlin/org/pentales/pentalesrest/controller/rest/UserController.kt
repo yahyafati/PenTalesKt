@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest
 
-import jakarta.servlet.http.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
@@ -11,7 +10,6 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.*
 
 @RestController
 @RequestMapping("/api/user")
@@ -34,9 +32,9 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
 
-        val users = userService.findAll(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
+        val users =
+            userService.findAll(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
@@ -55,11 +53,10 @@ class UserController(
     fun getFollowingsOfCurrentUser(
         @PathVariable
         followerId: Long,
-        request: HttpServletRequest
     ): ResponseEntity<BasicResponseDto<List<UserDto>>> {
         val followedUser = User(id = followerId)
         val followings =
-            followerServices.getFollowings(followedUser).map { UserDto(it, ServletUtil.getBaseURL(request)) }
+            followerServices.getFollowings(followedUser).map { UserDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
@@ -67,11 +64,10 @@ class UserController(
     fun getFollowersOfCurrentUser(
         @PathVariable
         followedId: Long,
-        request: HttpServletRequest
     ): ResponseEntity<BasicResponseDto<List<UserDto>>> {
         val followedUser = User(id = followedId)
         val followings =
-            followerServices.getFollowers(followedUser).map { UserDto(it, ServletUtil.getBaseURL(request)) }
+            followerServices.getFollowers(followedUser).map { UserDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
@@ -115,9 +111,10 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
+
         val users =
-            userService.findAllByRole(role, pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
+            userService.findAllByRole(role, pageRequest)
+                .map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 
@@ -145,8 +142,8 @@ class UserController(
         direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        val users = userService.getModerators(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURL(request)) }
+        val users = userService.getModerators(pageRequest)
+            .map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))
     }
 

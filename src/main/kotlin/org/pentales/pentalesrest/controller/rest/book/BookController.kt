@@ -12,7 +12,6 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.*
 
 @RestController
 @RequestMapping("/api/book")
@@ -81,8 +80,12 @@ class BookController(
     ): ResponseEntity<BasicResponseDto<RatingDto?>> {
         val currentUserId = authenticationFacade.forcedCurrentUser.id
         val rating = bookServices.getBookRatingByUser(bookId = bookId, userId = userId ?: currentUserId)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        return ResponseEntity.ok(BasicResponseDto.ok(rating?.let { RatingDto(it, ServletUtil.getBaseURL(request)) }))
+        return ResponseEntity.ok(BasicResponseDto.ok(rating?.let {
+            RatingDto(
+                it,
+                ServletUtil.getBaseURLFromCurrentRequest()
+            )
+        }))
     }
 
     @GetMapping("/{id}/rating")
@@ -102,8 +105,12 @@ class BookController(
             page, size, sort, direction
         )
         val ratings = bookServices.getBookRatings(id, pageRequest)
-        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)!!.request
-        return ResponseEntity.ok(BasicResponseDto.ok(ratings.map { RatingDto(it, ServletUtil.getBaseURL(request)) }))
+        return ResponseEntity.ok(BasicResponseDto.ok(ratings.map {
+            RatingDto(
+                it,
+                ServletUtil.getBaseURLFromCurrentRequest()
+            )
+        }))
     }
 
     @GetMapping("/{bookId}/related")

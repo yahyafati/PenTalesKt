@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest
 
-import jakarta.servlet.http.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
@@ -27,13 +26,12 @@ class UserProfileController(
     fun uploadProfilePicture(
         @RequestBody
         file: MultipartFile,
-        request: HttpServletRequest,
     ): ResponseEntity<BasicResponseDto<ProfileDto>> {
         val user = authenticationFacade.forcedCurrentUser
         val imageUploadDto = ImageUploadDto(file = file)
         val profile = user.profile ?: throw GenericException("No profile found")
         val updatedProfile = userProfileService.uploadProfilePicture(profile, imageUploadDto)
-        val baseURL = ServletUtil.getBaseURL(request)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
 
@@ -45,13 +43,12 @@ class UserProfileController(
     fun uploadProfileCover(
         @RequestBody
         file: MultipartFile,
-        request: HttpServletRequest,
     ): ResponseEntity<BasicResponseDto<ProfileDto>> {
         val user = authenticationFacade.forcedCurrentUser
         val imageUploadDto = ImageUploadDto(file = file)
         val profile = user.profile ?: throw GenericException("No profile found")
         val updatedProfile = userProfileService.uploadProfileCover(profile, imageUploadDto)
-        val baseURL = ServletUtil.getBaseURL(request)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
 }

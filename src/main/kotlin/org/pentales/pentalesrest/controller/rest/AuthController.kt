@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest
 
-import jakarta.servlet.http.*
 import jakarta.validation.*
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
@@ -24,14 +23,18 @@ class AuthController(
         @Valid
         @RequestBody
         registerUser: RegisterUser,
-        request: HttpServletRequest,
     ): ResponseEntity<BasicResponseDto<UserDto>> {
         val user = authServices.register(registerUser)
         val token = jwtService.generateToken(user)
         val headerToken = securityConfigProperties.jwt.header to securityConfigProperties.jwt.prefix + " " + token
 
         return ResponseEntity.ok().header(headerToken.first, headerToken.second)
-            .body(BasicResponseDto.ok(UserDto(user, ServletUtil.getBaseURL(request)), "User registered successfully"))
+            .body(
+                BasicResponseDto.ok(
+                    UserDto(user, ServletUtil.getBaseURLFromCurrentRequest()),
+                    "User registered successfully"
+                )
+            )
     }
 
     @PostMapping("/username-available")
@@ -46,10 +49,8 @@ class AuthController(
     }
 
     @GetMapping("/current")
-    fun getCurrentUser(
-        request: HttpServletRequest
-    ): ResponseEntity<UserDto> {
+    fun getCurrentUser(): ResponseEntity<UserDto> {
         val user = authServices.getCurrentUser()
-        return ResponseEntity.ok(UserDto(user, ServletUtil.getBaseURL(request)))
+        return ResponseEntity.ok(UserDto(user, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 }
