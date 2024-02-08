@@ -6,6 +6,7 @@ import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.*
@@ -30,7 +31,8 @@ class UserProfileController(
         val imageUploadDto = ImageUploadDto(file = file)
         val profile = user.profile ?: throw GenericException("No profile found")
         val updatedProfile = userProfileService.uploadProfilePicture(profile, imageUploadDto)
-        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile)))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
 
     @PostMapping(
@@ -46,6 +48,7 @@ class UserProfileController(
         val imageUploadDto = ImageUploadDto(file = file)
         val profile = user.profile ?: throw GenericException("No profile found")
         val updatedProfile = userProfileService.uploadProfileCover(profile, imageUploadDto)
-        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile)))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
 }

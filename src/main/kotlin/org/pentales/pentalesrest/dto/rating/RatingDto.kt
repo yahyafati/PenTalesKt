@@ -16,11 +16,11 @@ data class RatingDto(
     var isLiked: Boolean = false,
 ) {
 
-    constructor(rating: Rating) : this(
+    constructor(rating: Rating, baseURL: String) : this(
         id = rating.id,
         value = rating.value,
         review = rating.review,
-        user = UserDto(rating.user),
+        user = UserDto(rating.user, baseURL),
         book = BookDTO(rating.book),
         createdAt = rating.createdAt.time,
         updatedAt = rating.updatedAt.time,

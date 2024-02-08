@@ -45,3 +45,10 @@ org:
     file:
       upload:
         path: uploads # Path to the directory where the uploaded files will be stored
+        allowed-extensions:
+          - jpg
+          - jpeg
+          - png
+          - gif
+          - bmp
+          - webp

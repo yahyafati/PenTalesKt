@@ -13,11 +13,11 @@ data class CommentDto(
 ) {
 
     constructor(
-        comment: Comment
+        comment: Comment, baseURL: String
     ) : this(
         id = comment.id,
         comment = comment.comment,
-        user = UserDto(comment.user),
+        user = UserDto(comment.user, baseURL),
         createdAt = comment.createdAt.time,
         updatedAt = comment.updatedAt.time,
     )

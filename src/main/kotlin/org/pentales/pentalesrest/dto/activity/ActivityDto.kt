@@ -19,17 +19,17 @@ data class ActivityDto(
     var data: Any? = null,
 ) {
 
-    constructor(activityView: ActivityView) : this() {
+    constructor(activityView: ActivityView, baseURL: String) : this() {
         id = activityView.ratingId
         activityId = activityView.activityId
         type = activityView.type
         updatedAt = activityView.updatedAt.time
-        rating = activityView.getEffectiveRating()?.let { ActivityRatingDto(it) }
+        rating = activityView.getEffectiveRating()?.let { ActivityRatingDto(it, baseURL) }
         book = activityView.activityBook?.let { ActivityBookDto(it) }
         data = when (type) {
             EActivityType.RATING -> null
-            EActivityType.COMMENT -> CommentDto(activityView.comment!!)
-            EActivityType.SHARE -> ShareDto(activityView.share!!)
+            EActivityType.COMMENT -> CommentDto(activityView.comment!!, baseURL)
+            EActivityType.SHARE -> ShareDto(activityView.share!!, baseURL)
         }
     }
 }

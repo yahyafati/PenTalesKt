@@ -9,6 +9,7 @@ import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
@@ -68,7 +69,7 @@ class BookPageServices(
 
                 "reviewCount" to reviewCount,
 
-                "allRatings" to ratings.map { RatingDto(it) },
+                "allRatings" to ratings.map { RatingDto(it, ServletUtil.getBaseURLFromCurrentRequest()) },
 
                 "distribution" to ratingRepository.findRatingDistributionByBook(book).map { ratingDistribution ->
                     mapOf(

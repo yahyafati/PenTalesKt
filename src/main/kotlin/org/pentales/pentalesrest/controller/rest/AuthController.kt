@@ -1,11 +1,12 @@
 package org.pentales.pentalesrest.controller.rest
 
 import jakarta.validation.*
-import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -21,13 +22,19 @@ class AuthController(
     fun register(
         @Valid
         @RequestBody
-        registerUser: RegisterUser
+        registerUser: RegisterUser,
     ): ResponseEntity<BasicResponseDto<UserDto>> {
         val user = authServices.register(registerUser)
         val token = jwtService.generateToken(user)
         val headerToken = securityConfigProperties.jwt.header to securityConfigProperties.jwt.prefix + " " + token
+
         return ResponseEntity.ok().header(headerToken.first, headerToken.second)
-            .body(BasicResponseDto.ok(UserDto(user), "User registered successfully"))
+            .body(
+                BasicResponseDto.ok(
+                    UserDto(user, ServletUtil.getBaseURLFromCurrentRequest()),
+                    "User registered successfully"
+                )
+            )
     }
 
     @PostMapping("/username-available")
@@ -44,6 +51,6 @@ class AuthController(
     @GetMapping("/current")
     fun getCurrentUser(): ResponseEntity<UserDto> {
         val user = authServices.getCurrentUser()
-        return ResponseEntity.ok(UserDto(user))
+        return ResponseEntity.ok(UserDto(user, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 }

@@ -15,7 +15,7 @@ class ProfilePageController(
     @GetMapping
     fun getProfilePage(
         @RequestParam(required = false, name = "username")
-        usernameParam: String?
+        usernameParam: String?,
     ): BasicResponseDto<Map<String, Any>> {
         val username = usernameParam ?: authenticationFacade.forcedCurrentUser.username
         val response = profilePageServices.getProfilePage(username)

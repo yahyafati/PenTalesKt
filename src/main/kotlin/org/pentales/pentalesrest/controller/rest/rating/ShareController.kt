@@ -4,6 +4,7 @@ import org.pentales.pentalesrest.dto.share.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +21,7 @@ class ShareController(
         id: Long
     ): ResponseEntity<ShareDto> {
         val share = activityShareServices.getShareById(id = id)
-        return ResponseEntity.ok(ShareDto(share))
+        return ResponseEntity.ok(ShareDto(share, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 
     @PostMapping("/rating/{ratingId}")
@@ -38,7 +39,7 @@ class ShareController(
             user = user,
         )
         val savedShare = activityShareServices.saveNew(share)
-        return ResponseEntity.ok(ShareDto(savedShare))
+        return ResponseEntity.ok(ShareDto(savedShare, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 
     @DeleteMapping("/{shareId}")

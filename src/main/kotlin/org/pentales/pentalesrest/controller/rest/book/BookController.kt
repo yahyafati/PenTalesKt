@@ -8,6 +8,7 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -79,7 +80,12 @@ class BookController(
     ): ResponseEntity<BasicResponseDto<RatingDto?>> {
         val currentUserId = authenticationFacade.forcedCurrentUser.id
         val rating = bookServices.getBookRatingByUser(bookId = bookId, userId = userId ?: currentUserId)
-        return ResponseEntity.ok(BasicResponseDto.ok(rating?.let { RatingDto(it) }))
+        return ResponseEntity.ok(BasicResponseDto.ok(rating?.let {
+            RatingDto(
+                it,
+                ServletUtil.getBaseURLFromCurrentRequest()
+            )
+        }))
     }
 
     @GetMapping("/{id}/rating")
@@ -99,7 +105,12 @@ class BookController(
             page, size, sort, direction
         )
         val ratings = bookServices.getBookRatings(id, pageRequest)
-        return ResponseEntity.ok(BasicResponseDto.ok(ratings.map { RatingDto(it) }))
+        return ResponseEntity.ok(BasicResponseDto.ok(ratings.map {
+            RatingDto(
+                it,
+                ServletUtil.getBaseURLFromCurrentRequest()
+            )
+        }))
     }
 
     @GetMapping("/{bookId}/related")

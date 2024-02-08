@@ -35,14 +35,14 @@ data class ProfileDto(
 
     }
 
-    constructor(profile: UserProfile) : this(
+    constructor(profile: UserProfile, baseURL: String) : this(
         userId = profile.user.id,
         firstName = profile.firstName,
         lastName = profile.lastName,
         username = profile.user.username,
         email = profile.user.email,
-        profilePicture = profile.profilePicture,
-        coverPicture = profile.coverPicture,
+        profilePicture = if (profile.profilePicture != null) "$baseURL/api/assets/${profile.profilePicture}" else null,
+        coverPicture = if (profile.coverPicture != null) "$baseURL/api/assets/${profile.coverPicture}" else null,
         bio = profile.bio,
         gender = profile.gender,
         socialMedias = getSocialMedia(profile)

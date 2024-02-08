@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
@@ -20,31 +21,40 @@ import kotlin.reflect.full.*
 @Service
 class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
-    private val bookIntermediatesServices: IBookIntermediatesServices,
     private val authenticationFacade: IAuthenticationFacade,
+    private val fileService: IFileService,
     private val fileConfigProperties: FileConfigProperties
 ) : IUserProfileServices {
 
-    val UPLOAD_PATH = fileConfigProperties.upload.path
+    companion object {
 
-    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): Path {
+        const val MAX_FILE_NAME_LENGTH = 20
+    }
+
+    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
         if (uploadDto.file == null) {
             throw GenericException("File cannot be null")
         }
-        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "")
-        val allowedExtensions = listOf("jpg", "jpeg", "png")
-        if (!allowedExtensions.contains(extension)) {
+        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "").lowercase()
+
+        val allowedExtensions = fileConfigProperties.upload.allowedExtensions
+        if (extension !in allowedExtensions) {
             throw GenericException("File extension (.$extension) not allowed")
         }
         val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
 
-        val uniqueFileName = fileName + UUID.randomUUID().toString() + "." + extension
-        val path = Paths.get(UPLOAD_PATH, parent, uniqueFileName)
-        if (!Files.exists(path.parent)) {
-            Files.createDirectories(path.parent)
+        val shortFileName = if (fileName.length > MAX_FILE_NAME_LENGTH) {
+            fileName.substring(0, MAX_FILE_NAME_LENGTH) + "~"
+        } else {
+            fileName
         }
 
-        return path
+        val uniqueFileName = shortFileName + "_" + UUID.randomUUID().toString() + "." + extension
+        return Paths.get(
+            fileConfigProperties.upload.path,
+            parent,
+            uniqueFileName
+        ).toString()
     }
 
     fun findById(id: Long): UserProfile {
@@ -87,18 +97,23 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("profile", uploadDto)
-        uploadDto.file!!.transferTo(path)
-        val absolutePath: String = path.toAbsolutePath().toString()
-        userProfileRepository.updateProfilePicture(userProfile, absolutePath)
-        return findById(userProfile.id)
+
+        fileService.uploadFile(path, uploadDto.file!!.bytes)
+        if (userProfile.profilePicture != null) {
+            fileService.deleteFile(userProfile.profilePicture!!)
+        }
+        userProfileRepository.updateProfilePicture(userProfile, path)
+        return userProfile
     }
 
     @Transactional
     override fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("cover", uploadDto)
-        uploadDto.file!!.transferTo(path)
-        val absolutePath: String = path.toAbsolutePath().toString()
-        userProfileRepository.updateCoverPicture(userProfile, absolutePath)
-        return findById(userProfile.id)
+        fileService.uploadFile(path, uploadDto.file!!.bytes)
+        if (userProfile.coverPicture != null) {
+            fileService.deleteFile(userProfile.coverPicture!!)
+        }
+        userProfileRepository.updateCoverPicture(userProfile, path)
+        return userProfile
     }
 }

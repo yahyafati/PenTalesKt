@@ -14,7 +14,7 @@ data class UserSecurityDto(
     var profilePicture: String? = "",
 ) {
 
-    constructor(user: User) : this(
+    constructor(user: User, baseURL: String) : this(
         id = user.id,
         firstName = user.profile?.firstName,
         lastName = user.profile?.lastName,
@@ -22,6 +22,6 @@ data class UserSecurityDto(
         role = user.role.role,
         permissions = user.authorities.map { it.permission },
         email = user.email,
-        profilePicture = user.profile?.profilePicture,
+        profilePicture = UserDto.getProfilePictureWithBaseURL(user.profile, baseURL)
     )
 }

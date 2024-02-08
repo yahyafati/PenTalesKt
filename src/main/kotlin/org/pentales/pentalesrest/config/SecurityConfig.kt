@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.config
 
-import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.context.annotation.*
@@ -73,6 +73,7 @@ class SecurityConfig(
                     securityConfigProperties.usernameAvailableUrl,
                 ).permitAll()
 
+                    .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
                     .requestMatchers("/test/unsecured").permitAll()
 
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()

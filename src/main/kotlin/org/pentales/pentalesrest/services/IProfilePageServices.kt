@@ -3,7 +3,7 @@ package org.pentales.pentalesrest.services
 interface IProfilePageServices {
 
     fun getProfilePage(
-        username: String
+        username: String,
     ): Map<String, Any>
 
 }

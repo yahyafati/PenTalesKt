@@ -7,6 +7,7 @@ import org.pentales.pentalesrest.dto.report.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -46,7 +47,7 @@ class CommentController(
 
         val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, Sort.Direction.DESC)
         val response = commentServices.findAllByRating(rating, pageRequest)
-        val dto = response.map { CommentDto(it) }
+        val dto = response.map { CommentDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -61,7 +62,7 @@ class CommentController(
         val rating = Rating(id = ratingId)
         val comment = addCommentDto.toComment(rating = rating, user = user)
         val savedComment = commentServices.saveNew(comment)
-        val dto = CommentDto(savedComment)
+        val dto = CommentDto(savedComment, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -78,7 +79,7 @@ class CommentController(
         val updatedComment = updateCommentDto.toComment(rating = comment.rating, user = user)
         updatedComment.id = commentId
         val savedComment = commentServices.save(updatedComment)
-        val dto = CommentDto(savedComment)
+        val dto = CommentDto(savedComment, ServletUtil.getBaseURLFromCurrentRequest())
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -92,7 +93,7 @@ class CommentController(
         val user = authenticationFacade.forcedCurrentUser
         val report = reportDto.toReport(user = user, commentId = commentId, ratingId = null)
         val reported = reportServices.saveNew(report)
-        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(reported)))
+        return ResponseEntity.ok(BasicResponseDto.ok(ReportDto(reported, ServletUtil.getBaseURLFromCurrentRequest())))
     }
 
     @DeleteMapping("/{commentId}")

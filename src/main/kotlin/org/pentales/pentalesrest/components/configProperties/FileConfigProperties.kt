@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.components
+package org.pentales.pentalesrest.components.configProperties
 
 import org.springframework.boot.context.properties.*
 import org.springframework.stereotype.*
@@ -12,6 +12,7 @@ data class FileConfigProperties(
     @Component
     data class UploadProperties(
         var path: String = "",
+        var allowedExtensions: List<String> = emptyList(),
     )
 
 }

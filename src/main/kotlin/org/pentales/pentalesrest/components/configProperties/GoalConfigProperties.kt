@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.components
+package org.pentales.pentalesrest.components.configProperties
 
 import org.pentales.pentalesrest.utils.*
 import org.springframework.boot.context.properties.*

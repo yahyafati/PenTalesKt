@@ -18,16 +18,16 @@ data class ReportDto(
     var approvedBy: UserDto? = null,
 ) {
 
-    constructor(report: Report) : this(
+    constructor(report: Report, baseURL: String) : this(
         id = report.id,
-        user = UserDto(report.user),
-        rating = report.rating?.let { RatingDto(it) },
-        comment = report.comment?.let { CommentDto(it) },
+        user = UserDto(report.user, baseURL),
+        rating = report.rating?.let { RatingDto(it, baseURL) },
+        comment = report.comment?.let { CommentDto(it, baseURL) },
         type = report.type,
         reasons = report.eReasons,
         description = report.description,
         status = report.status,
-        approvedBy = report.approvedBy?.let { UserDto(it) },
+        approvedBy = report.approvedBy?.let { UserDto(it, baseURL) },
     )
 
     fun toReport(): Report = Report(

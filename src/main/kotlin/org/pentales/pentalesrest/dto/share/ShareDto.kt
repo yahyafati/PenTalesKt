@@ -9,10 +9,10 @@ data class ShareDto(
     var user: UserDto = UserDto(),
 ) {
 
-    constructor(share: Share) : this(
+    constructor(share: Share, baseURL: String) : this(
         id = share.id,
         quote = share.shareQuote,
-        user = UserDto(share.user),
+        user = UserDto(share.user, baseURL),
     )
 
     fun toActivityShare(

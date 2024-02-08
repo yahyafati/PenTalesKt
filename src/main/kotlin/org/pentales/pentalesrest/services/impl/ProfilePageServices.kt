@@ -8,6 +8,7 @@ import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.stereotype.*
 import java.time.*
 
@@ -29,7 +30,7 @@ class ProfilePageServices(
             profileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException(
                 "User with username $username not found"
             )
-        val profileDto = ProfileDto(profile)
+        val profileDto = ProfileDto(profile, ServletUtil.getBaseURLFromCurrentRequest())
         val followerCount = followerService.countFollowersOf(profile.user)
         val followingCount = followerService.countFollowingsOf(profile.user)
         val isFollowed = followerService.isFollowing(follower = currentUser, followed = profile.user)
