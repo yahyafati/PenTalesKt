@@ -99,7 +99,7 @@ public class BookRepository {
                 }
 
                 if (notFoundAuthors > 0) {
-                    System.err.println("Authors not found: " + notFoundAuthors);
+                    System.err.println("[e]: " + notFoundAuthors + " authors not found.");
                 }
                 bookGenreStatement.executeBatch();
                 bookAuthorStatement.executeBatch();

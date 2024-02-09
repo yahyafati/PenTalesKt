@@ -28,8 +28,10 @@ CREATE TABLE IF NOT EXISTS authority_user
 (
     user_id      INT NOT NULL,
     authority_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (authority_id) REFERENCES authority (id),
+    CONSTRAINT fk_user_authority_user
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_authority_authority_user
+        FOREIGN KEY (authority_id) REFERENCES authority (id) ON DELETE CASCADE,
 
     UNIQUE (user_id, authority_id)
 );

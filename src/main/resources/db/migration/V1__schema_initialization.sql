@@ -959,7 +959,8 @@ ALTER TABLE ONLY public.users
 --
 
 ALTER TABLE ONLY public.comment
-    ADD CONSTRAINT fk1ycdvbhcpqly0e1hje19gp6um FOREIGN KEY (rating_id) REFERENCES public.rating (id);
+    ADD CONSTRAINT fk_comment_rating
+        FOREIGN KEY (rating_id) REFERENCES public.rating (id) ON DELETE CASCADE;
 
 
 --
@@ -967,7 +968,8 @@ ALTER TABLE ONLY public.comment
 --
 
 ALTER TABLE ONLY public.user_book_status
-    ADD CONSTRAINT fk3wrjv72lf4u67elc8vhjtgs84 FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_user_book_status_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -975,7 +977,8 @@ ALTER TABLE ONLY public.user_book_status
 --
 
 ALTER TABLE ONLY public.book_shelf_book
-    ADD CONSTRAINT fk51ocbvgx36oggmqxm70pbtfgm FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_book_shelf_book_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -983,7 +986,8 @@ ALTER TABLE ONLY public.book_shelf_book
 --
 
 ALTER TABLE ONLY public.book_genre
-    ADD CONSTRAINT fk52evq6pdc5ypanf41bij5u218 FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_book_genre_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -991,7 +995,8 @@ ALTER TABLE ONLY public.book_genre
 --
 
 ALTER TABLE ONLY public.user_book_status
-    ADD CONSTRAINT fk6ggvp4rcd68xc0t3krh9ec341 FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_user_book_status_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -999,7 +1004,8 @@ ALTER TABLE ONLY public.user_book_status
 --
 
 ALTER TABLE ONLY public.rating
-    ADD CONSTRAINT fk7y1acs6la7vkgb5ulm44729sc FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_rating_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -1007,7 +1013,8 @@ ALTER TABLE ONLY public.rating
 --
 
 ALTER TABLE ONLY public.user_profile
-    ADD CONSTRAINT fk8bbdocfaltvsgg7pluom0eq29 FOREIGN KEY (want_to_read_shelf_id) REFERENCES public.book_shelf (id);
+    ADD CONSTRAINT fk_user_profile_book_shelf
+        FOREIGN KEY (want_to_read_shelf_id) REFERENCES public.book_shelf (id) ON DELETE SET NULL;
 
 
 --
@@ -1015,7 +1022,8 @@ ALTER TABLE ONLY public.user_profile
 --
 
 ALTER TABLE ONLY public.user_goal
-    ADD CONSTRAINT fk8h8plouhv0i01uem7wsxn0v6v FOREIGN KEY (goal_id) REFERENCES public.goal (id);
+    ADD CONSTRAINT fk_user_goal_goal
+        FOREIGN KEY (goal_id) REFERENCES public.goal (id) ON DELETE CASCADE;
 
 
 --
@@ -1023,7 +1031,8 @@ ALTER TABLE ONLY public.user_goal
 --
 
 ALTER TABLE ONLY public.book_genre
-    ADD CONSTRAINT fk8l6ops8exmjrlr89hmfow4mmo FOREIGN KEY (genre_id) REFERENCES public.genre (id);
+    ADD CONSTRAINT fk_book_genre_genre
+        FOREIGN KEY (genre_id) REFERENCES public.genre (id) ON DELETE CASCADE;
 
 
 --
@@ -1031,7 +1040,8 @@ ALTER TABLE ONLY public.book_genre
 --
 
 ALTER TABLE ONLY public.share
-    ADD CONSTRAINT fk8w9gobrtcmuyifxiyh1gvlnka FOREIGN KEY (rating_id) REFERENCES public.rating (id);
+    ADD CONSTRAINT fk_share_rating
+        FOREIGN KEY (rating_id) REFERENCES public.rating (id) ON DELETE CASCADE;
 
 
 --
@@ -1039,7 +1049,8 @@ ALTER TABLE ONLY public.share
 --
 
 ALTER TABLE ONLY public.book_author
-    ADD CONSTRAINT fkbjqhp85wjv8vpr0beygh6jsgo FOREIGN KEY (author_id) REFERENCES public.author (id);
+    ADD CONSTRAINT fk_book_author_author
+        FOREIGN KEY (author_id) REFERENCES public.author (id) ON DELETE CASCADE;
 
 
 --
@@ -1047,7 +1058,8 @@ ALTER TABLE ONLY public.book_author
 --
 
 ALTER TABLE ONLY public.user_goal
-    ADD CONSTRAINT fkd09eq8bpxgy8p5wi7mjglujck FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_user_goal_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1055,7 +1067,8 @@ ALTER TABLE ONLY public.user_goal
 --
 
 ALTER TABLE ONLY public.follower
-    ADD CONSTRAINT fkd3eogweewsvq7fvghxqwaupx0 FOREIGN KEY (follower_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_follower_followed
+        FOREIGN KEY (follower_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1063,7 +1076,8 @@ ALTER TABLE ONLY public.follower
 --
 
 ALTER TABLE ONLY public.book_shelf_book
-    ADD CONSTRAINT fkdk9sx9x6fc8vbbbesmbc1jk3x FOREIGN KEY (book_shelf_id) REFERENCES public.book_shelf (id);
+    ADD CONSTRAINT fk_book_shelf_book_book_shelf
+        FOREIGN KEY (book_shelf_id) REFERENCES public.book_shelf (id) ON DELETE CASCADE;
 
 
 --
@@ -1071,7 +1085,8 @@ ALTER TABLE ONLY public.book_shelf_book
 --
 
 ALTER TABLE ONLY public.user_book_activity
-    ADD CONSTRAINT fke7c2ckerv1mxm2kgwvxjhpk4y FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_user_book_activity_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1079,7 +1094,8 @@ ALTER TABLE ONLY public.user_book_activity
 --
 
 ALTER TABLE ONLY public.rating
-    ADD CONSTRAINT fkf68lgbsbxl310n0jifwpfqgfh FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_rating_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1087,7 +1103,8 @@ ALTER TABLE ONLY public.rating
 --
 
 ALTER TABLE ONLY public.follower
-    ADD CONSTRAINT fkg0qvdavbkdr7cf6hroqnf3r9p FOREIGN KEY (followed_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_follower_follower
+        FOREIGN KEY (followed_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1095,7 +1112,8 @@ ALTER TABLE ONLY public.follower
 --
 
 ALTER TABLE ONLY public.book_author
-    ADD CONSTRAINT fkhwgu59n9o80xv75plf9ggj7xn FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_book_author_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -1103,7 +1121,8 @@ ALTER TABLE ONLY public.book_author
 --
 
 ALTER TABLE ONLY public.user_profile_genre
-    ADD CONSTRAINT fkjji5y02d6lek6leuyunykeoia FOREIGN KEY (profile_id) REFERENCES public.user_profile (id);
+    ADD CONSTRAINT fk_user_profile_genre_genre
+        FOREIGN KEY (profile_id) REFERENCES public.user_profile (id) ON DELETE CASCADE;
 
 
 --
@@ -1111,7 +1130,8 @@ ALTER TABLE ONLY public.user_profile_genre
 --
 
 ALTER TABLE ONLY public.user_book_activity
-    ADD CONSTRAINT fko2qyv9yseq9hrftfhbji5wksm FOREIGN KEY (book_id) REFERENCES public.book (id);
+    ADD CONSTRAINT fk_user_book_activity_book
+        FOREIGN KEY (book_id) REFERENCES public.book (id) ON DELETE CASCADE;
 
 
 --
@@ -1119,7 +1139,8 @@ ALTER TABLE ONLY public.user_book_activity
 --
 
 ALTER TABLE ONLY public.user_profile_genre
-    ADD CONSTRAINT fkpnd4a9jl6p2lk9xya6jgslbkd FOREIGN KEY (genre_id) REFERENCES public.genre (id);
+    ADD CONSTRAINT fk_user_profile_genre_profile
+        FOREIGN KEY (genre_id) REFERENCES public.genre (id) ON DELETE CASCADE;
 
 
 --
@@ -1127,7 +1148,8 @@ ALTER TABLE ONLY public.user_profile_genre
 --
 
 ALTER TABLE ONLY public.comment
-    ADD CONSTRAINT fkqm52p1v3o13hy268he0wcngr5 FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_comment_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1135,7 +1157,8 @@ ALTER TABLE ONLY public.comment
 --
 
 ALTER TABLE ONLY public.share
-    ADD CONSTRAINT fkqpl1v3hvb4io91a90ltbfhkwf FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_share_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --
@@ -1143,7 +1166,8 @@ ALTER TABLE ONLY public.share
 --
 
 ALTER TABLE ONLY public.user_profile
-    ADD CONSTRAINT fkuganfwvnbll4kn2a3jeyxtyi FOREIGN KEY (user_id) REFERENCES public.users (id);
+    ADD CONSTRAINT fk_user_profile_user
+        FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE;
 
 
 --

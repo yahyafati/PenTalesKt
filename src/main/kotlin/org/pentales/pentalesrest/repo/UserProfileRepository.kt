@@ -10,10 +10,10 @@ interface UserProfileRepository : IRepoSpecification<UserProfile, Long> {
 
     @Query("UPDATE UserProfile u SET u.profilePicture = :profilePicture WHERE u = :userProfile")
     @Modifying
-    fun updateProfilePicture(userProfile: UserProfile, profilePicture: String): Int
+    fun updateProfilePicture(userProfile: UserProfile, profilePicture: String?): Int
 
     @Query("UPDATE UserProfile u SET u.coverPicture = :coverPicture WHERE u = :userProfile")
     @Modifying
-    fun updateCoverPicture(userProfile: UserProfile, coverPicture: String): Int
+    fun updateCoverPicture(userProfile: UserProfile, coverPicture: String?): Int
 
 }

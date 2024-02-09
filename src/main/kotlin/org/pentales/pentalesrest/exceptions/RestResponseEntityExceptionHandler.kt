@@ -65,7 +65,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         val errorModel = GenericErrorModel(
             exception.message ?: "Bad Request",
             System.currentTimeMillis(),
-            HttpStatus.BAD_REQUEST.value(),
+            exception.status.value(),
             exception,
         )
         LOG.error(errorModel.message)

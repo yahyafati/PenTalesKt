@@ -19,6 +19,17 @@ class UserProfileController(
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
+    @GetMapping
+    fun getProfile(
+        @RequestParam(required = false)
+        username: String?,
+    ): ResponseEntity<BasicResponseDto<ProfileDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val profile = user.profile ?: throw GenericException("No profile found")
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(profile, baseURL)))
+    }
+
     @GetMapping("/followers")
     fun getFollowers(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
         val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
@@ -58,6 +69,15 @@ class UserProfileController(
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
 
+    @DeleteMapping("/picture")
+    fun deleteProfilePicture(): ResponseEntity<BasicResponseDto<ProfileDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val profile = user.profile ?: throw GenericException("No profile found")
+        val updatedProfile = userProfileService.deleteProfilePicture(profile)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
+    }
+
     @PostMapping(
         "/cover",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
@@ -71,6 +91,15 @@ class UserProfileController(
         val imageUploadDto = ImageUploadDto(file = file)
         val profile = user.profile ?: throw GenericException("No profile found")
         val updatedProfile = userProfileService.uploadProfileCover(profile, imageUploadDto)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
+    }
+
+    @DeleteMapping("/cover")
+    fun deleteProfileCover(): ResponseEntity<BasicResponseDto<ProfileDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val profile = user.profile ?: throw GenericException("No profile found")
+        val updatedProfile = userProfileService.deleteProfileCover(profile)
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(updatedProfile, baseURL)))
     }
