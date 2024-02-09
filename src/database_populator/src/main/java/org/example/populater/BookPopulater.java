@@ -33,7 +33,8 @@ public class BookPopulater implements IPopulater {
 
     public static Map<String, Object> parseBookToMap(String line) {
         Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
         return gson.fromJson(line, type);
     }
 
@@ -66,7 +67,9 @@ public class BookPopulater implements IPopulater {
                     book.setTitle((String) value);
                     break;
                 case "description":
-                    book.setDescription((String) value);
+                    String description = (String) value;
+                    description = "<p>" + description.replaceAll("\n", "</p><p>") + "</p>";
+                    book.setDescription(description);
                     break;
                 case "isbn":
                     book.setIsbn((String) value);
@@ -118,6 +121,10 @@ public class BookPopulater implements IPopulater {
 
     @Override
     public void populate() {
+        populate(0);
+    }
+
+    public void populate(int maxBooks) {
         int BATCH_SIZE = 50;
         int RATING_THRESHOLD = 100;
         String line = null;
@@ -128,7 +135,7 @@ public class BookPopulater implements IPopulater {
 
              InputStreamReader reader = new InputStreamReader(gzis);
 
-             BufferedReader br = new BufferedReader(reader);) {
+             BufferedReader br = new BufferedReader(reader)) {
             Book[] books = new Book[BATCH_SIZE];
             int count = 0;
             while ((line = br.readLine()) != null) {
@@ -144,6 +151,9 @@ public class BookPopulater implements IPopulater {
                     BookRepository.insertBookBatch(books);
                     logger.info("Inserted " + count + " books");
                 }
+                if (maxBooks != 0 && count >= maxBooks) {
+                    break;
+                }
             }
             if (count % books.length != 0) {
                 Book[] temp = new Book[count % books.length];
@@ -151,6 +161,7 @@ public class BookPopulater implements IPopulater {
                 BookRepository.insertBookBatch(temp);
                 logger.info("Inserted " + count + " books");
             }
+            logger.info("Inserted " + count + " books");
         } catch (Exception e) {
             logger.severe("Error while populating books");
             logger.severe(e.getMessage());
