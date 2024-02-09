@@ -6,7 +6,7 @@ ALTER TABLE book_shelf
 -- add owner column to book shelf table
 
 ALTER TABLE book_shelf
-    ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES users (id);
+    ADD COLUMN IF NOT EXISTS owner_id INTEGER REFERENCES users (id) ON DELETE CASCADE;
 
 -- add constraint to book shelf table so that only one bookshelf can be read later for each user
 

@@ -181,4 +181,10 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(true))
     }
 
+    @DeleteMapping
+    fun deleteUser(): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = authenticationFacade.forcedCurrentUser
+        userService.deleteById(user.id)
+        return ResponseEntity.ok(BasicResponseDto.ok(true))
+    }
 }
