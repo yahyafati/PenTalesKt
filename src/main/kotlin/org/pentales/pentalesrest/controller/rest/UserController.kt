@@ -171,4 +171,14 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
+    @PostMapping("/change-password")
+    fun changePassword(
+        @RequestBody
+        changePasswordDto: ChangePasswordDto,
+    ): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = authenticationFacade.forcedCurrentUser
+        userService.changePassword(user, changePasswordDto)
+        return ResponseEntity.ok(BasicResponseDto.ok(true))
+    }
+
 }

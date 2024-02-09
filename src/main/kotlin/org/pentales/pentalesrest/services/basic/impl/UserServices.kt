@@ -1,18 +1,24 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import org.pentales.pentalesrest.dto.user.*
+import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
+import org.springframework.http.*
 import org.springframework.security.core.userdetails.*
+import org.springframework.security.crypto.password.*
 import org.springframework.stereotype.*
+import org.springframework.transaction.annotation.*
 
 @Service
 class UserServices(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
+    private val passwordEncoder: PasswordEncoder,
 ) : IUserServices {
 
     override fun save(user: User): User {
@@ -95,6 +101,20 @@ class UserServices(
         user.authorities.removeAll(removedAuthorities)
         save(user)
         return !user.authorities.containsAll(removedAuthorities)
+    }
+
+    @Transactional
+    override fun changePassword(user: User, changePassword: ChangePasswordDto) {
+        if (!passwordEncoder.matches(changePassword.oldPassword, user.password)) {
+            throw GenericException("Old password is incorrect", status = HttpStatus.BAD_REQUEST)
+        }
+        user.password = passwordEncoder.encode(changePassword.newPassword)
+        userRepository.changePassword(user.id, user.password)
+    }
+
+    @Transactional
+    override fun disable(user: User) {
+        userRepository.disable(user.id)
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {

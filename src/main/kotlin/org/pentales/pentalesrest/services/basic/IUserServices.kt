@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.basic
 
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.models.enums.*
 import org.springframework.data.domain.*
@@ -15,15 +16,15 @@ interface IUserServices : UserDetailsService {
     fun existsByUsername(username: String): Boolean
     fun deleteById(id: Long)
     fun deleteByUsername(username: String)
-
     fun getModerators(page: Pageable): Page<User>
     fun findAllByRole(role: ERole, pageable: Pageable): Page<User>
     fun toggleModerator(user: User): Boolean
     fun makeModerator(user: User): Boolean
     fun removeModerator(user: User): Boolean
-
     fun changeRole(user: User, role: ERole): Boolean
-
     fun addPermissions(user: User, permissions: Set<EPermission>): Boolean
     fun removePermissions(user: User, permissions: Set<EPermission>): Boolean
+    fun changePassword(user: User, changePassword: ChangePasswordDto)
+    fun disable(user: User)
+    
 }

@@ -137,4 +137,22 @@ class UserProfileServices(
         }
         return followings
     }
+
+    @Transactional
+    override fun deleteProfilePicture(profile: UserProfile): UserProfile {
+        if (profile.profilePicture != null) {
+            fileService.deleteFile(profile.profilePicture!!)
+        }
+        userProfileRepository.updateProfilePicture(profile, null)
+        return findById(profile.id)
+    }
+
+    @Transactional
+    override fun deleteProfileCover(profile: UserProfile): UserProfile {
+        if (profile.coverPicture != null) {
+            fileService.deleteFile(profile.coverPicture!!)
+        }
+        userProfileRepository.updateCoverPicture(profile, null)
+        return findById(profile.id)
+    }
 }

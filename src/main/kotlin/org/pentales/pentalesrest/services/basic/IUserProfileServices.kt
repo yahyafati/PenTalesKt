@@ -18,5 +18,7 @@ interface IUserProfileServices {
     fun getFollowers(user: User, pageable: Pageable): Page<User>
 
     fun getFollowings(user: User, pageable: Pageable): Page<User>
+    fun deleteProfilePicture(profile: UserProfile): UserProfile
+    fun deleteProfileCover(profile: UserProfile): UserProfile
 
 }
