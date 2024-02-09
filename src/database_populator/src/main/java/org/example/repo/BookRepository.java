@@ -68,14 +68,16 @@ public class BookRepository {
 
                  PreparedStatement bookGenreStatement = createInsertBookGenreStatement()) {
                 int index = 0;
+                int notFoundAuthors = 0;
                 while (generatedKeys.next()) {
                     long bookId = generatedKeys.getLong(1);
                     int addedAuthors = 0;
                     HashSet<Long> authorIds = new HashSet<>();
+
                     for (Author author : books[index].getAuthors()) {
                         long newAuthorId = AuthorRepository.getAuthorIdByGoodReadsId(author.getGoodReadsAuthorId());
                         if (newAuthorId == 0 || authorIds.contains(newAuthorId)) {
-                            System.err.println("Author not found: " + author.getGoodReadsAuthorId());
+                            notFoundAuthors++;
                             continue;
                         }
                         addBookAuthorToBatch(bookAuthorStatement, bookId, newAuthorId, index - addedAuthors);
@@ -94,6 +96,10 @@ public class BookRepository {
                     }
 
                     index++;
+                }
+
+                if (notFoundAuthors > 0) {
+                    System.err.println("Authors not found: " + notFoundAuthors);
                 }
                 bookGenreStatement.executeBatch();
                 bookAuthorStatement.executeBatch();

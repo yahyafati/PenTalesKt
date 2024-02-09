@@ -1,4 +1,5 @@
 -- create a unique id
+DROP VIEW IF EXISTS public.activity CASCADE;
 
 CREATE OR REPLACE VIEW public.activity AS
 SELECT 'RATING'::text AS type,

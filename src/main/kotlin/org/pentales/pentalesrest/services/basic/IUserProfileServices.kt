@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.services.basic
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
+import org.springframework.data.domain.*
 
 interface IUserProfileServices {
 
@@ -13,5 +14,9 @@ interface IUserProfileServices {
     fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile
 
     fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile
+
+    fun getFollowers(user: User, pageable: Pageable): Page<User>
+
+    fun getFollowings(user: User, pageable: Pageable): Page<User>
 
 }
