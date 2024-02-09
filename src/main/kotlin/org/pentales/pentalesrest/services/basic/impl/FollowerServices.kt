@@ -4,6 +4,7 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
+import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 
 @Service
@@ -56,8 +57,16 @@ class FollowerServices(
         return followings.map { it.followed }
     }
 
+    override fun getFollowings(followerUser: User, pageable: Pageable): Page<User> {
+        return followerRepository.findAllByFollower(followerUser, pageable).map { it.followed }
+    }
+
     override fun getFollowers(followedUser: User): List<User> {
         val followers = followerRepository.findAllByFollowed(followedUser)
         return followers.map { it.follower }
+    }
+
+    override fun getFollowers(followedUser: User, pageable: Pageable): Page<User> {
+        return followerRepository.findAllByFollowed(followedUser, pageable).map { it.follower }
     }
 }

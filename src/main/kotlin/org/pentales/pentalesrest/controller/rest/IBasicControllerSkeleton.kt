@@ -4,6 +4,7 @@ import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -30,6 +31,17 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
                 )
             }
             return pageRequest
+        }
+
+        fun getPageRequest(
+            pageParams: ServletUtil.PageParams
+        ): PageRequest {
+            return getPageRequest(
+                pageParams.page,
+                pageParams.size,
+                pageParams.sort,
+                Sort.Direction.valueOf(pageParams.direction)
+            )
         }
 
         private const val MAX_PAGE_SIZE = 50

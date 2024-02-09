@@ -1,6 +1,7 @@
 package org.pentales.pentalesrest.services.basic
 
 import org.pentales.pentalesrest.models.*
+import org.springframework.data.domain.*
 
 interface IFollowerServices {
 
@@ -33,7 +34,17 @@ interface IFollowerServices {
     ): List<User>
 
     fun getFollowers(
-        followedUser: User
+        followedUser: User,
     ): List<User>
+
+    fun getFollowings(
+        followerUser: User,
+        pageable: Pageable
+    ): Page<User>
+
+    fun getFollowers(
+        followedUser: User,
+        pageable: Pageable
+    ): Page<User>
 
 }

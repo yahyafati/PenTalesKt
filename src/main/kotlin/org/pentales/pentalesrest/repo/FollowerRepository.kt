@@ -2,7 +2,8 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
-import org.pentales.pentalesrest.repo.base.IRepoSpecification
+import org.pentales.pentalesrest.repo.base.*
+import org.springframework.data.domain.*
 
 interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
 
@@ -14,5 +15,9 @@ interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
 
     fun findAllByFollowed(followed: User): List<Follower>
     fun findAllByFollower(follower: User): List<Follower>
+
+    fun findAllByFollower(follower: User, pageable: Pageable): Page<Follower>
+
+    fun findAllByFollowed(followed: User, pageable: Pageable): Page<Follower>
 
 }

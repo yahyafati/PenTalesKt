@@ -6,10 +6,12 @@ import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
+import org.springframework.data.domain.*
 import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
@@ -23,7 +25,8 @@ class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
     private val authenticationFacade: IAuthenticationFacade,
     private val fileService: IFileService,
-    private val fileConfigProperties: FileConfigProperties
+    private val fileConfigProperties: FileConfigProperties,
+    private val followerServices: IFollowerServices,
 ) : IUserProfileServices {
 
     companion object {
@@ -103,7 +106,7 @@ class UserProfileServices(
             fileService.deleteFile(userProfile.profilePicture!!)
         }
         userProfileRepository.updateProfilePicture(userProfile, path)
-        return userProfile
+        return findById(userProfile.id)
     }
 
     @Transactional
@@ -114,6 +117,24 @@ class UserProfileServices(
             fileService.deleteFile(userProfile.coverPicture!!)
         }
         userProfileRepository.updateCoverPicture(userProfile, path)
-        return userProfile
+        return findById(userProfile.id)
+    }
+
+    @Transactional
+    override fun getFollowers(user: User, pageable: Pageable): Page<User> {
+        val follower = followerServices.getFollowers(user, pageable)
+        follower
+            .forEach {
+                it.__isFollowed = followerServices.isFollowing(authenticationFacade.forcedCurrentUser, it)
+            }
+        return follower
+    }
+
+    override fun getFollowings(user: User, pageable: Pageable): Page<User> {
+        val followings = followerServices.getFollowings(user, pageable)
+        followings.forEach {
+            it.__isFollowed = true
+        }
+        return followings
     }
 }
