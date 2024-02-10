@@ -20,7 +20,9 @@ class ActivityController(
     @GetMapping
     fun getActivities(): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
         val currentUser = authenticationFacade.forcedCurrentUser
-        val pageRequest = ServletUtil.getPageRequest()
+        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
+        pageParams.sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageRequest = ServletUtil.getPageRequest(pageParams)
         val activities = activityViewServices.getActivities(currentUser, pageRequest)
         return ResponseEntity.ok(
             BasicResponseDto.ok(activities.map { ActivityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) })

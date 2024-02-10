@@ -7,10 +7,9 @@ import org.springframework.web.context.request.*
 class ServletUtil {
 
     data class PageParams(
-        val page: Int,
-        val size: Int,
-        val sort: String,
-        val direction: String,
+        var page: Int,
+        var size: Int,
+        var sort: Sort,
     )
 
     companion object {
@@ -28,9 +27,13 @@ class ServletUtil {
         fun getPageParams(request: HttpServletRequest): PageParams {
             val page = request.getParameter("page")?.toIntOrNull() ?: 0
             val size = request.getParameter("size")?.toIntOrNull() ?: 10
-            val sort = request.getParameter("sort") ?: ""
+            val sort = request.getParameter("sort") ?: "id"
             val direction = request.getParameter("direction") ?: "ASC"
-            return PageParams(page, size, sort, direction)
+
+            return PageParams(
+                page, size,
+                Sort.by(Sort.Direction.valueOf(direction), sort),
+            )
         }
 
         fun getPageParamsFromCurrentRequest(): PageParams {
@@ -42,21 +45,33 @@ class ServletUtil {
         fun getPageRequest(
             page: Int?,
             size: Int?,
-            sort: String?,
-            direction: Sort.Direction?,
+            sort: Sort?,
         ): PageRequest {
             val pageNumber = (page ?: 0).coerceAtLeast(0)
             val pageSize = (size ?: 10).coerceIn(1, MAX_PAGE_SIZE)
-            val sortDirection = direction ?: Sort.Direction.ASC
 
-            val pageRequest = if (sort.isNullOrEmpty()) {
+            val pageRequest = if (sort == null) {
                 PageRequest.of(pageNumber, pageSize)
             } else {
                 PageRequest.of(
-                    pageNumber, pageSize, Sort.by(sortDirection, sort)
+                    pageNumber, pageSize, sort
                 )
             }
             return pageRequest
+        }
+
+        fun getPageRequest(
+            page: Int?,
+            size: Int?,
+            sort: String?,
+            direction: Sort.Direction?,
+        ): PageRequest {
+            val sortObj = if (sort != null && direction != null) {
+                Sort.by(direction, sort)
+            } else {
+                null
+            }
+            return getPageRequest(page, size, sortObj)
         }
 
         fun getPageRequest(
@@ -65,8 +80,7 @@ class ServletUtil {
             return getPageRequest(
                 pageParams.page,
                 pageParams.size,
-                pageParams.sort,
-                Sort.Direction.valueOf(pageParams.direction)
+                pageParams.sort
             )
         }
 

@@ -25,6 +25,10 @@ interface IFollowerServices {
         follower: User, followed: User
     ): Boolean
 
+    fun isFollowing(
+        followerUsername: String, followedUsername: String
+    ): Boolean
+
     fun toggleFollow(
         followerUser: User, followedUser: User
     ): Boolean

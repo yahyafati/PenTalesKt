@@ -62,15 +62,15 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
-    @GetMapping("/follow/{followedId}")
+    @GetMapping("/follow")
     fun currentUserIsFollowing(
-        @PathVariable
-        followedId: Long
+        @RequestParam
+        username: String,
     ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val currentUserId = authenticationFacade.currentUserId
+        val currentUser = authenticationFacade.forcedCurrentUser
         val following = followerServices.isFollowing(
-            follower = User(id = currentUserId),
-            followed = User(id = followedId),
+            followerUsername = currentUser.username,
+            followedUsername = username
         )
         return ResponseEntity.ok(BasicResponseDto.ok(following))
     }
