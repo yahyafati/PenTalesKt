@@ -25,7 +25,7 @@ class ActivityController(
         size: Int?
     ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
         val currentUser = authenticationFacade.forcedCurrentUser
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, "createdAt", Sort.Direction.DESC)
+        val pageRequest = ServletUtil.getPageRequest(page, size, "createdAt", Sort.Direction.DESC)
         val activities = activityViewServices.getActivities(currentUser, pageRequest)
         return ResponseEntity.ok(
             BasicResponseDto.ok(activities.map { ActivityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) })

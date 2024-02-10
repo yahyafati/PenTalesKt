@@ -155,4 +155,14 @@ class UserProfileServices(
         userProfileRepository.updateCoverPicture(profile, null)
         return findById(profile.id)
     }
+
+    override fun getSuggestedFollowings(user: User): List<UserProfile> {
+        val followings = followerServices.getFollowings(user)
+
+        val suggestedFollowings = userProfileRepository.findSuggestedFollowings(followings)
+        suggestedFollowings.forEach {
+            it.user.__isFollowed = false
+        }
+        return suggestedFollowings
+    }
 }

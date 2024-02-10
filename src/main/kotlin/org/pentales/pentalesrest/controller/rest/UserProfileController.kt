@@ -32,8 +32,7 @@ class UserProfileController(
 
     @GetMapping("/followers")
     fun getFollowers(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
-        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(pageParams)
+        val pageRequest = ServletUtil.getPageRequest()
         val user = authenticationFacade.forcedCurrentUser
         val followers = userProfileService.getFollowers(user, pageRequest)
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
@@ -44,12 +43,20 @@ class UserProfileController(
     @GetMapping("/followings")
     fun getFollowings(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
         val user = authenticationFacade.forcedCurrentUser
-        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(pageParams)
+        val pageRequest = ServletUtil.getPageRequest()
         val followings = userProfileService.getFollowings(user, pageRequest)
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         val followingsDto = followings.map { FriendDto(it, baseURL) }
         return ResponseEntity.ok(BasicResponseDto.ok(followingsDto))
+    }
+
+    @GetMapping("/suggested-users")
+    fun getSuggestedFollowings(): ResponseEntity<BasicResponseDto<List<FriendDto>>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val suggestedFollowings = userProfileService.getSuggestedFollowings(user)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val suggestedFollowingsDto = suggestedFollowings.map { FriendDto(it.user, baseURL) }
+        return ResponseEntity.ok(BasicResponseDto.ok(suggestedFollowingsDto))
     }
 
     @PostMapping(

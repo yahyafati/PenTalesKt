@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest.rating
 
-import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.ratingComment.*
 import org.pentales.pentalesrest.dto.report.*
@@ -34,18 +33,10 @@ class CommentController(
     fun getRatingComments(
         @PathVariable
         ratingId: Long,
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "updatedAt")
-        sort: String?,
-        @RequestParam(defaultValue = "DESC")
-        direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<CommentDto>>> {
         val rating = Rating(id = ratingId)
 
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, Sort.Direction.DESC)
+        val pageRequest = ServletUtil.getPageRequest()
         val response = commentServices.findAllByRating(rating, pageRequest)
         val dto = response.map { CommentDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(dto))

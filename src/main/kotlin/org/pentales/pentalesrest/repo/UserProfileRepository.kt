@@ -16,4 +16,8 @@ interface UserProfileRepository : IRepoSpecification<UserProfile, Long> {
     @Modifying
     fun updateCoverPicture(userProfile: UserProfile, coverPicture: String?): Int
 
+    //    get only the top 5 suggested followings
+    @Query("SELECT u FROM UserProfile u WHERE u.user NOT IN :followings ORDER BY u.id DESC LIMIT 5")
+    fun findSuggestedFollowings(followings: List<User>): List<UserProfile>
+
 }

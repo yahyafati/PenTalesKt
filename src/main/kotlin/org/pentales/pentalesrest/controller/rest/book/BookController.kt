@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.controller.rest.book
 
-import org.pentales.pentalesrest.controller.rest.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.dto.rating.*
@@ -27,20 +26,10 @@ class BookController(
 
     @PostMapping("/search")
     fun searchBooks(
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "")
-        sort: String?,
-        @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?,
         @RequestBody(required = false)
         filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<BookDTO>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(
-            page, size, sort, direction
-        )
+        val pageRequest = ServletUtil.getPageRequest()
         val response = service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it) }
         return ResponseEntity.ok(response)
     }
@@ -63,7 +52,7 @@ class BookController(
     }
 
     @GetMapping("/{id}/rating-info")
-    fun getBookRatingById(
+    fun getBookRatingInfoById(
         @PathVariable
         id: Long,
     ): ResponseEntity<BasicResponseDto<BookRatingInfoDto>> {
@@ -92,18 +81,8 @@ class BookController(
     fun getBookRatingById(
         @PathVariable
         id: Long,
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "")
-        sort: String?,
-        @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<RatingDto>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(
-            page, size, sort, direction
-        )
+        val pageRequest = ServletUtil.getPageRequest()
         val ratings = bookServices.getBookRatings(id, pageRequest)
         return ResponseEntity.ok(BasicResponseDto.ok(ratings.map {
             RatingDto(
@@ -117,18 +96,8 @@ class BookController(
     fun getRelatedBooks(
         @PathVariable
         bookId: Long,
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "")
-        sort: String?,
-        @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<BookDTO>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(
-            page, size, sort, direction
-        )
+        val pageRequest = ServletUtil.getPageRequest()
         val books = bookServices.getRelatedBooks(bookId, pageRequest)
         return ResponseEntity.ok(BasicResponseDto.ok(books.map { BookDTO(it) }))
     }

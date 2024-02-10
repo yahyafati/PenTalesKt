@@ -53,7 +53,14 @@ class ActivityViewServices(
     }
 
     override fun getActivities(currentUser: User, pageable: Pageable): Page<ActivityView> {
-        val activities = activityViewRepository.findAll(pageable)
+        val followings = followerServices.getFollowings(currentUser)
+
+        val activities = activityViewRepository.findAllByUserIn(
+            listOf(
+                currentUser,
+                *followings.toTypedArray()
+            ), pageable
+        )
         activities.forEach { processActivity(it, currentUser) }
         return activities
     }

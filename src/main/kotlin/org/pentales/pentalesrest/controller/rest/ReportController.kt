@@ -31,7 +31,7 @@ class ReportController(
         @RequestParam(required = false, defaultValue = "")
         search: String?,
     ): ResponseEntity<BasicResponseDto<Page<ReportDto>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, sortDirection)
+        val pageRequest = ServletUtil.getPageRequest(page, size, sort, sortDirection)
         val reports = reportService.getAllReports(pageRequest, search)
         val dto = reports.map { ReportDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(data = dto))

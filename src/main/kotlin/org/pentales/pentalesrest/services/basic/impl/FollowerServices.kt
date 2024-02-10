@@ -69,4 +69,5 @@ class FollowerServices(
     override fun getFollowers(followedUser: User, pageable: Pageable): Page<User> {
         return followerRepository.findAllByFollowed(followedUser, pageable).map { it.follower }
     }
+
 }
