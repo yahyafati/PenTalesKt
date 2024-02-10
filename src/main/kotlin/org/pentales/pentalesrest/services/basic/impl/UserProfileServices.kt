@@ -33,6 +33,7 @@ class UserProfileServices(
     companion object {
 
         const val MAX_FILE_NAME_LENGTH = 20
+        const val MAX_SUGGESTED_FOLLOWINGS = 5
     }
 
     fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
@@ -159,8 +160,13 @@ class UserProfileServices(
 
     override fun getSuggestedFollowings(user: User): List<UserProfile> {
         val followings = followerServices.getFollowings(user)
+        val notNeeded = listOf(
+            user,
+            *followings.toTypedArray()
+        )
 
-        val suggestedFollowings = userProfileRepository.findSuggestedFollowings(followings)
+        val suggestedFollowings =
+            userProfileRepository.findByUserNotIn(notNeeded, PageRequest.of(0, MAX_SUGGESTED_FOLLOWINGS))
         suggestedFollowings.forEach {
             it.user.__isFollowed = false
         }
