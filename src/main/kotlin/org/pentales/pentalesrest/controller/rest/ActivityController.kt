@@ -34,7 +34,9 @@ class ActivityController(
         @RequestParam
         username: String,
     ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
-        val pageRequest = ServletUtil.getPageRequest()
+        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
+        pageParams.sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageRequest = ServletUtil.getPageRequest(pageParams)
         val currentUser = authenticationFacade.forcedCurrentUser
         val activities = activityViewServices.getActivitiesBy(currentUser, username, pageRequest)
         return ResponseEntity.ok(
