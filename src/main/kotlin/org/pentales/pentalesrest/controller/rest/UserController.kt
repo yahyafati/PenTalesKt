@@ -21,17 +21,8 @@ class UserController(
 ) {
 
     @GetMapping
-    fun getUsers(
-        @RequestParam(required = false, defaultValue = "0")
-        page: Int?,
-        @RequestParam(required = false, defaultValue = "10")
-        size: Int?,
-        @RequestParam(required = false, defaultValue = "id")
-        sort: String?,
-        @RequestParam(required = false, defaultValue = "ASC")
-        direction: Sort.Direction?,
-    ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+    fun getUsers(): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
+        val pageRequest = ServletUtil.getPageRequest()
 
         val users =
             userService.findAll(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
@@ -71,15 +62,15 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
-    @GetMapping("/follow/{followedId}")
+    @GetMapping("/follow")
     fun currentUserIsFollowing(
-        @PathVariable
-        followedId: Long
+        @RequestParam
+        username: String,
     ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val currentUserId = authenticationFacade.currentUserId
+        val currentUser = authenticationFacade.forcedCurrentUser
         val following = followerServices.isFollowing(
-            follower = User(id = currentUserId),
-            followed = User(id = followedId),
+            followerUsername = currentUser.username,
+            followedUsername = username
         )
         return ResponseEntity.ok(BasicResponseDto.ok(following))
     }
@@ -101,16 +92,8 @@ class UserController(
     fun getUserByRole(
         @PathVariable
         role: ERole,
-        @RequestParam(required = false, defaultValue = "0")
-        page: Int?,
-        @RequestParam(required = false, defaultValue = "10")
-        size: Int?,
-        @RequestParam(required = false, defaultValue = "id")
-        sort: String?,
-        @RequestParam(required = false, defaultValue = "ASC")
-        direction: Sort.Direction?,
     ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+        val pageRequest = ServletUtil.getPageRequest()
 
         val users =
             userService.findAllByRole(role, pageRequest)
@@ -131,17 +114,8 @@ class UserController(
     }
 
     @GetMapping("/moderators")
-    fun getModerators(
-        @RequestParam(required = false, defaultValue = "0")
-        page: Int?,
-        @RequestParam(required = false, defaultValue = "10")
-        size: Int?,
-        @RequestParam(required = false, defaultValue = "id")
-        sort: String?,
-        @RequestParam(required = false, defaultValue = "ASC")
-        direction: Sort.Direction?,
-    ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, sort, direction)
+    fun getModerators(): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
+        val pageRequest = ServletUtil.getPageRequest()
         val users = userService.getModerators(pageRequest)
             .map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
         return ResponseEntity.ok(BasicResponseDto.ok(users))

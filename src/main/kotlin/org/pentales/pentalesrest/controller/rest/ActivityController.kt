@@ -18,15 +18,27 @@ class ActivityController(
 ) {
 
     @GetMapping
-    fun getActivities(
-        @RequestParam
-        page: Int?,
-        @RequestParam
-        size: Int?
-    ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
+    fun getActivities(): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
         val currentUser = authenticationFacade.forcedCurrentUser
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(page, size, "createdAt", Sort.Direction.DESC)
+        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
+        pageParams.sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageRequest = ServletUtil.getPageRequest(pageParams)
         val activities = activityViewServices.getActivities(currentUser, pageRequest)
+        return ResponseEntity.ok(
+            BasicResponseDto.ok(activities.map { ActivityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) })
+        )
+    }
+
+    @GetMapping("/by")
+    fun getActivitiesBy(
+        @RequestParam
+        username: String,
+    ): ResponseEntity<BasicResponseDto<Page<ActivityDto>>> {
+        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
+        pageParams.sort = Sort.by(Sort.Direction.DESC, "updatedAt")
+        val pageRequest = ServletUtil.getPageRequest(pageParams)
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val activities = activityViewServices.getActivitiesBy(currentUser, username, pageRequest)
         return ResponseEntity.ok(
             BasicResponseDto.ok(activities.map { ActivityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) })
         )

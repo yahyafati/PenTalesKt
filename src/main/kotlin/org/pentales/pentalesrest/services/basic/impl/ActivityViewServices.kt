@@ -17,6 +17,7 @@ class ActivityViewServices(
     private val commentRepository: CommentRepository,
     private val followerServices: IFollowerServices,
     private val ratingLikeRepository: RatingLikeRepository,
+    private val userRepository: UserRepository,
 ) : IActivityViewServices {
 
     fun processActivity(activity: ActivityView, currentUser: User) {
@@ -53,18 +54,31 @@ class ActivityViewServices(
     }
 
     override fun getActivities(currentUser: User, pageable: Pageable): Page<ActivityView> {
-        val activities = activityViewRepository.findAll(pageable)
+        val followings = followerServices.getFollowings(currentUser)
+
+        val activities = activityViewRepository.findAllByUserIn(
+            listOf(
+                currentUser,
+                *followings.toTypedArray()
+            ), pageable
+        )
         activities.forEach { processActivity(it, currentUser) }
         return activities
     }
 
-    override fun getActivity(currentUser: User, ratingId: Long, activityId: Long?, type: EActivityType): ActivityView {
+    override fun getActivitiesBy(currentUser: User, username: String, pageable: Pageable): Page<ActivityView> {
+        val activities = activityViewRepository.findAllByUserUsername(username, pageable)
+        activities.forEach { processActivity(it, currentUser) }
+        return activities
+    }
+
+    override fun getActivity(user: User, ratingId: Long, activityId: Long?, type: EActivityType): ActivityView {
         val safeType = activityId?.let { type } ?: EActivityType.RATING
         val safeId = if (safeType == EActivityType.RATING) ratingId else activityId!!
         val activity = activityViewRepository.findByActivityIdAndType(safeId, safeType)
             ?: throw NoEntityWithIdException("No activity with id: $safeId and type: $safeType")
 
-        processActivity(activity, currentUser)
+        processActivity(activity, user)
         return activity
     }
 

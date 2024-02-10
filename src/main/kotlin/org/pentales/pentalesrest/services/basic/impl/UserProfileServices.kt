@@ -27,11 +27,13 @@ class UserProfileServices(
     private val fileService: IFileService,
     private val fileConfigProperties: FileConfigProperties,
     private val followerServices: IFollowerServices,
+    private val ratingRepository: RatingRepository
 ) : IUserProfileServices {
 
     companion object {
 
         const val MAX_FILE_NAME_LENGTH = 20
+        const val MAX_SUGGESTED_FOLLOWINGS = 5
     }
 
     fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
@@ -154,5 +156,44 @@ class UserProfileServices(
         }
         userProfileRepository.updateCoverPicture(profile, null)
         return findById(profile.id)
+    }
+
+    override fun getSuggestedFollowings(user: User): List<UserProfile> {
+        val followings = followerServices.getFollowings(user)
+        val notNeeded = listOf(
+            user,
+            *followings.toTypedArray()
+        )
+
+        val suggestedFollowings =
+            userProfileRepository.findByUserNotIn(notNeeded, PageRequest.of(0, MAX_SUGGESTED_FOLLOWINGS))
+        suggestedFollowings.forEach {
+            it.user.__isFollowed = false
+        }
+        return suggestedFollowings
+    }
+
+    override fun getProfileMeta(username: String): ProfileMetaDto {
+        val profile = userProfileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException.create(
+            "UserProfile",
+            username
+        )
+        val followerCount = followerServices.countFollowingsOf(profile.user)
+        val followingCount = followerServices.countFollowersOf(profile.user)
+        val ratingCount = ratingRepository.countAllByUser(profile.user).toInt()
+        val reviewCount = ratingRepository.countUserReviews(profile.user).toInt()
+        return ProfileMetaDto(
+            followerCount = followerCount,
+            followingCount = followingCount,
+            ratingCount = ratingCount,
+            reviewCount = reviewCount
+        )
+    }
+
+    override fun getProfileByUsername(username: String): UserProfile {
+        return userProfileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException.create(
+            "UserProfile",
+            username
+        )
     }
 }

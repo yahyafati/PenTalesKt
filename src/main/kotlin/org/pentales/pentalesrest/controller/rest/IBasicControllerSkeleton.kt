@@ -11,42 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<Entity>> {
 
-    companion object {
-
-        fun getPageRequest(
-            page: Int?,
-            size: Int?,
-            sort: String?,
-            direction: Sort.Direction?,
-        ): PageRequest {
-            val pageNumber = (page ?: 0).coerceAtLeast(0)
-            val pageSize = (size ?: 10).coerceIn(1, MAX_PAGE_SIZE)
-            val sortDirection = direction ?: Sort.Direction.ASC
-
-            val pageRequest = if (sort.isNullOrEmpty()) {
-                PageRequest.of(pageNumber, pageSize)
-            } else {
-                PageRequest.of(
-                    pageNumber, pageSize, Sort.by(sortDirection, sort)
-                )
-            }
-            return pageRequest
-        }
-
-        fun getPageRequest(
-            pageParams: ServletUtil.PageParams
-        ): PageRequest {
-            return getPageRequest(
-                pageParams.page,
-                pageParams.size,
-                pageParams.sort,
-                Sort.Direction.valueOf(pageParams.direction)
-            )
-        }
-
-        private const val MAX_PAGE_SIZE = 50
-
-    }
+    companion object
 
     val service: Service
     val authenticationFacade: IAuthenticationFacade
@@ -64,7 +29,7 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
         @RequestBody(required = false)
         filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<Entity>> {
-        val pageRequest = getPageRequest(page, size, sort, direction)
+        val pageRequest = ServletUtil.getPageRequest(page, size, sort, direction)
         val response = service.findAll(pageRequest, filters ?: listOf())
         return ResponseEntity.ok(response)
     }

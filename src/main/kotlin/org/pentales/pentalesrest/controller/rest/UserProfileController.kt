@@ -25,15 +25,28 @@ class UserProfileController(
         username: String?,
     ): ResponseEntity<BasicResponseDto<ProfileDto>> {
         val user = authenticationFacade.forcedCurrentUser
-        val profile = user.profile ?: throw GenericException("No profile found")
+        val profile = if (username != null) {
+            userProfileService.getProfileByUsername(username)
+        } else {
+            user.profile ?: throw GenericException("No profile found")
+        }
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(profile, baseURL)))
     }
 
+    @GetMapping("/meta")
+    fun getProfileMeta(
+        @RequestParam(required = false)
+        username: String?,
+    ): ResponseEntity<BasicResponseDto<ProfileMetaDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val profileMeta: ProfileMetaDto = userProfileService.getProfileMeta(username ?: user.username)
+        return ResponseEntity.ok(BasicResponseDto.ok(profileMeta))
+    }
+
     @GetMapping("/followers")
     fun getFollowers(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
-        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(pageParams)
+        val pageRequest = ServletUtil.getPageRequest()
         val user = authenticationFacade.forcedCurrentUser
         val followers = userProfileService.getFollowers(user, pageRequest)
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
@@ -44,12 +57,20 @@ class UserProfileController(
     @GetMapping("/followings")
     fun getFollowings(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
         val user = authenticationFacade.forcedCurrentUser
-        val pageParams = ServletUtil.getPageParamsFromCurrentRequest()
-        val pageRequest = IBasicControllerSkeleton.getPageRequest(pageParams)
+        val pageRequest = ServletUtil.getPageRequest()
         val followings = userProfileService.getFollowings(user, pageRequest)
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         val followingsDto = followings.map { FriendDto(it, baseURL) }
         return ResponseEntity.ok(BasicResponseDto.ok(followingsDto))
+    }
+
+    @GetMapping("/suggested-users")
+    fun getSuggestedFollowings(): ResponseEntity<BasicResponseDto<List<FriendDto>>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val suggestedFollowings = userProfileService.getSuggestedFollowings(user)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val suggestedFollowingsDto = suggestedFollowings.map { FriendDto(it.user, baseURL) }
+        return ResponseEntity.ok(BasicResponseDto.ok(suggestedFollowingsDto))
     }
 
     @PostMapping(

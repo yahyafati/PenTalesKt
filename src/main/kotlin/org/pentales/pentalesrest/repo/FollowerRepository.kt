@@ -20,4 +20,6 @@ interface FollowerRepository : IRepoSpecification<Follower, UserUserKey> {
 
     fun findAllByFollowed(followed: User, pageable: Pageable): Page<Follower>
 
+    fun existsByFollowerUsernameAndFollowedUsername(followerUsername: String, followedUsername: String): Boolean
+
 }

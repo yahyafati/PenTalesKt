@@ -41,6 +41,13 @@ class FollowerServices(
         return followerRepository.existsById(key)
     }
 
+    override fun isFollowing(followerUsername: String, followedUsername: String): Boolean {
+        return followerRepository.existsByFollowerUsernameAndFollowedUsername(
+            followerUsername = followerUsername,
+            followedUsername = followedUsername
+        )
+    }
+
     override fun toggleFollow(followerUser: User, followedUser: User): Boolean {
         val key = UserUserKey(followerId = followerUser.id, followedId = followedUser.id)
         val follower = Follower(id = key, followed = followedUser, follower = followerUser)
@@ -69,4 +76,5 @@ class FollowerServices(
     override fun getFollowers(followedUser: User, pageable: Pageable): Page<User> {
         return followerRepository.findAllByFollowed(followedUser, pageable).map { it.follower }
     }
+
 }

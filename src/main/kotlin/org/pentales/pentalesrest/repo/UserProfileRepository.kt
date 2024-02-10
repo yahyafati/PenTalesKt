@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.repo
 
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.base.*
+import org.springframework.data.domain.*
 import org.springframework.data.jpa.repository.*
 
 interface UserProfileRepository : IRepoSpecification<UserProfile, Long> {
@@ -15,5 +16,7 @@ interface UserProfileRepository : IRepoSpecification<UserProfile, Long> {
     @Query("UPDATE UserProfile u SET u.coverPicture = :coverPicture WHERE u = :userProfile")
     @Modifying
     fun updateCoverPicture(userProfile: UserProfile, coverPicture: String?): Int
+
+    fun findByUserNotIn(users: List<User>, pageable: Pageable): List<UserProfile>
 
 }

@@ -21,6 +21,9 @@ data class ActivityView(
 
     var activityId: Long = 0,
 
+    @ManyToOne
+    var user: User = User(),
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     var type: EActivityType = EActivityType.RATING,
