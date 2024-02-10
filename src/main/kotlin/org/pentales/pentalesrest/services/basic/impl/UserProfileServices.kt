@@ -27,6 +27,7 @@ class UserProfileServices(
     private val fileService: IFileService,
     private val fileConfigProperties: FileConfigProperties,
     private val followerServices: IFollowerServices,
+    private val ratingRepository: RatingRepository
 ) : IUserProfileServices {
 
     companion object {
@@ -164,5 +165,29 @@ class UserProfileServices(
             it.user.__isFollowed = false
         }
         return suggestedFollowings
+    }
+
+    override fun getProfileMeta(username: String): ProfileMetaDto {
+        val profile = userProfileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException.create(
+            "UserProfile",
+            username
+        )
+        val followerCount = followerServices.countFollowingsOf(profile.user)
+        val followingCount = followerServices.countFollowersOf(profile.user)
+        val ratingCount = ratingRepository.countAllByUser(profile.user).toInt()
+        val reviewCount = ratingRepository.countUserReviews(profile.user).toInt()
+        return ProfileMetaDto(
+            followerCount = followerCount,
+            followingCount = followingCount,
+            ratingCount = ratingCount,
+            reviewCount = reviewCount
+        )
+    }
+
+    override fun getProfileByUsername(username: String): UserProfile {
+        return userProfileRepository.findByUserUsername(username) ?: throw NoEntityWithIdException.create(
+            "UserProfile",
+            username
+        )
     }
 }

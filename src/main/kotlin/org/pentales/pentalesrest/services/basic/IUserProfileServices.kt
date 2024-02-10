@@ -21,5 +21,7 @@ interface IUserProfileServices {
     fun deleteProfilePicture(profile: UserProfile): UserProfile
     fun deleteProfileCover(profile: UserProfile): UserProfile
     fun getSuggestedFollowings(user: User): List<UserProfile>
+    fun getProfileMeta(username: String): ProfileMetaDto
+    fun getProfileByUsername(username: String): UserProfile
 
 }

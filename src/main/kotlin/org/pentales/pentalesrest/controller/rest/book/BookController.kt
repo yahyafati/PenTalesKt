@@ -35,9 +35,12 @@ class BookController(
     }
 
     @GetMapping("/now-reading")
-    fun getNowReadingBook(): ResponseEntity<BasicResponseDto<NowReadingDto?>> {
-        val userId = authenticationFacade.forcedCurrentUser.id
-        val userBookStatus = userBookStatusServices.getNowReadingBook(userId)
+    fun getNowReadingBook(
+        @RequestParam(required = false)
+        username: String?,
+    ): ResponseEntity<BasicResponseDto<NowReadingDto?>> {
+        val currentUsername = authenticationFacade.forcedCurrentUser.username
+        val userBookStatus = userBookStatusServices.getNowReadingBook(username ?: currentUsername)
         val dto = userBookStatus?.book?.let { NowReadingDto(book = BookDTO(it), startedAt = userBookStatus.createdAt) }
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }

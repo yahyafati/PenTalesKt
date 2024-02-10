@@ -25,9 +25,23 @@ class UserProfileController(
         username: String?,
     ): ResponseEntity<BasicResponseDto<ProfileDto>> {
         val user = authenticationFacade.forcedCurrentUser
-        val profile = user.profile ?: throw GenericException("No profile found")
+        val profile = if (username != null) {
+            userProfileService.getProfileByUsername(username)
+        } else {
+            user.profile ?: throw GenericException("No profile found")
+        }
         val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
         return ResponseEntity.ok(BasicResponseDto.ok(ProfileDto(profile, baseURL)))
+    }
+
+    @GetMapping("/meta")
+    fun getProfileMeta(
+        @RequestParam(required = false)
+        username: String?,
+    ): ResponseEntity<BasicResponseDto<ProfileMetaDto>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val profileMeta: ProfileMetaDto = userProfileService.getProfileMeta(username ?: user.username)
+        return ResponseEntity.ok(BasicResponseDto.ok(profileMeta))
     }
 
     @GetMapping("/followers")
