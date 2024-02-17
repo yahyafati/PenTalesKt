@@ -12,14 +12,10 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Long = 0L,
-    @Column(
-        unique = true, nullable = false
-    )
     @NotBlank(message = "Username is required")
     private var username: String = "",
     @NotBlank(message = "Password is required")
     private var password: String = "",
-    @Column(unique = true, nullable = false)
     @NotBlank(message = "Email is required")
     var email: String = "",
     @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
