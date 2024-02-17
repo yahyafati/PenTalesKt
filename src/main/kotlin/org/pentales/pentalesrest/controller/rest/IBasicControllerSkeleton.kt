@@ -18,18 +18,10 @@ interface IBasicControllerSkeleton<Entity : IModel, Service : IGenericService<En
 
     @PostMapping("/search")
     fun searchAll(
-        @RequestParam(defaultValue = "0")
-        page: Int?,
-        @RequestParam(defaultValue = "10")
-        size: Int?,
-        @RequestParam(defaultValue = "")
-        sort: String?,
-        @RequestParam(defaultValue = "ASC")
-        direction: Sort.Direction?,
         @RequestBody(required = false)
         filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<Entity>> {
-        val pageRequest = ServletUtil.getPageRequest(page, size, sort, direction)
+        val pageRequest = ServletUtil.getPageRequest()
         val response = service.findAll(pageRequest, filters ?: listOf())
         return ResponseEntity.ok(response)
     }

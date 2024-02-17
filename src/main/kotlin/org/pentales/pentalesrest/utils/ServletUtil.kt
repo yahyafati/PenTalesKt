@@ -24,10 +24,10 @@ class ServletUtil {
             return getBaseURL(request)
         }
 
-        fun getPageParams(request: HttpServletRequest): PageParams {
+        private fun getPageParams(request: HttpServletRequest): PageParams {
             val page = request.getParameter("page")?.toIntOrNull() ?: 0
             val size = request.getParameter("size")?.toIntOrNull() ?: 10
-            val sort = request.getParameter("sort") ?: "id"
+            val sort = if (request.getParameter("sort").isNullOrBlank()) "id" else request.getParameter("sort")
             val direction = request.getParameter("direction") ?: "ASC"
 
             return PageParams(
@@ -42,7 +42,7 @@ class ServletUtil {
             return getPageParams(request)
         }
 
-        fun getPageRequest(
+        private fun getPageRequest(
             page: Int?,
             size: Int?,
             sort: Sort?,
