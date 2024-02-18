@@ -12,7 +12,7 @@ data class ProfileDto(
     var email: String = "",
     var profilePicture: String? = "",
     var coverPicture: String? = "",
-    var bio: String = "",
+    var bio: String? = "",
     var gender: EGender = EGender.FEMALE,
     var socialMedias: List<SocialMediaDto> = listOf(),
 ) {

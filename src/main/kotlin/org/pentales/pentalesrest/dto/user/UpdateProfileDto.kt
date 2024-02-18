@@ -8,7 +8,7 @@ data class UpdateProfileDto(
     var firstName: String = "",
     var lastName: String = "",
     var displayName: String = "",
-    var bio: String = "",
+    var bio: String? = "",
     var gender: EGender = EGender.MALE,
     var dateOfBirth: LocalDate = LocalDate.now(),
     var goodreadsProfile: String = "",

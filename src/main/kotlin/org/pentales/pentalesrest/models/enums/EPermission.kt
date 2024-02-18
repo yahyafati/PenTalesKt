@@ -6,10 +6,10 @@ enum class EPermission(val id: Long) {
     ADMIN_WRITE(2),
     ADMIN_DELETE(3),
     MANAGER_READ(4),
-    MANAGER_CREATE(5),
+    MANAGER_WRITE(5),
     MANAGER_DELETE(6),
     USER_READ(7),
-    USER_CREATE(8),
+    USER_WRITE(8),
     USER_DELETE(9),
     MODERATOR_ACCESS(10);
 
@@ -26,7 +26,7 @@ enum class EPermission(val id: Long) {
         fun getManagerPermissions(): Array<out EPermission> {
             return arrayOf(
                 MANAGER_READ,
-                MANAGER_CREATE,
+                MANAGER_WRITE,
                 MANAGER_DELETE,
             )
         }
@@ -40,7 +40,7 @@ enum class EPermission(val id: Long) {
         fun getUserPermissions(): Array<out EPermission> {
             return arrayOf(
                 USER_READ,
-                USER_CREATE,
+                USER_WRITE,
                 USER_DELETE,
             )
         }

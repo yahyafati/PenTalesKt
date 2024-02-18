@@ -15,7 +15,7 @@ class UserProfile(
     var lastName: String = "",
     var displayName: String = "",
     var dateOfBirth: LocalDate = LocalDate.now(),
-    var bio: String = "",
+    var bio: String? = "",
     @Enumerated(value = EnumType.STRING)
     var gender: EGender = EGender.FEMALE,
     var profilePicture: String? = null,
