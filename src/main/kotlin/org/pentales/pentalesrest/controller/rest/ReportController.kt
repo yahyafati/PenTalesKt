@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/report")
-@PreAuthorize("hasPermission('MODERATOR', 'MODERATOR_ACCESS')")
+@PreAuthorize("hasPermission('MODERATOR', 'ACCESS')")
 class ReportController(
     private val reportService: IReportServices,
     private val authenticationFacade: IAuthenticationFacade,

@@ -18,13 +18,16 @@ interface IUserServices : UserDetailsService {
     fun deleteByUsername(username: String)
     fun getModerators(page: Pageable): Page<User>
     fun findAllByRole(role: ERole, pageable: Pageable): Page<User>
+    fun findAllByRoles(roles: Set<ERole>, pageable: Pageable): Page<User>
+    fun findAllByPermissions(permissions: Set<EPermission>, pageable: Pageable): Page<User>
     fun toggleModerator(user: User): Boolean
     fun makeModerator(user: User): Boolean
     fun removeModerator(user: User): Boolean
     fun changeRole(user: User, role: ERole): Boolean
-    fun addPermissions(user: User, permissions: Set<EPermission>): Boolean
-    fun removePermissions(user: User, permissions: Set<EPermission>): Boolean
+    fun addPermissions(user: User, permissions: Set<EPermission>): User
+    fun removePermissions(user: User, permissions: Set<EPermission>): User
+    fun setPermissions(username: String, permissions: Set<EPermission>): User
     fun changePassword(user: User, changePassword: ChangePasswordDto)
     fun disable(user: User)
-    
+
 }

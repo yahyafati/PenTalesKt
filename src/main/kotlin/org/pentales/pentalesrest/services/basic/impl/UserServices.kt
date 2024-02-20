@@ -5,6 +5,8 @@ import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.intermediates.*
+import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.basic.*
 import org.springframework.data.domain.*
@@ -19,6 +21,7 @@ class UserServices(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val authorityUserRepository: AuthorityUserRepository,
 ) : IUserServices {
 
     override fun save(user: User): User {
@@ -59,12 +62,22 @@ class UserServices(
     }
 
     override fun getModerators(page: Pageable): Page<User> {
-        return userRepository.findAllByAuthoritiesContaining(Authority(permission = EPermission.MODERATOR_ACCESS), page)
+        return userRepository.findAllByAuthoritiesAuthority(Authority(permission = EPermission.MODERATOR_ACCESS), page)
     }
 
     override fun findAllByRole(role: ERole, pageable: Pageable): Page<User> {
         val roleEntity = Role(role = role)
         return userRepository.findAllByRole(roleEntity, pageable)
+    }
+
+    override fun findAllByRoles(roles: Set<ERole>, pageable: Pageable): Page<User> {
+        val roleEntities = roles.map { Role(role = it) }.toSet()
+        return userRepository.findAllByRoleIn(roleEntities, pageable)
+    }
+
+    override fun findAllByPermissions(permissions: Set<EPermission>, pageable: Pageable): Page<User> {
+        val authorities = permissions.map { Authority(permission = it) }.toSet()
+        return userRepository.findAllByAuthoritiesAuthorityIn(authorities, pageable)
     }
 
     override fun toggleModerator(user: User): Boolean {
@@ -89,18 +102,45 @@ class UserServices(
         return user.role.role == role
     }
 
-    override fun addPermissions(user: User, permissions: Set<EPermission>): Boolean {
-        val addedAuthorities = permissions.map { Authority(permission = it) }.toSet()
-        user.authorities.addAll(addedAuthorities)
-        save(user)
-        return user.authorities.containsAll(addedAuthorities)
+    override fun addPermissions(user: User, permissions: Set<EPermission>): User {
+        val addedAuthorities = permissions.map {
+            AuthorityUser(
+                id = AuthorityUserKey(userId = user.id, authorityId = it.id),
+                user = user,
+                authority = Authority(permission = it)
+            )
+        }
+        authorityUserRepository.saveAll(addedAuthorities)
+        return user
     }
 
-    override fun removePermissions(user: User, permissions: Set<EPermission>): Boolean {
-        val removedAuthorities = permissions.map { Authority(permission = it) }.toSet()
+    @Transactional
+    override fun removePermissions(user: User, permissions: Set<EPermission>): User {
+        val removedAuthorities = permissions.toSet().map {
+            AuthorityUser(
+                id = AuthorityUserKey(userId = user.id, authorityId = it.id),
+                user = user,
+                authority = Authority(permission = it)
+            )
+        }.toSet()
+        authorityUserRepository.deleteAll(removedAuthorities)
         user.authorities.removeAll(removedAuthorities)
-        save(user)
-        return !user.authorities.containsAll(removedAuthorities)
+        return user
+    }
+
+    @Transactional
+    fun setPermissions(user: User, permissions: Set<EPermission>): User {
+        user.authorities.clear()
+        authorityUserRepository.deleteAllByUser(user)
+        return addPermissions(user, permissions)
+    }
+
+    @Transactional
+    override fun setPermissions(username: String, permissions: Set<EPermission>): User {
+        val user = findByUsername(username)
+        setPermissions(user, permissions)
+        user.authorities = authorityUserRepository.findAllByUser(user).toMutableSet()
+        return user
     }
 
     @Transactional

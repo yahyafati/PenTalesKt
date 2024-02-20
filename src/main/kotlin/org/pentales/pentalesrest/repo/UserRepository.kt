@@ -12,8 +12,10 @@ interface UserRepository : IRepoSpecification<User, Long> {
     fun existsByEmail(email: String): Boolean
     fun deleteByUsername(username: String)
     fun findAllByRole(role: Role, pageable: Pageable): Page<User>
+    fun findAllByRoleIn(roles: Set<Role>, pageable: Pageable): Page<User>
 
-    fun findAllByAuthoritiesContaining(authority: Authority, pageable: Pageable): Page<User>
+    fun findAllByAuthoritiesAuthority(authority: Authority, pageable: Pageable): Page<User>
+    fun findAllByAuthoritiesAuthorityIn(authorities: Set<Authority>, pageable: Pageable): Page<User>
 
     @Query("Update User u set u.password = :password where u.id = :id")
     @Modifying
@@ -22,5 +24,8 @@ interface UserRepository : IRepoSpecification<User, Long> {
     @Query("Update User u set u.isEnabled = false where u.id = :id")
     @Modifying
     fun disable(id: Long): Int
+
+    @Query("DELETE FROM Authority a WHERE a.id = :id")
+    fun deleteAllAuthorities(id: Long): Int
 
 }

@@ -39,7 +39,7 @@ class JwtService(securityConfigProperties: SecurityConfigProperties) {
 
         return jwtBuilder
             .withArrayClaim(
-                "authorities", user.authorities.map { it.authority }.toTypedArray<String?>()
+                "authorities", user.authorities.map { it.authority.authority }.toTypedArray<String?>()
             )
             .withClaim("role", user.role.role.name)
             .withSubject(user.username)
