@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.models
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.interfaces.*
+import org.pentales.pentalesrest.models.intermediates.*
 import org.springframework.security.core.*
 import org.springframework.security.core.userdetails.*
 
@@ -33,20 +34,18 @@ class User(
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
     var role: Role = Role()
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "authority_user",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "authority_id")]
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE]
     )
-    var authorities: MutableSet<Authority> = mutableSetOf()
+    var authorities: MutableSet<AuthorityUser> = mutableSetOf()
 
     override fun toString(): String {
         return "User(id=$id, username='$username', email='$email', password='$password')"
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return authorities.toMutableList()
+        return authorities.map { it.authority }.toMutableList()
     }
 
     override fun getPassword(): String {

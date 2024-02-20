@@ -3,11 +3,9 @@ package org.pentales.pentalesrest.controller.rest
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
-import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -20,26 +18,7 @@ class UserController(
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 
-    @GetMapping
-    fun getUsers(): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = ServletUtil.getPageRequest()
-
-        val users =
-            userService.findAll(pageRequest).map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
-        return ResponseEntity.ok(BasicResponseDto.ok(users))
-    }
-
-    @PutMapping("/profile")
-    fun updateProfile(
-        @RequestBody
-        profile: UpdateProfileDto,
-        @RequestParam
-        updateFields: List<String>?,
-    ): ResponseEntity<BasicResponseDto<UpdateProfileDto>> {
-        val updatedProfile = userProfileService.update(profile, updateFields ?: listOf())
-        return ResponseEntity.ok(BasicResponseDto.ok(UpdateProfileDto(updatedProfile)))
-    }
-
+    // TODO: Move the following endpoints to a separate controller, preferably FollowerController
     @GetMapping("/follow/{followerId}/followings")
     fun getFollowingsOfCurrentUser(
         @PathVariable
@@ -51,6 +30,7 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
+    // TODO: Move the following endpoints to a separate controller, preferably FollowerController
     @GetMapping("/follow/{followedId}/followers")
     fun getFollowersOfCurrentUser(
         @PathVariable
@@ -62,6 +42,7 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(followings))
     }
 
+    // TODO: Move the following endpoints to a separate controller, preferably FollowerController
     @GetMapping("/follow")
     fun currentUserIsFollowing(
         @RequestParam
@@ -75,6 +56,7 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(following))
     }
 
+    // TODO: Move the following endpoints to a separate controller, preferably FollowerController
     @PatchMapping("/follow/{followedId}/toggle")
     fun followUser(
         @PathVariable
@@ -88,61 +70,15 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
-    @GetMapping("/role/{role}")
-    fun getUserByRole(
-        @PathVariable
-        role: ERole,
-    ): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = ServletUtil.getPageRequest()
-
-        val users =
-            userService.findAllByRole(role, pageRequest)
-                .map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
-        return ResponseEntity.ok(BasicResponseDto.ok(users))
-    }
-
-    @PatchMapping("/role/{username}")
-    fun changeRole(
-        @PathVariable
-        username: String,
+    @PutMapping("/profile")
+    fun updateProfile(
+        @RequestBody
+        profile: UpdateProfileDto,
         @RequestParam
-        role: ERole,
-    ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val user = userService.findByUsername(username)
-        val status = userService.changeRole(user, role)
-        return ResponseEntity.ok(BasicResponseDto.ok(status))
-    }
-
-    @GetMapping("/moderators")
-    fun getModerators(): ResponseEntity<BasicResponseDto<Page<UserSecurityDto>>> {
-        val pageRequest = ServletUtil.getPageRequest()
-        val users = userService.getModerators(pageRequest)
-            .map { UserSecurityDto(it, ServletUtil.getBaseURLFromCurrentRequest()) }
-        return ResponseEntity.ok(BasicResponseDto.ok(users))
-    }
-
-    @PatchMapping("/permission/{username}/add")
-    fun addPermissions(
-        @PathVariable
-        username: String,
-        @RequestBody
-        permissions: Set<EPermission>,
-    ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val user = userService.findByUsername(username)
-        val status = userService.addPermissions(user, permissions)
-        return ResponseEntity.ok(BasicResponseDto.ok(status))
-    }
-
-    @PatchMapping("/permission/{username}/remove")
-    fun removePermissions(
-        @PathVariable
-        username: String,
-        @RequestBody
-        permissions: Set<EPermission>,
-    ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val user = userService.findByUsername(username)
-        val status = userService.removePermissions(user, permissions)
-        return ResponseEntity.ok(BasicResponseDto.ok(status))
+        updateFields: List<String>?,
+    ): ResponseEntity<BasicResponseDto<UpdateProfileDto>> {
+        val updatedProfile = userProfileService.update(profile, updateFields ?: listOf())
+        return ResponseEntity.ok(BasicResponseDto.ok(UpdateProfileDto(updatedProfile)))
     }
 
     @PostMapping("/change-password")

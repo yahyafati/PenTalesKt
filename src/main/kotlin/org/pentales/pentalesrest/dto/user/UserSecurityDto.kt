@@ -20,7 +20,7 @@ data class UserSecurityDto(
         lastName = user.profile?.lastName,
         username = user.username,
         role = user.role.role,
-        permissions = user.authorities.map { it.permission },
+        permissions = user.authorities.map { it.authority.permission },
         email = user.email,
         profilePicture = UserDto.getProfilePictureWithBaseURL(user.profile, baseURL)
     )

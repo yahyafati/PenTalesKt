@@ -75,7 +75,7 @@ class JWTAuthorizationFilter(
             LOG.info("Username: $username")
             val loggedInUser: User = userService.findByUsername(username)
             return UsernamePasswordAuthenticationToken(
-                loggedInUser, null, loggedInUser.authorities
+                loggedInUser, null, loggedInUser.authorities.map { it.authority }
             )
         } catch (ex: JWTVerificationException) {
             LOG.error(ex.message)
