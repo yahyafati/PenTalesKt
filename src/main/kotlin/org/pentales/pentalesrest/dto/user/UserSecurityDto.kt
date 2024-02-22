@@ -22,6 +22,6 @@ data class UserSecurityDto(
         role = user.role.role,
         permissions = user.authorities.map { it.authority.permission },
         email = user.email,
-        profilePicture = UserDto.getProfilePictureWithBaseURL(user.profile, baseURL)
+        profilePicture = UserDto.getURLWithBaseURL(user.profile?.profilePicture, baseURL)
     )
 }

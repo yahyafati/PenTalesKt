@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.models
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.*
+import org.pentales.pentalesrest.models.embeddables.*
 import org.pentales.pentalesrest.models.interfaces.*
 import org.pentales.pentalesrest.models.intermediates.*
 import org.springframework.security.core.*
@@ -21,6 +22,8 @@ class User(
     var email: String = "",
     @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
     var profile: UserProfile? = null,
+    @Embedded
+    var provider: UserProvider = UserProvider(),
 ) : IModel(), UserDetails {
 
     @Transient
@@ -31,7 +34,7 @@ class User(
     //    private var isCredentialsNonExpired: Boolean = true
     private var isEnabled: Boolean = true
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    @ManyToOne(fetch = FetchType.EAGER)
     var role: Role = Role()
 
     @OneToMany(

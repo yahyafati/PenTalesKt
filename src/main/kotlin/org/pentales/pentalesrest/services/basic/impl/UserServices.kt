@@ -24,6 +24,7 @@ class UserServices(
     private val authorityUserRepository: AuthorityUserRepository,
 ) : IUserServices {
 
+    @Transactional
     override fun save(user: User): User {
         user.role =
             roleRepository.findById(user.role.id).orElseThrow {
@@ -155,6 +156,10 @@ class UserServices(
     @Transactional
     override fun disable(user: User) {
         userRepository.disable(user.id)
+    }
+
+    override fun findByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {

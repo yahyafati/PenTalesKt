@@ -34,7 +34,7 @@ class JWTAuthorizationFilter(
     ) {
         val header = request.getHeader(jwtProperties.header)
         if (header == null || !header.startsWith(jwtProperties.prefix)) {
-            LOG.warn("No JWT token found in request headers")
+            LOG.debug("No JWT token found in request headers")
             chain.doFilter(request, response)
             return
         }

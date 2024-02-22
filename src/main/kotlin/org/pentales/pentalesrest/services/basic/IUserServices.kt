@@ -29,5 +29,6 @@ interface IUserServices : UserDetailsService {
     fun setPermissions(username: String, permissions: Set<EPermission>): User
     fun changePassword(user: User, changePassword: ChangePasswordDto)
     fun disable(user: User)
+    fun findByEmail(email: String): User?
 
 }

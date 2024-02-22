@@ -17,7 +17,7 @@ data class FriendDto(
         username = user.username,
         firstName = user.profile?.firstName ?: "",
         lastName = user.profile?.lastName ?: "",
-        profilePicture = UserDto.getProfilePictureWithBaseURL(user.profile, baseURL),
+        profilePicture = UserDto.getURLWithBaseURL(user.profile?.profilePicture, baseURL),
         bio = user.profile?.bio ?: "",
         isFollowed = user.__isFollowed
     )
