@@ -1,8 +1,10 @@
 package org.pentales.pentalesrest.config
 
 import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.config.oauth2.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
+import org.slf4j.*
 import org.springframework.context.annotation.*
 import org.springframework.http.*
 import org.springframework.security.access.expression.method.*
@@ -25,8 +27,15 @@ class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
     private val securityConfigProperties: SecurityConfigProperties,
     private val userService: IUserServices,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val oauthUserService: CustomOAuth2UserService,
+    private val oAuth2AuthenticationSuccessHandler: OAuth2AuthenticationSuccessHandler,
 ) {
+
+    companion object {
+
+        val LOG = LoggerFactory.getLogger(SecurityConfig::class.java)
+    }
 
     @Bean
     fun roleHierarchy(): RoleHierarchy {
@@ -63,22 +72,37 @@ class SecurityConfig(
                     securityConfigProperties, userService, jwtService
                 ), JWTAuthenticationFilter::class.java
             ).authorizeHttpRequests { auth ->
-                auth.requestMatchers(
-                    HttpMethod.POST,
-                    securityConfigProperties.loginUrl,
-                    securityConfigProperties.logoutUrl,
-                    securityConfigProperties.registerUrl,
-                    securityConfigProperties.usernameAvailableUrl,
-                ).permitAll()
-
+                auth
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        securityConfigProperties.loginUrl,
+                        securityConfigProperties.logoutUrl,
+                        securityConfigProperties.registerUrl,
+                        securityConfigProperties.usernameAvailableUrl,
+                    ).permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
+                    .requestMatchers("/oauth2/**", "/auth/**", "/oauth/**").permitAll()
                     .requestMatchers("/test/unsecured").permitAll()
-
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-
-                    .anyRequest().authenticated()
-            }.exceptionHandling {
-//                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+                    .anyRequest()
+                    .authenticated()
+            }.oauth2Login { oauth2 ->
+                oauth2
+                    .authorizationEndpoint {
+                        it.baseUri("/oauth2/authorize")
+                            .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                    }
+                    .redirectionEndpoint {
+                        it.baseUri("/oauth2/callback/*")
+                    }
+                    .userInfoEndpoint {
+                        it.userService(oauthUserService)
+                    }
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler { request, response, exception ->
+                        LOG.error("Failure handler")
+                        println(exception)
+                    }
             }.build()
     }
 
@@ -105,6 +129,16 @@ class SecurityConfig(
         config.addExposedHeader(securityConfigProperties.jwt.header)
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
+    }
+
+    /*
+      By default, Spring OAuth2 uses HttpSessionOAuth2AuthorizationRequestRepository to save
+      the authorization request. But, since our service is stateless, we can't save it in
+      the session. We'll save the request in a Base64 encoded cookie instead.
+    */
+    @Bean
+    fun cookieAuthorizationRequestRepository(): HttpCookieOAuth2AuthorizationRequestRepository {
+        return HttpCookieOAuth2AuthorizationRequestRepository()
     }
 
     @Bean

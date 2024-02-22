@@ -2,12 +2,9 @@ package org.pentales.pentalesrest.utils
 
 import java.time.*
 
-class TimeUtil {
+object TimeUtil {
 
-    companion object {
-
-        fun getCurrentYearUTC(): Int {
-            return Year.now(ZoneId.of("UTC")).value
-        }
+    fun getCurrentYearUTC(): Int {
+        return Year.now(ZoneId.of("UTC")).value
     }
 }

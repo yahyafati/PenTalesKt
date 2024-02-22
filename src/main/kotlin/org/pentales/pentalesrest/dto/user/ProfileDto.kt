@@ -41,8 +41,8 @@ data class ProfileDto(
         lastName = profile.lastName,
         username = profile.user.username,
         email = profile.user.email,
-        profilePicture = if (profile.profilePicture != null) "$baseURL/api/assets/${profile.profilePicture}" else null,
-        coverPicture = if (profile.coverPicture != null) "$baseURL/api/assets/${profile.coverPicture}" else null,
+        profilePicture = UserDto.getURLWithBaseURL(profile.profilePicture, baseURL),
+        coverPicture = UserDto.getURLWithBaseURL(profile.coverPicture, baseURL),
         bio = profile.bio,
         gender = profile.gender,
         socialMedias = getSocialMedia(profile)

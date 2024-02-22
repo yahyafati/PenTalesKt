@@ -23,4 +23,10 @@ data class SecurityConfigProperties(
         var prefix: String = "",
         var issuer: String = "self",
     )
+
+    @ConfigurationProperties(prefix = "org.pen-tales.security.oauth2")
+    @Component
+    data class OAuth2Properties(
+        var authorizedRedirectUris: List<String> = emptyList(),
+    )
 }

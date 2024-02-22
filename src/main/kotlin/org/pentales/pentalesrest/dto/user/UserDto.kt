@@ -17,15 +17,15 @@ class UserDto(
 
     companion object {
 
-        fun getProfilePictureWithBaseURL(profile: UserProfile?, baseURL: String): String? {
-            val profilePicture = profile?.profilePicture ?: return null
-            return "$baseURL/api/assets/$profilePicture"
+        fun getURLWithBaseURL(url: String?, baseURL: String): String? {
+            if (url == null) return null
+            if (url.startsWith("http")) return url
+            return "$baseURL/api/assets/$url"
         }
 
-        fun getProfilePictureWithoutBaseURL(userDto: UserDto): String? {
+        fun getURLWithoutBaseURL(url: String?, userDto: UserDto): String? {
             val baseURL = userDto.baseURL
-            val profilePicture = userDto.profilePicture ?: return null
-            return profilePicture.removePrefix("$baseURL/api/assets/")
+            return url?.removePrefix("$baseURL/api/assets/")
         }
     }
 
@@ -35,7 +35,7 @@ class UserDto(
         email = user.email,
         firstName = user.profile?.firstName,
         lastName = user.profile?.lastName,
-        profilePicture = getProfilePictureWithBaseURL(user.profile, baseURL),
+        profilePicture = getURLWithBaseURL(user.profile?.profilePicture, baseURL),
         isFollowed = user.__isFollowed,
         baseURL = baseURL
     )
@@ -48,7 +48,7 @@ class UserDto(
             profile = UserProfile(
                 firstName = firstName ?: "",
                 lastName = lastName ?: "",
-                profilePicture = getProfilePictureWithoutBaseURL(this)
+                profilePicture = getURLWithoutBaseURL(profilePicture, this)
             ),
         )
         user.id = id
