@@ -2,12 +2,14 @@ package org.pentales.pentalesrest.services.basic.impl
 
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
@@ -29,6 +31,7 @@ class UserProfileServices(
     private val followerServices: IFollowerServices,
     private val ratingRepository: RatingRepository,
     private val superAdminProvider: SuperAdminProvider,
+    private val userProfileSpecification: UserProfileSpecification,
 ) : IUserProfileServices {
 
     companion object {
@@ -197,5 +200,20 @@ class UserProfileServices(
             "UserProfile",
             username
         )
+    }
+
+    override fun searchFriends(
+        currentUser: User,
+        filters: List<FilterDto>,
+        pageRequest: PageRequest
+    ): Page<UserProfile> {
+        val friends = userProfileRepository.findAll(
+            userProfileSpecification.columnEquals(filters),
+            pageRequest
+        )
+        friends.forEach {
+            it.user.__isFollowed = followerServices.isFollowing(currentUser, it.user)
+        }
+        return friends
     }
 }

@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.basic
 
+import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
@@ -23,5 +24,6 @@ interface IUserProfileServices {
     fun getSuggestedFollowings(user: User): List<UserProfile>
     fun getProfileMeta(username: String): ProfileMetaDto
     fun getProfileByUsername(username: String): UserProfile
+    fun searchFriends(currentUser: User, filters: List<FilterDto>, pageRequest: PageRequest): Page<UserProfile>
 
 }
