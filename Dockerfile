@@ -1,22 +1,23 @@
-# Use Oracle's official Java 17 image.
-FROM openjdk:17
+FROM gradle:8.6.0-jdk17 as builder
 
-RUN microdnf install findutils
-
-VOLUME [ "/root/.gradle" ]
-
-# Set working directory in the container
 WORKDIR /app
 
-# Copy the Gradle build files and source code into the container
-COPY . .
+COPY build.gradle.kts .
+COPY settings.gradle.kts .
+COPY src src/
 
-# Build the application
-RUN chmod +x gradlew
-RUN ./gradlew build -x test
+RUN gradle build -x test --build-cache
 
-# Expose the port your Spring Boot app runs on
-EXPOSE 8080
+FROM openjdk:17-slim
+WORKDIR /app
 
-# Specify the command to run your application
-CMD ["java", "-jar", "build/libs/PenTalesREST-0.0.1-SNAPSHOT.jar"]
+# list the files in the builder
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+COPY src/main/resources/*.yml .
+
+ARG SPRINGBOOT_DOCKER_PORT
+ENV SPRINGBOOT_DOCKER_PORT=$SPRINGBOOT_DOCKER_PORT
+EXPOSE $SPRINGBOOT_DOCKER_PORT
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -12,11 +12,17 @@ spring:
           google:
             client-id: REPLACE-WITH-YOUR-GOOGLE-CLIENT-ID
             client-secret: REPLACE-WITH-YOUR-GOOGLE-CLIENT-SECRET
-            redirect-uri: REPLACE-WITH-YOUR-REDIRECT-URI
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}" # The path to which the user will be redirected after they authenticate with Google
             scope:
-              - scope1
-              - scope2
+              - email
+              - profile
 server:
   port: 8080 # Specify the port on which your Spring Boot application will run
 
+org:
+  pen-tales:
+    aws:
+      s3:
+        region: eu-north-1
+        bucket: reading-realm
 
