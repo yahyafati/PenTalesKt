@@ -55,3 +55,27 @@ org:
           - gif
           - bmp
           - webp
+    cors:
+      allow-credentials: true
+      allowed-origins:
+        - # Add the allowed origins here
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+        - PATCH
+      exposed-headers:
+        - Authorization
+        - Content-Type
+        - Accept
+        - X-Requested-With
+        - x-xsrf-token
+        - Access-Control-Allow-Headers
+        - Origin
+        - Access-Control-Request-Method
+        - Access-Control-Request-Headers
+      allowed-headers:
+        - "*"
+      max-age: 3600

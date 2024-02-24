@@ -44,6 +44,19 @@ class UserProfileController(
         return ResponseEntity.ok(BasicResponseDto.ok(profileMeta))
     }
 
+    @PostMapping("/search-friends")
+    fun searchFriends(
+        @RequestBody(required = false)
+        filters: List<FilterDto> = emptyList(),
+    ): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
+        val user = authenticationFacade.forcedCurrentUser
+        val pageRequest = ServletUtil.getPageRequest()
+        val friends = userProfileService.searchFriends(user, filters, pageRequest)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val friendsDto = friends.map { FriendDto(it.user, baseURL) }
+        return ResponseEntity.ok(BasicResponseDto.ok(friendsDto))
+    }
+
     @GetMapping("/followers")
     fun getFollowers(): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
         val pageRequest = ServletUtil.getPageRequest()

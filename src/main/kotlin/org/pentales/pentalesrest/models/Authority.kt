@@ -42,4 +42,8 @@ class Authority(
     override fun hashCode(): Int {
         return permission.hashCode()
     }
+
+    override fun toString(): String {
+        return permission.name
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.*
 import org.springframework.security.oauth2.client.userinfo.*
 import org.springframework.security.oauth2.core.user.*
 import org.springframework.stereotype.*
+import kotlin.random.*
 
 @Service
 class CustomOAuth2UserService(
@@ -40,14 +41,16 @@ class CustomOAuth2UserService(
         var user = userServices.findByEmail(oAuth2UserInfo.email)
         var isNewUser: Boolean = false
         if (user != null) {
-            val existingProvider = user.provider.provider
+            val existingProvider = user.provider?.provider
             val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
-            if (existingProvider != EAuthProvider.LOCAL && existingProvider != provider
-            ) {
-                throw OAuth2AuthenticationProcessingException(
-                    "Looks like you're signed up with $existingProvider account. " +
-                            "Please use your $existingProvider account to login."
-                )
+            if (existingProvider != null) {
+                if (existingProvider != EAuthProvider.LOCAL && existingProvider != provider
+                ) {
+                    throw OAuth2AuthenticationProcessingException(
+                        "Looks like you're signed up with $existingProvider account. " +
+                                "Please use your $existingProvider account to login."
+                    )
+                }
             }
             user = updateExistingUser(user, oAuth2UserInfo, provider)
         } else {
@@ -58,11 +61,22 @@ class CustomOAuth2UserService(
         return oAuth2UserInfo.toCustomOAuth2User(user).apply { newUser = isNewUser }
     }
 
+    private fun extractUniqueUsernameFromEmail(email: String): String {
+        val username = email.takeWhile { it != '@' }
+        var prefix = ""
+        var uniqueUsername = username
+        while (userServices.existsByUsername(uniqueUsername)) {
+            prefix += Random.nextInt(100, 999).toString()
+            uniqueUsername = "${username}_${prefix}"
+        }
+        return uniqueUsername
+    }
+
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
         val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
         val user = User()
         user.email = oAuth2UserInfo.email
-        user.username = oAuth2UserInfo.email
+        user.username = extractUniqueUsernameFromEmail(oAuth2UserInfo.email)
         user.password = ""
         user.profile = UserProfile(
             firstName = oAuth2UserInfo.firstName,
@@ -83,8 +97,11 @@ class CustomOAuth2UserService(
             it.lastName = oAuth2UserInfo.name
             it.profilePicture = oAuth2UserInfo.imageUrl
         }
-        existingUser.provider.providerId = oAuth2UserInfo.id
-        existingUser.provider.provider = provider
+        val providerEntity = existingUser.provider ?: UserProvider()
+        existingUser.provider = providerEntity.apply {
+            this.provider = providerEntity.provider
+            this.providerId = oAuth2UserInfo.id
+        }
         return userServices.save(existingUser)
     }
 }

@@ -107,6 +107,7 @@ class SecurityConfig(
     }
 
     @Bean
+    @Profile("local")
     fun corsFilter(): CorsFilter {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
@@ -127,6 +128,33 @@ class SecurityConfig(
             "Access-Control-Request-Headers"
         )
         config.addExposedHeader(securityConfigProperties.jwt.header)
+        source.registerCorsConfiguration("/**", config)
+        return CorsFilter(source)
+    }
+
+    @Bean
+    @Profile("prod")
+    fun corsFilterProd(corsConfigProperties: CorsConfigProperties): CorsFilter {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowedOrigins = corsConfigProperties.allowedOrigins
+        config.allowedMethods = corsConfigProperties.allowedMethods
+        config.allowedHeaders = corsConfigProperties.allowedHeaders
+        config.addAllowedHeader(securityConfigProperties.jwt.header)
+        config.allowCredentials = corsConfigProperties.allowCredentials
+        config.maxAge = corsConfigProperties.maxAge
+        config.exposedHeaders = listOf(
+            "x-xsrf-token",
+            "Access-Control-Allow-Headers",
+            "Origin",
+            "Accept",
+            "X-Requested-With",
+            "Content-Type",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers",
+            *corsConfigProperties.exposedHeaders.toTypedArray(),
+            securityConfigProperties.jwt.header
+        )
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
     }

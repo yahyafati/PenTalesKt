@@ -23,7 +23,7 @@ class User(
     @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
     var profile: UserProfile? = null,
     @Embedded
-    var provider: UserProvider = UserProvider(),
+    var provider: UserProvider? = UserProvider(),
 ) : IModel(), UserDetails {
 
     @Transient
@@ -44,7 +44,7 @@ class User(
     var authorities: MutableSet<AuthorityUser> = mutableSetOf()
 
     override fun toString(): String {
-        return "User(id=$id, username='$username', email='$email', password='$password')"
+        return "User(id=$id, username='$username', email='$email')"
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
@@ -94,4 +94,5 @@ class User(
     fun setEnabled(isEnabled: Boolean) {
         this.isEnabled = isEnabled
     }
+
 }
