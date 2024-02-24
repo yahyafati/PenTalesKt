@@ -10,6 +10,7 @@ import org.springframework.security.core.*
 import org.springframework.security.oauth2.client.userinfo.*
 import org.springframework.security.oauth2.core.user.*
 import org.springframework.stereotype.*
+import kotlin.random.*
 
 @Service
 class CustomOAuth2UserService(
@@ -58,11 +59,25 @@ class CustomOAuth2UserService(
         return oAuth2UserInfo.toCustomOAuth2User(user).apply { newUser = isNewUser }
     }
 
+    private fun extractUniqueUsernameFromEmail(email: String): String {
+        val username = email.takeWhile { it != '@' }
+        var prefix = ""
+        var uniqueUsername = username
+        while (userServices.existsByUsername(uniqueUsername)) {
+            prefix +=
+                (1..6)
+                    .map { Random.nextInt(0, 100) }
+                    .joinToString { it.toString() }
+            uniqueUsername = "${username}_${prefix}"
+        }
+        return uniqueUsername
+    }
+
     private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
         val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
         val user = User()
         user.email = oAuth2UserInfo.email
-        user.username = oAuth2UserInfo.email
+        user.username = extractUniqueUsernameFromEmail(oAuth2UserInfo.email)
         user.password = ""
         user.profile = UserProfile(
             firstName = oAuth2UserInfo.firstName,
