@@ -23,7 +23,7 @@ class User(
     @OneToOne(cascade = [CascadeType.PERSIST, CascadeType.REMOVE], mappedBy = "user")
     var profile: UserProfile? = null,
     @Embedded
-    var provider: UserProvider = UserProvider(),
+    var provider: UserProvider? = UserProvider(),
 ) : IModel(), UserDetails {
 
     @Transient

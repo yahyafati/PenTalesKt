@@ -27,7 +27,8 @@ class UserProfileServices(
     private val fileService: IFileService,
     private val fileConfigProperties: FileConfigProperties,
     private val followerServices: IFollowerServices,
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val superAdminProvider: SuperAdminProvider,
 ) : IUserProfileServices {
 
     companion object {
@@ -162,6 +163,7 @@ class UserProfileServices(
         val followings = followerServices.getFollowings(user)
         val notNeeded = listOf(
             user,
+            superAdminProvider.superAdmin,
             *followings.toTypedArray()
         )
 

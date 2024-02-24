@@ -41,14 +41,16 @@ class CustomOAuth2UserService(
         var user = userServices.findByEmail(oAuth2UserInfo.email)
         var isNewUser: Boolean = false
         if (user != null) {
-            val existingProvider = user.provider.provider
+            val existingProvider = user.provider?.provider
             val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
-            if (existingProvider != EAuthProvider.LOCAL && existingProvider != provider
-            ) {
-                throw OAuth2AuthenticationProcessingException(
-                    "Looks like you're signed up with $existingProvider account. " +
-                            "Please use your $existingProvider account to login."
-                )
+            if (existingProvider != null) {
+                if (existingProvider != EAuthProvider.LOCAL && existingProvider != provider
+                ) {
+                    throw OAuth2AuthenticationProcessingException(
+                        "Looks like you're signed up with $existingProvider account. " +
+                                "Please use your $existingProvider account to login."
+                    )
+                }
             }
             user = updateExistingUser(user, oAuth2UserInfo, provider)
         } else {
@@ -64,10 +66,7 @@ class CustomOAuth2UserService(
         var prefix = ""
         var uniqueUsername = username
         while (userServices.existsByUsername(uniqueUsername)) {
-            prefix +=
-                (1..6)
-                    .map { Random.nextInt(0, 100) }
-                    .joinToString { it.toString() }
+            prefix += Random.nextInt(100, 999).toString()
             uniqueUsername = "${username}_${prefix}"
         }
         return uniqueUsername
@@ -98,8 +97,11 @@ class CustomOAuth2UserService(
             it.lastName = oAuth2UserInfo.name
             it.profilePicture = oAuth2UserInfo.imageUrl
         }
-        existingUser.provider.providerId = oAuth2UserInfo.id
-        existingUser.provider.provider = provider
+        val providerEntity = existingUser.provider ?: UserProvider()
+        existingUser.provider = providerEntity.apply {
+            this.provider = providerEntity.provider
+            this.providerId = oAuth2UserInfo.id
+        }
         return userServices.save(existingUser)
     }
 }
