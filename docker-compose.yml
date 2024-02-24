@@ -11,6 +11,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   springboot-app:
     build: .
@@ -20,27 +22,14 @@ services:
       - ${SPRINGBOOT_LOCAL_PORT}:${SPRINGBOOT_DOCKER_PORT}
     depends_on:
       - postgres
-    volumes:
-      - gradle-cache:/root/.gradle
-      - app-build:/app/build
     environment:
       SPRING_PROFILES_ACTIVE: local  # Set the active profile to "local"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRES_DOCKER_PORT}/reading-realm
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    env_file: .env
-    ports:
-      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    depends_on:
-      - postgres
+    volumes:
+      - gradle-cache:/root/.gradle  # Mount Gradle cache directory as a volume
 
 volumes:
+  postgres-data:
   gradle-cache:
-  app-build:
