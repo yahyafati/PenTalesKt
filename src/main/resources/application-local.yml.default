@@ -25,4 +25,13 @@ org:
       s3:
         region: eu-north-1
         bucket: reading-realm
+  security:
+    jwt:
+      secret: REPLACE-WITH-YOUR-SECRET # Secret key
+    oauth2:
+      authorized-redirect-uris:
+        - http://localhost:5173/oauth2/callback/google
+    cors:
+      allowed-origins:
+        - http://localhost:5173
 

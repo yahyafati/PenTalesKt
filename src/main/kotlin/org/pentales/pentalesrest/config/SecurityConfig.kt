@@ -64,7 +64,9 @@ class SecurityConfig(
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http.cors(Customizer.withDefaults()).csrf { it.disable() }
+        return http
+            .cors(Customizer.withDefaults())
+            .csrf { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
             .addFilterAfter(
@@ -107,34 +109,8 @@ class SecurityConfig(
     }
 
     @Bean
-    @Profile("local")
-    fun corsFilter(): CorsFilter {
-        val source = UrlBasedCorsConfigurationSource()
-        val config = CorsConfiguration()
-//        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*")
-        config.addAllowedHeader("*")
-        config.addAllowedHeader(securityConfigProperties.jwt.header)
-        config.addAllowedMethod("*")
-        config.maxAge = 3600L
-        config.exposedHeaders = listOf(
-            "x-xsrf-token",
-            "Access-Control-Allow-Headers",
-            "Origin",
-            "Accept",
-            "X-Requested-With",
-            "Content-Type",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers"
-        )
-        config.addExposedHeader(securityConfigProperties.jwt.header)
-        source.registerCorsConfiguration("/**", config)
-        return CorsFilter(source)
-    }
-
-    @Bean
-    @Profile("prod")
-    fun corsFilterProd(corsConfigProperties: CorsConfigProperties): CorsFilter {
+    fun corsFilter(corsConfigProperties: CorsConfigProperties): CorsFilter {
+        LOG.info("CORS Configuration: $corsConfigProperties")
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowedOrigins = corsConfigProperties.allowedOrigins
@@ -144,14 +120,6 @@ class SecurityConfig(
         config.allowCredentials = corsConfigProperties.allowCredentials
         config.maxAge = corsConfigProperties.maxAge
         config.exposedHeaders = listOf(
-            "x-xsrf-token",
-            "Access-Control-Allow-Headers",
-            "Origin",
-            "Accept",
-            "X-Requested-With",
-            "Content-Type",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers",
             *corsConfigProperties.exposedHeaders.toTypedArray(),
             securityConfigProperties.jwt.header
         )
