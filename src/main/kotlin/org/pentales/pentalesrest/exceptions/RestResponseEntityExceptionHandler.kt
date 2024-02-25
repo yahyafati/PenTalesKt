@@ -1,9 +1,11 @@
 package org.pentales.pentalesrest.exceptions
 
+import jakarta.validation.*
 import org.slf4j.*
 import org.springframework.http.*
 import org.springframework.security.access.*
 import org.springframework.security.core.*
+import org.springframework.web.bind.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.*
 import org.springframework.web.servlet.config.annotation.*
@@ -26,6 +28,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
             is AuthenticationException -> return handleAuthenticationException(ex, request)
             is AccessDeniedException -> return handleAccessDenied(ex, request)
             is NoEntityWithIdException -> return handleNoEntityWithIdException(ex, request)
+            is ValidationException -> return handleValidationException(ex, request)
             is GenericException -> return handleBadRequest(ex, request)
         }
 
@@ -42,6 +45,26 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         )
     }
 
+    override fun handleMethodArgumentNotValid(
+        ex: MethodArgumentNotValidException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+
+        val errorModel = GenericErrorModel(
+            "Validation error",
+            System.currentTimeMillis(),
+            status.value(),
+            ex,
+            ex.bindingResult.fieldErrors.map { it.defaultMessage }
+        )
+
+        return ResponseEntity(
+            errorModel, headers, status
+        )
+    }
+
     protected fun handleNoEntityWithIdException(
         exception: NoEntityWithIdException,
         request: WebRequest?
@@ -55,6 +78,22 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         LOG.error(errorModel.message)
         return ResponseEntity(
             errorModel, HttpHeaders(), HttpStatus.NOT_FOUND
+        )
+    }
+
+    protected fun handleValidationException(
+        exception: ValidationException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message ?: "Validation error",
+            System.currentTimeMillis(),
+            HttpStatus.CONFLICT.value(),
+            exception,
+        )
+        LOG.error(errorModel.message)
+        return ResponseEntity(
+            errorModel, HttpHeaders(), HttpStatus.CONFLICT
         )
     }
 
