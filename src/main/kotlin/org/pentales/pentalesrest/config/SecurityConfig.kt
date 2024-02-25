@@ -66,6 +66,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .cors(Customizer.withDefaults())
+            .requiresChannel { it.anyRequest().requiresSecure() }
             .csrf { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))

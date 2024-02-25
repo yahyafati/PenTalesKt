@@ -17,7 +17,12 @@ spring:
               - email
               - profile
 server:
-  port: 8080 # Specify the port on which your Spring Boot application will run
+  ssl:
+    enabled: true
+    key-store: classpath:keys/keystore.p12 # Path to the keystore file
+    key-store-password: REPLACE-WITH-YOUR-PASSWORD # Password to access the keystore
+    key-alias: REPLACE-WITH-YOUR-ALIAS # Alias of the key in the keystore
+    key-store-type: REPLACE-WITH-YOUR-TYPE # Type of the keystore
 
 org:
   pen-tales:

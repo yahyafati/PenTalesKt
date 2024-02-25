@@ -24,7 +24,7 @@ spring:
               - profile
 
 server:
-  port: 8080 # Specify the port on which your Spring Boot application will run
+  port: 8443 # Specify the port on which your Spring Boot application will run
 
 org:
   pen-tales:
