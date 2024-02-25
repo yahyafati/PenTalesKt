@@ -1,0 +1,26 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: $GOOGLE_CLIENT_ID
+            client-secret: $GOOGLE_CLIENT_SECRET
+            redirect-uri: $GOOGLE_REDIRECT_URI
+            scope:
+              - email
+              - profile
+
+org:
+  pen-tales:
+    security:
+      jwt:
+        secret: $JWT_SECRET # Secret key for JWT
+      oauth2:
+        authorized-redirect-uris: $OAUTH2_AUTHORIZED_REDIRECT_URIS
+      cors:
+        allowed-origins: $CORS_ALLOWED_ORIGINS
+    aws:
+      s3:
+        region: $AWS_REGION
+        bucket: $AWS_BUCKET

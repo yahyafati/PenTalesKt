@@ -17,7 +17,12 @@ spring:
               - email
               - profile
 server:
-  port: 8080 # Specify the port on which your Spring Boot application will run
+  ssl:
+    enabled: true
+    key-store: classpath:keys/keystore.p12 # Path to the keystore file
+    key-store-password: REPLACE-WITH-YOUR-PASSWORD # Password to access the keystore
+    key-alias: REPLACE-WITH-YOUR-ALIAS # Alias of the key in the keystore
+    key-store-type: REPLACE-WITH-YOUR-TYPE # Type of the keystore
 
 org:
   pen-tales:
@@ -25,4 +30,13 @@ org:
       s3:
         region: eu-north-1
         bucket: reading-realm
+  security:
+    jwt:
+      secret: REPLACE-WITH-YOUR-SECRET # Secret key
+    oauth2:
+      authorized-redirect-uris:
+        - http://localhost:5173/oauth2/callback/google
+    cors:
+      allowed-origins:
+        - http://localhost:5173
 

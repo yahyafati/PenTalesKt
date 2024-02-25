@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.*
 import org.springframework.stereotype.*
 
 @Component
-@ConfigurationProperties(prefix = "org.pen-tales.goal.default")
+@ConfigurationProperties(prefix = "org.pen-tales.goal")
 data class GoalConfigProperties(
     var default: DefaultGoalProperties = DefaultGoalProperties(),
 ) {

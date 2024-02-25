@@ -24,26 +24,45 @@ spring:
               - profile
 
 server:
-  port: 8080 # Specify the port on which your Spring Boot application will run
+  port: 8443 # Specify the port on which your Spring Boot application will run
 
 org:
   pen-tales:
     security:
       jwt:
-        secret: secret # Secret key for JWT signing
         expiration: 86400000 # Token validity time in milliseconds
         header: Authorization # Header key for JWT
         prefix: "Bearer " # Prefix for JWT
-        issuer: pen-tales # Issuer of the token
-      oauth2:
-        authorized-redirect-uris:
-          - http://localhost:5173/oauth2/callback/google
+        issuer: reading-realm # Issuer of the token
+
+      cors:
+        allow-credentials: false
+        allowed-methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+          - PATCH
+        exposed-headers:
+          - Authorization
+          - Content-Type
+          - Accept
+          - X-Requested-With
+          - x-xsrf-token
+          - Origin
+          - Access-Control-Allow-Headers
+          - Access-Control-Allow-Origin
+          - Access-Control-Request-Method
+          - Access-Control-Request-Headers
+        allowed-headers:
+          - "*"
+        max-age: 3600
 
     goal:
       default:
-        default:
-          title: Embrace the Pages
-          description: A Year of Literary Exploration
+        title: Embrace the Pages
+        description: A Year of Literary Exploration
 
     file:
       upload:
@@ -55,27 +74,3 @@ org:
           - gif
           - bmp
           - webp
-    cors:
-      allow-credentials: true
-      allowed-origins:
-        - # Add the allowed origins here
-      allowed-methods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - OPTIONS
-        - PATCH
-      exposed-headers:
-        - Authorization
-        - Content-Type
-        - Accept
-        - X-Requested-With
-        - x-xsrf-token
-        - Access-Control-Allow-Headers
-        - Origin
-        - Access-Control-Request-Method
-        - Access-Control-Request-Headers
-      allowed-headers:
-        - "*"
-      max-age: 3600
