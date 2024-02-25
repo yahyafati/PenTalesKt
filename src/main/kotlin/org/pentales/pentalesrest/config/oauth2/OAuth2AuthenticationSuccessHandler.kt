@@ -76,17 +76,12 @@ class OAuth2AuthenticationSuccessHandler(
     private fun isAuthorizedRedirectUri(uri: String): Boolean {
         val clientRedirectUri = URI.create(uri)
 
-        return oAuth2Properties.authorizedRedirectUris
+        return oAuth2Properties.authorizedRedirectOrigins
             .stream()
-            .anyMatch { authorizedRedirectUri ->
-                // Only validate host and port. Let the clients use different paths if they want to
-                val authorizedURI = URI.create(authorizedRedirectUri)
-                if (authorizedURI.host.equals(clientRedirectUri.host, ignoreCase = true)
-                    && authorizedURI.port == clientRedirectUri.port
-                ) {
-                    return@anyMatch true
-                }
-                false
+            .anyMatch { authorizedRedirectOrigin ->
+                val authorizedURI = URI.create(authorizedRedirectOrigin)
+                authorizedURI.host.equals(clientRedirectUri.host, ignoreCase = true) &&
+                        authorizedURI.port == clientRedirectUri.port
             }
     }
 }

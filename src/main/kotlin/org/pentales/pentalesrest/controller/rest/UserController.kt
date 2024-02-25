@@ -81,6 +81,12 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(UpdateProfileDto(updatedProfile)))
     }
 
+    @GetMapping("/is-created-using-social")
+    fun isSocialRegistered(): ResponseEntity<BasicResponseDto<Boolean>> {
+        val user = authenticationFacade.forcedCurrentUser
+        return ResponseEntity.ok(BasicResponseDto.ok(user.password.isEmpty()))
+    }
+
     @PostMapping("/change-password")
     fun changePassword(
         @RequestBody
