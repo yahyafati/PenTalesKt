@@ -4,16 +4,30 @@ import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.*
 
 data class RegisterUser(
-    @NotBlank(message = "Username is required")
-    val username: String,
-    @NotBlank(message = "Password is required")
+    @field:NotBlank(message = "Username is required")
+    @field:Size(min = 3, message = "Username must be at least 3 characters long")
+    @field:Pattern(regexp = "^[a-zA-Z0-9]*\$", message = "Username must contain only letters and numbers")
+    var username: String,
+    @field:NotBlank(message = "Password is required")
+    @field:Size(min = 8, message = "Password must be at least 8 characters long")
     val password: String,
-    @NotBlank(message = "Email is required")
+    @field:NotBlank(message = "Email is required")
+    @field:Email(message = "Invalid email")
     val email: String = "",
+    @field:NotBlank(message = "First name is required")
     val firstName: String = "",
+    @field:NotBlank(message = "Last name is required")
     val lastName: String = "",
-    val displayName: String = "",
+    var displayName: String = "",
 ) {
+
+    init {
+        username = username.trim().lowercase()
+        if (displayName.isBlank()) {
+            val name = if (firstName.isBlank() && lastName.isBlank()) username else "$firstName $lastName"
+            displayName = name
+        }
+    }
 
     fun toUser(): User {
         val user = User(0L, username, password, email)

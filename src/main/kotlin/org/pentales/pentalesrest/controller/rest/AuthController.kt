@@ -8,6 +8,7 @@ import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
+import org.springframework.validation.annotation.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -20,7 +21,7 @@ class AuthController(
 
     @PostMapping("/register")
     fun register(
-        @Valid
+        @Validated
         @RequestBody
         registerUser: RegisterUser,
     ): ResponseEntity<BasicResponseDto<UserDto>> {

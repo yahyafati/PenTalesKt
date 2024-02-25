@@ -162,6 +162,10 @@ class UserServices(
         return userRepository.findByEmail(email)
     }
 
+    override fun existsByEmail(email: String): Boolean {
+        return userRepository.existsByEmail(email)
+    }
+
     override fun loadUserByUsername(username: String?): UserDetails {
         if (username == null) {
             throw UsernameNotFoundException("Username is null")

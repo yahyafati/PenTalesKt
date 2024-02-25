@@ -30,5 +30,6 @@ interface IUserServices : UserDetailsService {
     fun changePassword(user: User, changePassword: ChangePasswordDto)
     fun disable(user: User)
     fun findByEmail(email: String): User?
+    fun existsByEmail(email: String): Boolean
 
 }
