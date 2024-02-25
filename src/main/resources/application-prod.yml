@@ -11,9 +11,6 @@ spring:
               - email
               - profile
 
-server:
-  port: 8080 # Specify the port on which your Spring Boot application will run
-
 org:
   pen-tales:
     security:
