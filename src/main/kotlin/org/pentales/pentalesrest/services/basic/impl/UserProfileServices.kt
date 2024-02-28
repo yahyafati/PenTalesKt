@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
 import java.nio.file.*
-import java.util.*
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 
@@ -36,7 +35,6 @@ class UserProfileServices(
 
     companion object {
 
-        const val MAX_FILE_NAME_LENGTH = 20
         const val MAX_SUGGESTED_FOLLOWINGS = 5
     }
 
@@ -52,13 +50,7 @@ class UserProfileServices(
         }
         val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
 
-        val shortFileName = if (fileName.length > MAX_FILE_NAME_LENGTH) {
-            fileName.substring(0, MAX_FILE_NAME_LENGTH) + "~"
-        } else {
-            fileName
-        }
-
-        val uniqueFileName = shortFileName + "_" + UUID.randomUUID().toString() + "." + extension
+        val uniqueFileName = FileUtil.getUniqueFilename(fileName)
         return Paths.get(
             fileConfigProperties.upload.path,
             parent,
