@@ -9,6 +9,7 @@ import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
+import org.springframework.validation.annotation.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.*
 
@@ -42,6 +43,18 @@ class UserProfileController(
         val user = authenticationFacade.forcedCurrentUser
         val profileMeta: ProfileMetaDto = userProfileService.getProfileMeta(username ?: user.username)
         return ResponseEntity.ok(BasicResponseDto.ok(profileMeta))
+    }
+
+    @PutMapping("")
+    fun updateProfile(
+        @RequestBody
+        @Validated
+        profile: UpdateProfileDto,
+        @RequestParam
+        updateFields: List<String>?,
+    ): ResponseEntity<BasicResponseDto<UpdateProfileDto>> {
+        val updatedProfile = userProfileService.update(profile, updateFields ?: listOf())
+        return ResponseEntity.ok(BasicResponseDto.ok(UpdateProfileDto(updatedProfile)))
     }
 
     @PostMapping("/search-friends")
