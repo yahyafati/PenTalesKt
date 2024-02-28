@@ -70,17 +70,6 @@ class UserController(
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }
 
-    @PutMapping("/profile")
-    fun updateProfile(
-        @RequestBody
-        profile: UpdateProfileDto,
-        @RequestParam
-        updateFields: List<String>?,
-    ): ResponseEntity<BasicResponseDto<UpdateProfileDto>> {
-        val updatedProfile = userProfileService.update(profile, updateFields ?: listOf())
-        return ResponseEntity.ok(BasicResponseDto.ok(UpdateProfileDto(updatedProfile)))
-    }
-
     @GetMapping("/is-created-using-social")
     fun isSocialRegistered(): ResponseEntity<BasicResponseDto<Boolean>> {
         val user = authenticationFacade.forcedCurrentUser

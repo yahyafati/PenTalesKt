@@ -20,12 +20,6 @@ class UserProfile(
     var gender: EGender = EGender.FEMALE,
     var profilePicture: String? = null,
     var coverPicture: String? = null,
-    var goodreadsProfile: String? = null,
-    var twitterProfile: String? = null,
-    var facebookProfile: String? = null,
-    var instagramProfile: String? = null,
-    var linkedinProfile: String? = null,
-    var youtubeProfile: String? = null,
     @OneToOne
     var user: User = User(),
 ) : IModel() {

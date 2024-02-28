@@ -1,22 +1,22 @@
 package org.pentales.pentalesrest.dto.user
 
+import jakarta.validation.constraints.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import java.time.*
 
 data class UpdateProfileDto(
+    @field:NotBlank(message = "First name is required")
     var firstName: String = "",
+    @field:NotBlank(message = "Last name is required")
     var lastName: String = "",
+    @field:NotBlank(message = "Display name is required")
     var displayName: String = "",
     var bio: String? = "",
+    @field:NotNull
     var gender: EGender = EGender.MALE,
+    @field:NotNull
     var dateOfBirth: LocalDate = LocalDate.now(),
-    var goodreadsProfile: String = "",
-    var twitterProfile: String = "",
-    var facebookProfile: String = "",
-    var instagramProfile: String = "",
-    var linkedinProfile: String = "",
-    var youtubeProfile: String = ""
 ) {
 
     constructor(profile: UserProfile) : this(
@@ -26,12 +26,6 @@ data class UpdateProfileDto(
         bio = profile.bio,
         gender = profile.gender,
         dateOfBirth = profile.dateOfBirth,
-        goodreadsProfile = profile.goodreadsProfile ?: "",
-        twitterProfile = profile.twitterProfile ?: "",
-        facebookProfile = profile.facebookProfile ?: "",
-        instagramProfile = profile.instagramProfile ?: "",
-        linkedinProfile = profile.linkedinProfile ?: "",
-        youtubeProfile = profile.youtubeProfile ?: ""
     )
 
     fun toUserProfile(): UserProfile {
@@ -42,12 +36,6 @@ data class UpdateProfileDto(
             bio = bio,
             gender = gender,
             dateOfBirth = dateOfBirth,
-            goodreadsProfile = goodreadsProfile,
-            twitterProfile = twitterProfile,
-            facebookProfile = facebookProfile,
-            instagramProfile = instagramProfile,
-            linkedinProfile = linkedinProfile,
-            youtubeProfile = youtubeProfile
         )
     }
 }
