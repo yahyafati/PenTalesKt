@@ -10,7 +10,6 @@ data class UpdateProfileDto(
     var firstName: String = "",
     @field:NotBlank(message = "Last name is required")
     var lastName: String = "",
-    @field:NotBlank(message = "Display name is required")
     var displayName: String = "",
     var bio: String? = "",
     @field:NotNull
