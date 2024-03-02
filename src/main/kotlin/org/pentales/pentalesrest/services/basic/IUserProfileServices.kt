@@ -24,6 +24,6 @@ interface IUserProfileServices {
     fun getSuggestedFollowings(user: User): List<UserProfile>
     fun getProfileMeta(username: String): ProfileMetaDto
     fun getProfileByUsername(username: String): UserProfile
-    fun searchFriends(currentUser: User, filters: List<FilterDto>, pageRequest: PageRequest): Page<UserProfile>
+    fun searchFriends(currentUser: User, filters: List<List<FilterDto>>, pageRequest: PageRequest): Page<UserProfile>
 
 }

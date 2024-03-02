@@ -19,7 +19,7 @@ class UserProfile(
     var gender: EGender = EGender.FEMALE,
     var profilePicture: String? = null,
     var coverPicture: String? = null,
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     var user: User = User(),
 ) : IModel() {
 

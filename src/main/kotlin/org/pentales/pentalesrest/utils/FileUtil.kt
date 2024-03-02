@@ -1,6 +1,9 @@
 package org.pentales.pentalesrest.utils
 
+import java.awt.image.*
+import java.io.*
 import java.util.*
+import javax.imageio.*
 
 object FileUtil {
 
@@ -34,5 +37,11 @@ object FileUtil {
         val extension = getExtension(fileName)
         val uniqueFileName = "${fileNameWithoutExtension}_${UUID.randomUUID()}.$extension"
         return uniqueFileName
+    }
+
+    fun toByteArray(scaledFile: BufferedImage, formatName: String): ByteArray {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        ImageIO.write(scaledFile, formatName, byteArrayOutputStream)
+        return byteArrayOutputStream.toByteArray()
     }
 }

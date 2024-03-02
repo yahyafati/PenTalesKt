@@ -6,6 +6,15 @@ import org.springframework.data.jpa.domain.*
 
 interface ISpecification<T> {
 
+    fun getSubProperty(root: Root<T>, properties: List<String>): Path<String> {
+        var subProperty = root.get<String>(properties.first())
+        for (i in 1 until properties.size) {
+            subProperty = subProperty.get(properties[i])
+        }
+        return subProperty
+
+    }
+
     fun basicComparePredicate(filter: FilterDto, root: Root<T>, criteriaBuilder: CriteriaBuilder): Predicate {
         if (filter.filterType == FilterTypes.IS_EMPTY || filter.filterType == FilterTypes.IS_NOT_EMPTY) {
             if (filter.name.contains(".")) {
@@ -13,10 +22,7 @@ interface ISpecification<T> {
             }
         }
         val properties = filter.name.split(".")
-        var subProperty: Path<String> = root.get(properties[0])
-        for (i in 1 until properties.size) {
-            subProperty = subProperty.get(properties[i])
-        }
+        val subProperty: Path<String> = getSubProperty(root, properties)
 
         return when (filter.filterType) {
             FilterTypes.EQUALS -> {
