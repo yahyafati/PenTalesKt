@@ -7,13 +7,19 @@ data class BookFileDto(
     var id: Long = 0L,
     var path: String = "",
     var owner: UserDto = UserDto(),
-    var book: BookDTO = BookDTO()
+    var book: BookDTO = BookDTO(),
+    var progress: String = "",
+    var isPublic: Boolean = false,
+    var lastRead: Long? = null
 ) {
 
     constructor(bookFile: BookFile, baseURL: String) : this(
-        bookFile.id,
-        UserDto.getURLWithBaseURL(bookFile.path, baseURL) ?: "",
-        UserDto(bookFile.owner, baseURL),
-        BookDTO(bookFile.book)
+        id = bookFile.id,
+        path = UserDto.getURLWithBaseURL(bookFile.path, baseURL) ?: "",
+        owner = UserDto(bookFile.owner, baseURL),
+        book = BookDTO(bookFile.book),
+        progress = bookFile.__progress,
+        isPublic = bookFile.isPublic,
+        lastRead = bookFile.__lastRead?.time
     )
 }

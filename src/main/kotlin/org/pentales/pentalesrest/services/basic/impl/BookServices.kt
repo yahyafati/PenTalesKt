@@ -3,10 +3,12 @@ package org.pentales.pentalesrest.services.basic.impl
 import jakarta.transaction.*
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.intermediates.*
+import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.repo.base.*
 import org.pentales.pentalesrest.repo.specifications.*
@@ -17,6 +19,7 @@ import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 import org.springframework.web.multipart.*
 import java.nio.file.*
+import kotlin.jvm.optionals.*
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 
@@ -31,7 +34,19 @@ class BookServices(
     private val bookFileRepository: BookFileRepository,
     private val authenticationFacade: IAuthenticationFacade,
     private val fileConfigProperties: FileConfigProperties,
+    private val userBookProgressRepository: UserBookProgressRepository,
 ) : IBookServices {
+
+    override val repository: IRepoSpecification<Book, Long>
+        get() = bookRepository
+    override val modelProperties: Collection<KProperty1<Book, *>>
+        get() = Book::class.memberProperties
+
+    override val specification: ISpecification<Book>
+        get() = bookSpecification
+
+    val bookFileSpecification: ISpecification<BookFile>
+        get() = object : ISpecification<BookFile> {}
 
     override fun getBookRatingInfo(bookId: Long, fetchBook: Boolean): BookRatingInfo {
         val bookRatingInfo = BookRatingInfo()
@@ -93,22 +108,84 @@ class BookServices(
         return bookFileRepository.save(bookFile)
     }
 
-    override fun getUserEbook(user: User, book: Book): BookFile {
-        return bookFileRepository.findByOwnerAndBook(user, book)
-            ?: throw NoEntityWithIdException("No book file found for user ${user.id} and book ${book.id}")
-    }
-
     override fun existsUserEbook(user: User, book: Book): Boolean {
         return bookFileRepository.existsByOwnerAndBook(user, book)
     }
 
-    override val repository: IRepoSpecification<Book, Long>
-        get() = bookRepository
-    override val modelProperties: Collection<KProperty1<Book, *>>
-        get() = Book::class.memberProperties
+    override fun updateEbookProgress(user: User, bookFile: BookFile, progress: String) {
+        val userBookProgress = UserBookProgress(
+            id = UserBookFileKey(
+                userId = user.id,
+                bookFileId = bookFile.id
+            ),
+            user = user,
+            bookFile = bookFile,
+            progress = progress
+        )
+        userBookProgressRepository.save(userBookProgress)
+    }
 
-    override val specification: ISpecification<Book>
-        get() = bookSpecification
+    override fun getUserEbooks(user: User, book: Book, pageable: Pageable): Page<BookFile> {
+        val specification = bookFileSpecification.columnEqualsOr(
+            listOf(
+                listOf(
+                    FilterDto(
+                        name = "owner.id",
+                        value = user.id,
+                        filterType = FilterTypes.EQUALS
+                    ),
+                    FilterDto(
+                        name = "book.id",
+                        value = book.id,
+                        filterType = FilterTypes.EQUALS
+                    )
+                ),
+                // OR
+                listOf(
+                    FilterDto(
+                        name = "isPublic",
+                        value = true,
+                        filterType = FilterTypes.EQUALS
+                    ),
+                    FilterDto(
+                        name = "book.id",
+                        value = book.id,
+                        filterType = FilterTypes.EQUALS
+                    )
+                )
+            )
+        )
+        val bookFiles = bookFileRepository.findAll(
+            specification,
+            pageable
+        )
+        bookFiles.forEach {
+            val userBookProgress = userBookProgressRepository.findById(
+                UserBookFileKey(
+                    userId = user.id,
+                    bookFileId = it.id
+                )
+            ).getOrNull()
+            it.__lastRead = userBookProgress?.updatedAt
+            it.__progress = userBookProgress?.progress ?: "0"
+
+        }
+        return bookFiles
+    }
+
+    override fun getEbook(fileId: Long): BookFile {
+        val bookFile =
+            bookFileRepository.findById(fileId).orElseThrow { NoEntityWithIdException.create("BookFile", fileId) }
+        val userBookProgress = userBookProgressRepository.findById(
+            UserBookFileKey(
+                userId = authenticationFacade.forcedCurrentUser.id,
+                bookFileId = fileId
+            )
+        ).getOrNull()
+        bookFile.__progress = userBookProgress?.progress ?: "0"
+        bookFile.__lastRead = userBookProgress?.updatedAt
+        return bookFile
+    }
 
     private fun saveBookGenres(book: Book): List<BookGenre> {
         val bookGenres: List<BookGenre> = book.genres

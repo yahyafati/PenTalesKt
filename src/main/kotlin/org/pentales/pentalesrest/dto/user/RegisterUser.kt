@@ -30,8 +30,13 @@ data class RegisterUser(
     }
 
     fun toUser(): User {
-        val user = User(0L, username, password, email)
-        val profile = UserProfile(firstName = firstName, lastName = lastName, displayName = displayName, user = user)
+        val user = User(id = 0L, username = username.lowercase(), password = password, email = email.lowercase())
+        val profile = UserProfile(
+            firstName = firstName,
+            lastName = lastName,
+            displayName = displayName,
+            user = user
+        )
         user.profile = profile
         return user
     }

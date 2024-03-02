@@ -29,6 +29,7 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
             is AccessDeniedException -> return handleAccessDenied(ex, request)
             is NoEntityWithIdException -> return handleNoEntityWithIdException(ex, request)
             is ValidationException -> return handleValidationException(ex, request)
+            is ObjectValidationException -> return handleObjectValidationException(ex, request)
             is GenericException -> return handleBadRequest(ex, request)
         }
 
@@ -51,17 +52,33 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-
         val errorModel = GenericErrorModel(
-            "Validation error",
+            ex.message,
             System.currentTimeMillis(),
-            status.value(),
+            HttpStatus.CONFLICT.value(),
             ex,
             ex.bindingResult.fieldErrors.map { it.defaultMessage }
         )
-
+        LOG.error(errorModel.message)
         return ResponseEntity(
-            errorModel, headers, status
+            errorModel, HttpHeaders(), HttpStatus.CONFLICT
+        )
+    }
+
+    protected fun handleObjectValidationException(
+        exception: ObjectValidationException,
+        request: WebRequest?
+    ): ResponseEntity<GenericErrorModel> {
+        val errorModel = GenericErrorModel(
+            exception.message,
+            System.currentTimeMillis(),
+            HttpStatus.CONFLICT.value(),
+            exception,
+            exception.errors.map { it.defaultMessage }
+        )
+        LOG.error(errorModel.message)
+        return ResponseEntity(
+            errorModel, HttpHeaders(), HttpStatus.CONFLICT
         )
     }
 

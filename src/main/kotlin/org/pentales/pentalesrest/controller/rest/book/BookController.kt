@@ -11,7 +11,6 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.*
 
 @RestController
 @RequestMapping("/api/book")
@@ -33,43 +32,6 @@ class BookController(
         val pageRequest = ServletUtil.getPageRequest()
         val response = service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it) }
         return ResponseEntity.ok(response)
-    }
-
-    @PostMapping(
-        "{bookId}/ebook",
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    fun uploadEbook(
-        @PathVariable
-        bookId: Long,
-        @RequestPart("file")
-        file: MultipartFile,
-    ): ResponseEntity<BasicResponseDto<BookFileDto>> {
-        val book = bookServices.uploadEbook(file, bookId)
-        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
-        return ResponseEntity.ok(BasicResponseDto.ok(BookFileDto(book, baseURL)))
-    }
-
-    @GetMapping("/{bookId}/ebook")
-    fun getEbook(
-        @PathVariable
-        bookId: Long,
-    ): ResponseEntity<BasicResponseDto<BookFileDto>> {
-        val user = authenticationFacade.forcedCurrentUser
-        val bookFile = bookServices.getUserEbook(user, Book(id = bookId))
-        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
-        return ResponseEntity.ok(BasicResponseDto.ok(BookFileDto(bookFile, baseURL)))
-    }
-
-    @GetMapping("/{bookId}/ebook/exists")
-    fun getEbookExists(
-        @PathVariable
-        bookId: Long,
-    ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val user = authenticationFacade.forcedCurrentUser
-        val bookFile = bookServices.existsUserEbook(user, Book(id = bookId))
-        return ResponseEntity.ok(BasicResponseDto.ok(bookFile))
     }
 
     @GetMapping("/now-reading")

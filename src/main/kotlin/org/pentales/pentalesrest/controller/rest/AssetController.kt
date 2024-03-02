@@ -14,7 +14,15 @@ class AssetController(
     private val fileService: IFileService,
 ) {
 
-    @GetMapping("/**", produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE])
+    @GetMapping(
+        "/**",
+        produces = [
+            MediaType.IMAGE_JPEG_VALUE,
+            MediaType.IMAGE_PNG_VALUE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            MediaType.ALL_VALUE
+        ]
+    )
     fun getResource(request: HttpServletRequest): ResponseEntity<ByteArray> {
         val url = request.requestURL.toString()
         val encoded = url.substringAfter("/api/assets/")
