@@ -51,7 +51,7 @@ class UserServices(
     }
 
     override fun existsByUsername(username: String): Boolean {
-        return userRepository.existsByUsername(username)
+        return userRepository.existsByUsernameIgnoreCase(username)
     }
 
     override fun deleteById(id: Long) {
@@ -163,7 +163,7 @@ class UserServices(
     }
 
     override fun existsByEmail(email: String): Boolean {
-        return userRepository.existsByEmail(email)
+        return userRepository.existsByEmailIgnoreCase(email)
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {

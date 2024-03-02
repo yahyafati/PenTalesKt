@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.*
 interface UserRepository : IRepoSpecification<User, Long> {
 
     fun findByUsername(username: String): User?
-    fun existsByUsername(username: String): Boolean
+    fun existsByUsernameIgnoreCase(username: String): Boolean
     fun findByEmail(email: String): User?
-    fun existsByEmail(email: String): Boolean
+    fun existsByEmailIgnoreCase(email: String): Boolean
     fun deleteByUsername(username: String)
     fun findAllByRole(role: Role, pageable: Pageable): Page<User>
     fun findAllByRoleIn(roles: Set<Role>, pageable: Pageable): Page<User>
