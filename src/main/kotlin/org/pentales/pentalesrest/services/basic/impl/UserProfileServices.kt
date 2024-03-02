@@ -1,5 +1,7 @@
 package org.pentales.pentalesrest.services.basic.impl
 
+import net.coobird.thumbnailator.*
+import net.coobird.thumbnailator.geometry.*
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.dto.*
@@ -99,8 +101,15 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("profile", uploadDto)
+        val scaledFile = Thumbnails.of(uploadDto.file!!.inputStream)
+            .size(300, 300)
+            .crop(Positions.CENTER)
+            .outputFormat("jpg")
+            .asBufferedImage()
 
-        fileService.uploadFile(path, uploadDto.file!!.bytes)
+        val byteArray = FileUtil.toByteArray(scaledFile, "jpg")
+
+        fileService.uploadFile(path, byteArray)
         if (userProfile.profilePicture != null) {
             fileService.deleteFile(userProfile.profilePicture!!)
         }
@@ -111,7 +120,14 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("cover", uploadDto)
-        fileService.uploadFile(path, uploadDto.file!!.bytes)
+        val scaledFile = Thumbnails.of(uploadDto.file!!.inputStream)
+            .size(1200, 300)
+            .crop(Positions.CENTER)
+            .keepAspectRatio(true) // This is the default, but it doesn't hurt to be explicit
+            .outputFormat("jpg")
+            .asBufferedImage()
+        val byteArray = FileUtil.toByteArray(scaledFile, "jpg")
+        fileService.uploadFile(path, byteArray)
         if (userProfile.coverPicture != null) {
             fileService.deleteFile(userProfile.coverPicture!!)
         }

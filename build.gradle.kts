@@ -55,6 +55,9 @@ dependencies {
 
     //    org.apache.tika:tika-core:1.14
     implementation("org.apache.tika:tika-core:2.5.0")
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation("net.coobird:thumbnailator:0.4.20")
+
 }
 
 tasks.withType<KotlinCompile> {
