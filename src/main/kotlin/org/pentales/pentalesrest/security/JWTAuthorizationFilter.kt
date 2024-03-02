@@ -72,7 +72,6 @@ class JWTAuthorizationFilter(
         try {
             val token = rawToken.replace(jwtProperties.prefix, "")
             val username: String = jwtService.extractUsername(token)
-            LOG.info("Username: $username")
             val loggedInUser: User = userService.findByUsername(username)
             return UsernamePasswordAuthenticationToken(
                 loggedInUser, null, loggedInUser.authorities.map { it.authority }

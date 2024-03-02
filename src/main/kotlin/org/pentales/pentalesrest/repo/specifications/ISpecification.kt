@@ -7,59 +7,73 @@ import org.springframework.data.jpa.domain.*
 interface ISpecification<T> {
 
     fun basicComparePredicate(filter: FilterDto, root: Root<T>, criteriaBuilder: CriteriaBuilder): Predicate {
+        if (filter.filterType == FilterTypes.IS_EMPTY || filter.filterType == FilterTypes.IS_NOT_EMPTY) {
+            if (filter.name.contains(".")) {
+                throw IllegalArgumentException("Can't use IS_EMPTY or IS_NOT_EMPTY with nested properties, not yet implemented")
+            }
+        }
+        val properties = filter.name.split(".")
+        var subProperty: Path<String> = root.get(properties[0])
+        for (i in 1 until properties.size) {
+            subProperty = subProperty.get(properties[i])
+        }
+
         return when (filter.filterType) {
             FilterTypes.EQUALS -> {
-                criteriaBuilder.equal(root.get<String>(filter.name), filter.value)
+                criteriaBuilder.equal(subProperty, filter.value)
             }
 
             FilterTypes.GREATER_THAN -> {
                 criteriaBuilder.greaterThan(
-                    root.get(filter.name), filter.value.toString()
+                    subProperty, filter.value.toString()
                 )
             }
 
             FilterTypes.LESS_THAN -> {
-                criteriaBuilder.lessThan(root.get(filter.name), filter.value.toString())
+                criteriaBuilder.lessThan(subProperty, filter.value.toString())
             }
 
             FilterTypes.GREATER_THAN_OR_EQUAL -> {
                 criteriaBuilder.greaterThanOrEqualTo(
-                    root.get(filter.name), filter.value.toString()
+                    subProperty, filter.value.toString()
                 )
             }
 
             FilterTypes.LESS_THAN_OR_EQUAL -> {
                 criteriaBuilder.lessThanOrEqualTo(
-                    root.get(filter.name), filter.value.toString()
+                    subProperty, filter.value.toString()
                 )
             }
 
             FilterTypes.NOT_EQUALS -> {
-                criteriaBuilder.notEqual(root.get<String>(filter.name), filter.value)
+                criteriaBuilder.notEqual(subProperty, filter.value)
             }
 
             FilterTypes.LIKE -> {
-                criteriaBuilder.like(criteriaBuilder.lower(root.get(filter.name)), "%${filter.value}%".lowercase())
+                criteriaBuilder.like(
+                    criteriaBuilder.lower(subProperty),
+                    "%${filter.value}%".lowercase()
+                )
             }
 
             FilterTypes.NOT_LIKE -> {
-                criteriaBuilder.notLike(criteriaBuilder.lower(root.get(filter.name)), "%${filter.value}%".lowercase())
+                criteriaBuilder.notLike(criteriaBuilder.lower(subProperty), "%${filter.value}%".lowercase())
             }
 
             FilterTypes.IN -> {
-                criteriaBuilder.`in`(root.get<String>(filter.name)).value(filter.value.toString())
+                criteriaBuilder.`in`(subProperty).value(filter.value.toString())
             }
 
             FilterTypes.NOT_IN -> {
-                criteriaBuilder.`in`(root.get<String>(filter.name)).value(filter.value.toString()).not()
+                criteriaBuilder.`in`(subProperty).value(filter.value.toString()).not()
             }
 
             FilterTypes.IS_NULL -> {
-                criteriaBuilder.isNull(root.get<String>(filter.name))
+                criteriaBuilder.isNull(subProperty)
             }
 
             FilterTypes.IS_NOT_NULL -> {
-                criteriaBuilder.isNotNull(root.get<String>(filter.name))
+                criteriaBuilder.isNotNull(subProperty)
             }
 
             FilterTypes.IS_EMPTY -> {
@@ -72,14 +86,33 @@ interface ISpecification<T> {
         }
     }
 
+    fun basicComparePredicate(
+        filterDtoList: List<FilterDto>,
+        root: Root<T>,
+        criteriaBuilder: CriteriaBuilder
+    ): Predicate {
+        val predicates = mutableListOf<Predicate>()
+        filterDtoList.forEach { filter ->
+            val predicate = basicComparePredicate(filter, root, criteriaBuilder)
+            predicates.add(predicate)
+        }
+        return criteriaBuilder.and(*predicates.toTypedArray())
+    }
+
     fun columnEquals(filterDtoList: List<FilterDto>): Specification<T> {
         return Specification { root, query, criteriaBuilder ->
+            return@Specification basicComparePredicate(filterDtoList, root, criteriaBuilder)
+        }
+    }
+
+    fun columnEqualsOr(filterDtoList: List<List<FilterDto>>): Specification<T> {
+        return Specification { root, query, criteriaBuilder ->
             val predicates = mutableListOf<Predicate>()
-            filterDtoList.forEach { filter ->
-                val predicate = basicComparePredicate(filter, root, criteriaBuilder)
+            filterDtoList.forEach { filterDtoList ->
+                val predicate = basicComparePredicate(filterDtoList, root, criteriaBuilder)
                 predicates.add(predicate)
             }
-            return@Specification criteriaBuilder.and(*predicates.toTypedArray())
+            return@Specification criteriaBuilder.or(*predicates.toTypedArray())
         }
     }
 }

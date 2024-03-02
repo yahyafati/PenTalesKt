@@ -12,7 +12,9 @@ interface IBookServices : IGenericService<Book> {
     fun getRelatedBooks(bookId: Long, pageable: Pageable): Page<Book>
     fun getBookRatingByUser(bookId: Long, userId: Long): Rating?
     fun uploadEbook(file: MultipartFile, id: Long): BookFile
-    fun getUserEbook(user: User, book: Book): BookFile
     fun existsUserEbook(user: User, book: Book): Boolean
+    fun updateEbookProgress(user: User, bookFile: BookFile, progress: String)
+    fun getUserEbooks(user: User, book: Book, pageable: Pageable): Page<BookFile>
+    fun getEbook(fileId: Long): BookFile
 
 }
