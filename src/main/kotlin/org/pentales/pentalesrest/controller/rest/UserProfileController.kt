@@ -62,7 +62,7 @@ class UserProfileController(
     @PostMapping("/search-friends")
     fun searchFriends(
         @RequestBody(required = false)
-        filters: List<FilterDto> = emptyList(),
+        filters: List<List<FilterDto>> = emptyList(),
     ): ResponseEntity<BasicResponseDto<Page<FriendDto>>> {
         val user = authenticationFacade.forcedCurrentUser
         val pageRequest = ServletUtil.getPageRequest()

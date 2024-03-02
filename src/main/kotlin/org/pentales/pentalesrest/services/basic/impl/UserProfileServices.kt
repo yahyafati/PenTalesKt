@@ -24,6 +24,7 @@ import kotlin.reflect.full.*
 @Service
 class UserProfileServices(
     private val userProfileRepository: UserProfileRepository,
+    private val userRepository: UserRepository,
     private val authenticationFacade: IAuthenticationFacade,
     private val fileService: IFileService,
     private val fileConfigProperties: FileConfigProperties,
@@ -196,11 +197,11 @@ class UserProfileServices(
 
     override fun searchFriends(
         currentUser: User,
-        filters: List<FilterDto>,
+        filters: List<List<FilterDto>>,
         pageRequest: PageRequest
     ): Page<UserProfile> {
         val friends = userProfileRepository.findAll(
-            userProfileSpecification.columnEquals(filters),
+            userProfileSpecification.columnEqualsOr(filters),
             pageRequest
         )
         friends.forEach {
