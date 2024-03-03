@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest.rating
+package org.pentales.pentalesrest.controller.rating
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.ratingComment.*

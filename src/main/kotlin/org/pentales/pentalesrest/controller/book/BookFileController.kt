@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest.book
+package org.pentales.pentalesrest.controller.book
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*

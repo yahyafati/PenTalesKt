@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest
+package org.pentales.pentalesrest.controller
 
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.components.*

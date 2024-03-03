@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.controller.rest
+package org.pentales.pentalesrest.controller
 
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.activity.*
