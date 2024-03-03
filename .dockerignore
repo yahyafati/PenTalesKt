@@ -9,3 +9,4 @@ build
 **/*.local
 **/package-lock.json
 .env
+keys/*
