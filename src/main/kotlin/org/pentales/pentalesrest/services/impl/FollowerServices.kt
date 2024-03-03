@@ -1,15 +1,18 @@
 package org.pentales.pentalesrest.services.impl
 
+import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.services.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 
 @Service
 class FollowerServices(
-    private val followerRepository: FollowerRepository
-) : org.pentales.pentalesrest.services.IFollowerServices {
+    private val followerRepository: FollowerRepository,
+    private val pushNotificationService: IPushNotificationService,
+) : IFollowerServices {
 
     fun save(follower: Follower): Follower {
         return followerRepository.save(follower)
@@ -54,6 +57,15 @@ class FollowerServices(
             followerRepository.deleteById(key)
             return false
         }
+        val notification = Notification
+            .builder()
+            .setTitle("New Follower")
+            .setBody("${followerUser.username} is now following you")
+            .build()
+        pushNotificationService.sendPushNotificationToUser(
+            notification = notification,
+            userId = followedUser.id
+        )
         save(follower)
         return true
     }
