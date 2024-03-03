@@ -8,7 +8,7 @@ import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.User
-import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.services.*
 import org.slf4j.*
 import org.springframework.http.*
 import org.springframework.security.authentication.*

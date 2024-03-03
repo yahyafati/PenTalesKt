@@ -4,7 +4,6 @@ import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.activity.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/activity")
 class ActivityController(
-    private val activityViewServices: IActivityViewServices,
+    private val activityViewServices: org.pentales.pentalesrest.services.IActivityViewServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 

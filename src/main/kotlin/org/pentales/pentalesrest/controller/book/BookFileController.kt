@@ -4,7 +4,6 @@ import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
@@ -14,7 +13,7 @@ import org.springframework.web.multipart.*
 @RestController
 @RequestMapping("/api/book-file")
 class BookFileController(
-    private val bookServices: IBookServices,
+    private val bookServices: org.pentales.pentalesrest.services.IBookServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 

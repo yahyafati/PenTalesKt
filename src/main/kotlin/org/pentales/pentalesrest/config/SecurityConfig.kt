@@ -3,7 +3,7 @@ package org.pentales.pentalesrest.config
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.oauth2.*
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.services.*
 import org.slf4j.*
 import org.springframework.context.annotation.*
 import org.springframework.http.*

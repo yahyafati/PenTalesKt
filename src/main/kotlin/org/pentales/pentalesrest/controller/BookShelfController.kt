@@ -5,7 +5,6 @@ import org.pentales.pentalesrest.dto.bookshelf.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
@@ -15,7 +14,7 @@ import org.springframework.web.server.*
 @RestController
 @RequestMapping("/api/bookshelf")
 class BookShelfController(
-    private val bookShelfServices: IBookShelfServices,
+    private val bookShelfServices: org.pentales.pentalesrest.services.IBookShelfServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
 

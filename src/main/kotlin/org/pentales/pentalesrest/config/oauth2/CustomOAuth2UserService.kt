@@ -4,7 +4,7 @@ import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.embeddables.*
 import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.services.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.*
 import org.springframework.security.oauth2.client.userinfo.*

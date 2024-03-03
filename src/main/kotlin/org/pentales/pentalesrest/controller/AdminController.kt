@@ -3,7 +3,7 @@ package org.pentales.pentalesrest.controller
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*

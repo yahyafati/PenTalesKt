@@ -5,7 +5,6 @@ import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.user.*
-import org.pentales.pentalesrest.services.basic.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.validation.annotation.*
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-    private val authServices: IAuthServices,
+    private val authServices: org.pentales.pentalesrest.services.IAuthServices,
     private val securityConfigProperties: SecurityConfigProperties,
     private val jwtService: JwtService,
 ) {

@@ -6,7 +6,7 @@ import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
 import org.pentales.pentalesrest.security.*
-import org.pentales.pentalesrest.services.basic.*
+import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
