@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.services.impl
 import jakarta.transaction.*
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.exceptions.*
@@ -12,7 +13,6 @@ import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.repo.base.*
 import org.pentales.pentalesrest.repo.specifications.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*

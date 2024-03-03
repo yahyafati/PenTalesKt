@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.config.oauth2
+package org.pentales.pentalesrest.config.security.oauth2
 
 import jakarta.servlet.http.*
 import org.pentales.pentalesrest.components.configProperties.*
@@ -44,8 +44,7 @@ class OAuth2AuthenticationSuccessHandler(
         authentication: Authentication?
     ): String {
         val redirectUri = CookieUtils.getCookie(
-            request!!,
-            HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME
+            request!!, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME
         )?.value ?: throw IllegalArgumentException("Redirect URL not found")
 
         if (!isAuthorizedRedirectUri(redirectUri)) {

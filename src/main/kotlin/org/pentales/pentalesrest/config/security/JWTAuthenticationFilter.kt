@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.security
+package org.pentales.pentalesrest.config.security
 
 import com.auth0.jwt.*
 import com.auth0.jwt.algorithms.*

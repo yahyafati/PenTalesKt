@@ -1,9 +1,9 @@
 package org.pentales.pentalesrest.controller
 
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.activity.*
 import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*

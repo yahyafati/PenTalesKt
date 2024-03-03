@@ -1,8 +1,8 @@
 package org.pentales.pentalesrest.controller.rating
 
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.share.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*

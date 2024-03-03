@@ -15,7 +15,7 @@ import kotlin.reflect.full.*
 @Service
 class BookShelfServices(
     private val bookShelfRepository: BookShelfRepository,
-    private val bookShelfBookRepository: IBookshelfBookRepository,
+    private val bookShelfBookRepository: BookshelfBookRepository,
     private val ratingRepository: RatingRepository,
 ) : org.pentales.pentalesrest.services.IBookShelfServices {
 

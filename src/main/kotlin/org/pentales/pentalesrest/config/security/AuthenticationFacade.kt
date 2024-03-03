@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.security
+package org.pentales.pentalesrest.config.security
 
 import org.springframework.security.core.*
 import org.springframework.security.core.context.*

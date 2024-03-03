@@ -1,4 +1,4 @@
-package org.pentales.pentalesrest.security
+package org.pentales.pentalesrest.config.security
 
 import org.pentales.pentalesrest.models.User
 import org.springframework.security.core.*

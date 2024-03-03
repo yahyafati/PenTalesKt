@@ -4,6 +4,7 @@ import net.coobird.thumbnailator.*
 import net.coobird.thumbnailator.geometry.*
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.user.*
@@ -12,7 +13,6 @@ import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.User
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.repo.specifications.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*

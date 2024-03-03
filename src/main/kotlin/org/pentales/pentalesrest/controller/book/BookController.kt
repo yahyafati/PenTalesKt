@@ -1,11 +1,11 @@
 package org.pentales.pentalesrest.controller.book
 
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*

@@ -1,9 +1,9 @@
 package org.pentales.pentalesrest.services.impl
 
 import jakarta.validation.*
+import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.security.*
 import org.pentales.pentalesrest.services.*
 import org.springframework.security.crypto.password.*
 import org.springframework.stereotype.*
