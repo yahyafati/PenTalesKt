@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.utils
 
+import java.awt.*
 import java.awt.image.*
 import java.io.*
 import java.util.*
@@ -11,11 +12,11 @@ object FileUtil {
 
     fun getExtension(filename: String, defaultExtension: String = ""): String {
         val i = filename.lastIndexOf('.')
-        return if (i > 0) {
+        return (if (i > 0) {
             filename.substring(i + 1)
         } else {
             defaultExtension
-        }
+        }).trim()
     }
 
     fun getFilenameWithoutExtension(filename: String): String {
@@ -43,5 +44,12 @@ object FileUtil {
         val byteArrayOutputStream = ByteArrayOutputStream()
         ImageIO.write(scaledFile, formatName, byteArrayOutputStream)
         return byteArrayOutputStream.toByteArray()
+    }
+
+    fun convertWebpToJpg(inputStream: InputStream): BufferedImage {
+        val webpImage = ImageIO.read(inputStream)
+        val jpgImage = BufferedImage(webpImage.width, webpImage.height, BufferedImage.TYPE_INT_RGB)
+        jpgImage.createGraphics().drawImage(webpImage, 0, 0, Color.WHITE, null)
+        return jpgImage
     }
 }

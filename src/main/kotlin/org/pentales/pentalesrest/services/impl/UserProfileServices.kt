@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.services.impl
 
 import net.coobird.thumbnailator.*
 import net.coobird.thumbnailator.geometry.*
+import net.coobird.thumbnailator.util.*
 import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.security.*
@@ -101,10 +102,21 @@ class UserProfileServices(
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
         val path = getUploadPath("profile", uploadDto)
-        val scaledFile = Thumbnails.of(uploadDto.file!!.inputStream)
+        val file = uploadDto.file ?: throw GenericException("File cannot be null")
+        val extension = FileUtil.getExtension(file.originalFilename ?: "").lowercase()
+
+        val isExtensionAllowed = ThumbnailatorUtils.isSupportedOutputFormat(extension)
+
+        val scaledFile = Thumbnails.of(file.inputStream)
             .size(300, 300)
             .crop(Positions.CENTER)
-            .outputFormat("jpg")
+            .outputFormat(
+                if (isExtensionAllowed) {
+                    "jpg"
+                } else {
+                    ThumbnailParameter.ORIGINAL_FORMAT
+                }
+            )
             .asBufferedImage()
 
         val byteArray = FileUtil.toByteArray(scaledFile, "jpg")
