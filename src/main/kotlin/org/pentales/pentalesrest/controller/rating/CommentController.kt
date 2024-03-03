@@ -15,6 +15,7 @@ import org.springframework.web.server.*
 @RequestMapping("/api/comment")
 @RestController
 class CommentController(
+    private val ratingServices: IRatingServices,
     private val commentServices: ICommentServices,
     private val reportServices: IReportServices,
     private val authenticationFacade: IAuthenticationFacade,
@@ -50,7 +51,7 @@ class CommentController(
         addCommentDto: AddCommentDto
     ): ResponseEntity<BasicResponseDto<CommentDto>> {
         val user = authenticationFacade.forcedCurrentUser
-        val rating = Rating(id = ratingId)
+        val rating = ratingServices.findById(ratingId)
         val comment = addCommentDto.toComment(rating = rating, user = user)
         val savedComment = commentServices.saveNew(comment)
         val dto = CommentDto(savedComment, ServletUtil.getBaseURLFromCurrentRequest())

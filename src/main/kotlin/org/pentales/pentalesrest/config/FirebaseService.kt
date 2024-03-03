@@ -24,12 +24,15 @@ class FirebaseService(
     }
 
     fun subscribeToTopics(token: String, topics: List<String>) {
-        subscribeToTopic(token, topics.first()).addListener({
-            LOG.info("Subscribed to topic ${topics.first()} out of ${topics.size} topics.")
-            if (topics.size > 1) {
-                subscribeToTopics(token, topics.subList(1, topics.size))
-            }
-        }, MoreExecutors.directExecutor())
+        topics.forEach { topic ->
+            subscribeToTopic(token, topic)
+                .addListener(
+                    {
+                        LOG.info("Subscribed to topic $topic")
+                    },
+                    MoreExecutors.directExecutor()
+                )
+        }
     }
 
     fun unsubscribeFromTopic(token: String, topic: String): ApiFuture<TopicManagementResponse> {

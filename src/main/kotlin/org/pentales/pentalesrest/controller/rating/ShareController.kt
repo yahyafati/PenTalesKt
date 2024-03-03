@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/share")
 class ShareController(
+    private val ratingServices: IRatingServices,
     private val activityShareServices: IShareServices,
     private val authenticationFacade: IAuthenticationFacade,
 ) {
@@ -32,7 +33,7 @@ class ShareController(
         shareDto: AddShareDto?
     ): ResponseEntity<ShareDto> {
         val user = authenticationFacade.forcedCurrentUser
-        val rating = Rating(id = ratingId)
+        val rating = ratingServices.findById(ratingId)
 
         val share = shareDto?.toActivityShare(rating = rating, user = user) ?: Share(
             rating = rating,

@@ -62,7 +62,8 @@ class RatingController(
         id: Long
     ): ResponseEntity<BasicResponseDto<Boolean>> {
         val user = authenticationFacade.forcedCurrentUser
-        val like = ratingServices.likeRating(Rating(id = id), user)
+        val rating = ratingServices.findById(id)
+        val like = ratingServices.likeRating(rating, user)
         return ResponseEntity.ok(BasicResponseDto.ok(like))
     }
 

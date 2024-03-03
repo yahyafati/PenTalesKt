@@ -35,7 +35,7 @@ class PushNotificationService(
             )
             .setTopic("user_$userId")
             .build()
-
+        LOG.info("Sending push notification to user $userId")
         firebaseService.sendMessage(message)
     }
 

@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services.impl
 
+import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
@@ -15,6 +16,7 @@ import kotlin.reflect.full.*
 class RatingServices(
     private val repository: RatingRepository,
     private val ratingLikeRepository: RatingLikeRepository,
+    private val pushNotificationService: PushNotificationService,
 ) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
@@ -79,8 +81,16 @@ class RatingServices(
         if (ratingLikeRepository.existsById(key)) {
             return true
         }
+        val notification = Notification.builder()
+            .setTitle("New like")
+            .setBody("@${user.username} liked your rating on ${rating.book.title}")
+            .setImage(user.profile?.profilePicture)
+            .build()
         val ratingLike = RatingLike(id = key, rating = rating, user = user)
         ratingLikeRepository.save(ratingLike)
+        if (rating.user.id != user.id) {
+            pushNotificationService.sendPushNotificationToUser(notification, rating.user.id)
+        }
         return true
     }
 
