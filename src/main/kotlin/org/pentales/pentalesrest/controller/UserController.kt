@@ -62,10 +62,11 @@ class UserController(
         @PathVariable
         followedId: Long
     ): ResponseEntity<BasicResponseDto<Boolean>> {
-        val currentUserId = authenticationFacade.currentUserId
+        val currentUser = authenticationFacade.forcedCurrentUser
+        val followedUser = userService.findById(followedId)
         val status = followerServices.toggleFollow(
-            followerUser = User(id = currentUserId),
-            followedUser = User(id = followedId),
+            followerUser = currentUser,
+            followedUser = followedUser
         )
         return ResponseEntity.ok(BasicResponseDto.ok(status))
     }

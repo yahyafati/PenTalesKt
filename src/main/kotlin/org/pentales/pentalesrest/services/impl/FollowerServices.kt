@@ -1,10 +1,12 @@
 package org.pentales.pentalesrest.services.impl
 
 import com.google.firebase.messaging.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 
@@ -60,7 +62,13 @@ class FollowerServices(
         val notification = Notification
             .builder()
             .setTitle("New Follower")
-            .setBody("${followerUser.username} is now following you")
+            .setBody("@${followerUser.username} is now following you")
+            .setImage(
+                UserDto.getURLWithBaseURL(
+                    followedUser.profile?.profilePicture,
+                    ServletUtil.getBaseURLFromCurrentRequest()
+                )
+            )
             .build()
         pushNotificationService.sendPushNotificationToUser(
             notification = notification,
