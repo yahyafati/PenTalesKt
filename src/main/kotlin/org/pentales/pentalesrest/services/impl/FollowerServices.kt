@@ -7,6 +7,7 @@ import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
+import org.slf4j.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 
@@ -15,6 +16,11 @@ class FollowerServices(
     private val followerRepository: FollowerRepository,
     private val pushNotificationService: IPushNotificationService,
 ) : IFollowerServices {
+
+    companion object {
+
+        val LOG: Logger = LoggerFactory.getLogger(FollowerServices::class.java)
+    }
 
     fun save(follower: Follower): Follower {
         return followerRepository.save(follower)
@@ -55,7 +61,9 @@ class FollowerServices(
     override fun toggleFollow(followerUser: User, followedUser: User): Boolean {
         val key = UserUserKey(followerId = followerUser.id, followedId = followedUser.id)
         val follower = Follower(id = key, followed = followedUser, follower = followerUser)
-        if (followerRepository.existsById(key)) {
+        val exists = followerRepository.existsById(key)
+        LOG.debug("Follower exists: $exists")
+        if (exists) {
             followerRepository.deleteById(key)
             return false
         }
