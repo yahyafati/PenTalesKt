@@ -19,7 +19,7 @@ class PushNotificationService(
 
     override fun sendPushNotificationToAllUsers(
         action: IPushNotificationService.ActionType,
-        data: Map<String, String?>
+        data: Map<String, String>
     ) {
         val message = Message.builder()
             .setTopic("all")
@@ -33,7 +33,7 @@ class PushNotificationService(
     override fun sendPushNotificationToUser(
         action: IPushNotificationService.ActionType,
         userId: Long,
-        data: Map<String, String?>
+        data: Map<String, String>
     ) {
         val message = Message.builder()
             .putAllData(data)
@@ -47,7 +47,7 @@ class PushNotificationService(
     override fun sendPushNotificationToUsers(
         action: IPushNotificationService.ActionType,
         userIds: List<Long>,
-        data: Map<String, String?>
+        data: Map<String, String>
     ) {
         // TODO: There is a batch limit of 500 messages
         if (userIds.size > 20) {
@@ -67,7 +67,7 @@ class PushNotificationService(
     override fun sendPushNotificationToToken(
         action: IPushNotificationService.ActionType,
         token: String,
-        data: Map<String, String?>
+        data: Map<String, String>
     ) {
         val message = Message.builder()
             .putAllData(data)
@@ -78,12 +78,12 @@ class PushNotificationService(
         firebaseService.sendMessage(message)
     }
 
-    override fun registerDevice(token: String, user: User, data: Map<String, String?>) {
+    override fun registerDevice(token: String, user: User, data: Map<String, String>) {
         firebaseService.subscribeToTopics(token, listOf("all", "user_${user.id}"))
         LOG.info("Device registered for user ${user.username}")
     }
 
-    override fun unregisterDevice(token: String, data: Map<String, String?>) {
+    override fun unregisterDevice(token: String, data: Map<String, String>) {
         firebaseService.unsubscribeFromTopic("all", token)
         LOG.info("Device unregistered")
     }

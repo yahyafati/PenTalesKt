@@ -12,36 +12,36 @@ interface IPushNotificationService {
 
     fun sendPushNotificationToAllUsers(
         action: ActionType,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
     fun sendPushNotificationToUser(
         action: ActionType,
         userId: Long,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
     fun sendPushNotificationToUsers(
         action: ActionType,
         userIds: List<Long>,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
     fun sendPushNotificationToToken(
         action: ActionType,
         token: String,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
     fun registerDevice(
         token: String,
         user: User,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
     fun unregisterDevice(
         token: String,
-        data: Map<String, String?> = emptyMap()
+        data: Map<String, String> = emptyMap()
     )
 
 }

@@ -49,7 +49,7 @@ class CommentServices(
                     "icon" to UserDto.getURLWithBaseURL(
                         saved.user.profile?.profilePicture,
                         ServletUtil.getBaseURLFromCurrentRequest()
-                    )
+                    ).let { it ?: "" }
                 )
             )
         }

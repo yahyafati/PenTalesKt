@@ -77,7 +77,7 @@ class FollowerServices(
                 "icon" to UserDto.getURLWithBaseURL(
                     followerUser.profile?.profilePicture,
                     ServletUtil.getBaseURLFromCurrentRequest()
-                ),
+                ).let { it ?: "" },
                 "isFollowingBack" to isFollowingBack.toString()
             )
         )

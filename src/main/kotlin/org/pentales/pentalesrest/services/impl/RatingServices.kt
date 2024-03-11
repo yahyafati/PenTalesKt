@@ -97,7 +97,7 @@ class RatingServices(
                     "icon" to UserDto.getURLWithBaseURL(
                         user.profile?.profilePicture,
                         ServletUtil.getBaseURLFromCurrentRequest()
-                    )
+                    ).let { it ?: "" }
                 )
             )
         }
