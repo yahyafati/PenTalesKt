@@ -1,11 +1,12 @@
 package org.pentales.pentalesrest.services.impl
 
-import com.google.firebase.messaging.*
+import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
 import org.pentales.pentalesrest.repo.*
 import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
@@ -81,15 +82,24 @@ class RatingServices(
         if (ratingLikeRepository.existsById(key)) {
             return true
         }
-        val notification = Notification.builder()
-            .setTitle("New like")
-            .setBody("@${user.username} liked your rating on ${rating.book.title}")
-            .setImage(user.profile?.profilePicture)
-            .build()
         val ratingLike = RatingLike(id = key, rating = rating, user = user)
         ratingLikeRepository.save(ratingLike)
         if (rating.user.id != user.id) {
-            pushNotificationService.sendPushNotificationToUser(notification, rating.user.id)
+            pushNotificationService.sendPushNotificationToUser(
+                IPushNotificationService.ActionType.OPEN_REVIEW,
+                rating.user.id,
+                mapOf(
+                    "type" to "like",
+                    "reviewId" to rating.id.toString(),
+                    "bookTitle" to rating.book.title,
+                    "bookId" to rating.book.id.toString(),
+                    "username" to user.username,
+                    "icon" to UserDto.getURLWithBaseURL(
+                        user.profile?.profilePicture,
+                        ServletUtil.getBaseURLFromCurrentRequest()
+                    )
+                )
+            )
         }
         return true
     }

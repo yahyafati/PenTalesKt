@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.services.impl
 
-import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.keys.*
@@ -67,20 +66,20 @@ class FollowerServices(
             followerRepository.deleteById(key)
             return false
         }
-        val notification = Notification
-            .builder()
-            .setTitle("New Follower")
-            .setBody("@${followerUser.username} is now following you")
-            .setImage(
-                UserDto.getURLWithBaseURL(
-                    followedUser.profile?.profilePicture,
-                    ServletUtil.getBaseURLFromCurrentRequest()
-                )
-            )
-            .build()
+        val isFollowingBack = isFollowing(followedUser, followerUser)
         pushNotificationService.sendPushNotificationToUser(
-            notification = notification,
-            userId = followedUser.id
+            action = IPushNotificationService.ActionType.OPEN_USER_PROFILE,
+            userId = followedUser.id,
+            data = mapOf(
+                "type" to "follow",
+                "username" to followerUser.username,
+                "userId" to followerUser.id.toString(),
+                "icon" to UserDto.getURLWithBaseURL(
+                    followerUser.profile?.profilePicture,
+                    ServletUtil.getBaseURLFromCurrentRequest()
+                ),
+                "isFollowingBack" to isFollowingBack.toString()
+            )
         )
         save(follower)
         return true

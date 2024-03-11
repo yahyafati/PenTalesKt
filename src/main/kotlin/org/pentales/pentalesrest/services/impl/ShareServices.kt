@@ -1,6 +1,5 @@
 package org.pentales.pentalesrest.services.impl
 
-import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
@@ -33,18 +32,22 @@ class ShareServices(
         share.id = 0
         val saved = save(share)
         if (saved.user.id != saved.rating.user.id) {
-            val notification = Notification.builder()
-                .setTitle("New Share")
-                .setBody("${saved.user.username} shared your review of ${saved.rating.book.title}")
-                .setImage(
-                    UserDto.getURLWithBaseURL(
+            pushNotificationService.sendPushNotificationToUser(
+                IPushNotificationService.ActionType.OPEN_REVIEW,
+                saved.rating.user.id,
+                mapOf(
+                    "type" to "share",
+                    "shareId" to saved.id.toString(),
+                    "reviewId" to saved.rating.id.toString(),
+                    "bookId" to saved.rating.book.id.toString(),
+                    "bookTitle" to saved.rating.book.title,
+                    "username" to saved.user.username,
+                    "icon" to UserDto.getURLWithBaseURL(
                         saved.user.profile?.profilePicture,
                         ServletUtil.getBaseURLFromCurrentRequest()
-                    )
+                    ),
                 )
-                .build()
-
-            pushNotificationService.sendPushNotificationToUser(notification, saved.rating.user.id)
+            )
         }
         return saved
     }

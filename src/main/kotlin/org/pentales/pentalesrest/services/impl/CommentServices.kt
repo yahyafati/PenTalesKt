@@ -1,10 +1,10 @@
 package org.pentales.pentalesrest.services.impl
 
-import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.repo.*
+import org.pentales.pentalesrest.services.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.stereotype.*
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.*
 class CommentServices(
     private val repository: CommentRepository,
     private val pushNotificationService: PushNotificationService,
-) : org.pentales.pentalesrest.services.ICommentServices {
+) : ICommentServices {
 
     override fun getCommentById(id: Long): Comment {
         return repository.findById(id).orElseThrow { NoEntityWithIdException.create("Comment", id) }
@@ -36,18 +36,22 @@ class CommentServices(
         comment.id = 0
         val saved = save(comment)
         if (saved.user.id != saved.rating.user.id) {
-            val notification = Notification.builder()
-                .setTitle("New Comment")
-                .setBody("${saved.user.username} commented on your review of ${saved.rating.book.title}")
-                .setImage(
-                    UserDto.getURLWithBaseURL(
+            pushNotificationService.sendPushNotificationToUser(
+                IPushNotificationService.ActionType.OPEN_REVIEW_COMMENT,
+                saved.rating.user.id,
+                mapOf(
+                    "type" to "comment",
+                    "commentId" to saved.id.toString(),
+                    "reviewId" to saved.rating.id.toString(),
+                    "bookId" to saved.rating.book.id.toString(),
+                    "bookTitle" to saved.rating.book.title,
+                    "username" to saved.user.username,
+                    "icon" to UserDto.getURLWithBaseURL(
                         saved.user.profile?.profilePicture,
                         ServletUtil.getBaseURLFromCurrentRequest()
                     )
                 )
-                .build()
-
-            pushNotificationService.sendPushNotificationToUser(notification, saved.rating.user.id)
+            )
         }
         return saved
     }

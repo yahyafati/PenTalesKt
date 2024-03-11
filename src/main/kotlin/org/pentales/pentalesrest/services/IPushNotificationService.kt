@@ -1,36 +1,48 @@
 package org.pentales.pentalesrest.services
 
-import com.google.firebase.messaging.*
 import org.pentales.pentalesrest.models.*
 
 interface IPushNotificationService {
 
+    enum class ActionType {
+        OPEN_USER_PROFILE,
+        OPEN_REVIEW,
+        OPEN_REVIEW_COMMENT,
+    }
+
     fun sendPushNotificationToAllUsers(
-        notification: Notification
+        action: ActionType,
+        data: Map<String, String?> = emptyMap()
     )
 
     fun sendPushNotificationToUser(
-        notification: Notification,
-        userId: Long
+        action: ActionType,
+        userId: Long,
+        data: Map<String, String?> = emptyMap()
     )
 
     fun sendPushNotificationToUsers(
-        notification: Notification,
-        userIds: List<Long>
+        action: ActionType,
+        userIds: List<Long>,
+        data: Map<String, String?> = emptyMap()
     )
 
     fun sendPushNotificationToToken(
-        notification: Notification,
-        token: String
+        action: ActionType,
+        token: String,
+        data: Map<String, String?> = emptyMap()
     )
 
     fun registerDevice(
         token: String,
-        user: User
+        user: User,
+        data: Map<String, String?> = emptyMap()
     )
 
     fun unregisterDevice(
-        token: String
+        token: String,
+        data: Map<String, String?> = emptyMap()
     )
 
 }
+
