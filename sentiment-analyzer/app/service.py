@@ -5,7 +5,7 @@ from enum import Enum
 from textblob import TextBlob
 
 from app import db
-from app.models import Rating
+from app.models import Rating, Comment
 
 
 class MoodStatus(Enum):
@@ -45,14 +45,26 @@ def get_mood(input_text: str, *, threshold: float = __THRESHOLD) -> Mood:
         return Mood(MoodStatus.NEUTRAL, sentiment)
 
 
-def evaluate_and_hide_rating(rating_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> Rating:
-    rating = Rating.query.get_or_404(rating_id)
-    mood = get_mood(rating.review, threshold=threshold)
+def evaluate_and_hide(item: db.Model, item_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> db.Model:
+    item = item.query.get_or_404(item_id)
+
+    if not hasattr(item, 'get_text'):
+        raise ValueError('The item does not have a get_text method')
+
+    mood = get_mood(item.get_text(), threshold=threshold)
     if mood.status == MoodStatus.HOSTILE:
         if delete:
-            db.session.delete(rating)
+            db.session.delete(item)
         else:
-            rating.hidden = True
-            rating.updated_at = datetime.utcnow()
+            item.hidden = True
+            item.updated_at = datetime.utcnow()
         db.session.commit()
-    return rating
+    return item
+
+
+def evaluate_and_hide_rating(rating_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> Rating:
+    return evaluate_and_hide(Rating, rating_id, threshold=threshold, delete=delete)
+
+
+def evaluate_and_hide_comment(comment_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> Comment:
+    return evaluate_and_hide(Comment, comment_id, threshold=threshold, delete=delete)
