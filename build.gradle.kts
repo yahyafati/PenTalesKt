@@ -57,6 +57,10 @@ dependencies {
     implementation("org.apache.tika:tika-core:2.5.0")
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
     implementation("net.coobird:thumbnailator:0.4.20")
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation("com.google.firebase:firebase-admin:9.2.0")
+    // https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp
+    runtimeOnly("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
 
 }
 
