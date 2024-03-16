@@ -1,11 +1,7 @@
 import bs4
 from dataclasses import dataclass
-from datetime import datetime
 from enum import Enum
 from textblob import TextBlob
-
-from app import db
-from app.models import Rating, Comment
 
 
 class MoodStatus(Enum):
@@ -18,6 +14,7 @@ class MoodStatus(Enum):
 class Mood:
     status: MoodStatus
     sentiment: float
+    text: str = None
 
 
 __THRESHOLD = 0.4
@@ -36,35 +33,10 @@ def get_mood(input_text: str, *, threshold: float = __THRESHOLD) -> Mood:
     hostile_threshold: float = -threshold
 
     if sentiment >= friendly_threshold:
-        return Mood(MoodStatus.FRIENDLY, sentiment)
+        return Mood(MoodStatus.FRIENDLY, sentiment, input_text)
 
     elif sentiment <= hostile_threshold:
-        return Mood(MoodStatus.HOSTILE, sentiment)
+        return Mood(MoodStatus.HOSTILE, sentiment, input_text)
 
     else:
-        return Mood(MoodStatus.NEUTRAL, sentiment)
-
-
-def evaluate_and_hide(item: db.Model, item_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> db.Model:
-    item = item.query.get_or_404(item_id)
-
-    if not hasattr(item, 'get_text'):
-        raise ValueError('The item does not have a get_text method')
-
-    mood = get_mood(item.get_text(), threshold=threshold)
-    if mood.status == MoodStatus.HOSTILE:
-        if delete:
-            db.session.delete(item)
-        else:
-            item.hidden = True
-            item.updated_at = datetime.utcnow()
-        db.session.commit()
-    return item
-
-
-def evaluate_and_hide_rating(rating_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> Rating:
-    return evaluate_and_hide(Rating, rating_id, threshold=threshold, delete=delete)
-
-
-def evaluate_and_hide_comment(comment_id: int, threshold: float = __THRESHOLD, delete: bool = False) -> Comment:
-    return evaluate_and_hide(Comment, comment_id, threshold=threshold, delete=delete)
+        return Mood(MoodStatus.NEUTRAL, sentiment, input_text)
