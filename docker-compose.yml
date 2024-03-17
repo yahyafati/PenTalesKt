@@ -71,17 +71,17 @@ services:
       - upload-cache:/app/uploads  # Mount the upload directory as a volume
       - ./src/main/resources/keys/firebase-key.json:/app/firebase-credentials.json  # Mount the Firebase credentials file as a volume
 
-  pgadmin:
-    image: dpage/pgadmin4
-    platform: linux/amd64
-    container_name: pgadmin
-    ports:
-      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    depends_on:
-      - postgres
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    platform: linux/amd64
+#    container_name: pgadmin
+#    ports:
+#      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+#    depends_on:
+#      - postgres
 
 volumes:
   postgres-data:
