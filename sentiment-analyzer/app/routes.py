@@ -1,26 +1,51 @@
+import dataclasses
 from flask import jsonify, request
 
 from app import flask_app
 from app import service
 
 
-@flask_app.route('/evaluate-text', methods=['POST'])
+@dataclasses.dataclass
+class EvaluationRequest:
+    id: int
+    text: str
+    type: str
+
+    @staticmethod
+    def from_dict(data: dict):
+        return EvaluationRequest(
+            id=data.get('id'),
+            text=data.get('text'),
+            type=data.get('type'),
+        )
+
+
+@flask_app.route('/evaluate', methods=['POST'])
 def get_evaluation():
-    data = request.json
+    data: list[dict] = request.json
     if not data:
         return jsonify({
-            'error': 'request body is required'
-        }), 400
-    if 'text' not in data:
-        return jsonify({
-            'error': 'text field is required'
-        }), 400
-    input_text = data['text']
+            'data': [],
+        })
+
     threshold = request.args.get('threshold', default=0.4, type=float)
-    mood = service.get_mood(input_text, threshold=threshold)
+    responses = []
+    for item in data:
+        item = EvaluationRequest.from_dict(item)
+        mood = service.get_mood(item.text, threshold=threshold)
+        responses.append({
+            'id': item.id,
+            'type': item.type,
+            'sentiment': mood.sentiment,
+        })
 
     return jsonify({
-        'status': mood.status.name,
-        'sentiment': mood.sentiment,
-        'text': mood.text[:100]
+        'data': responses
+    })
+
+
+@flask_app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'ok'
     })
