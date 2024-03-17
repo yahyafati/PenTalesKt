@@ -9,7 +9,6 @@ import kotlin.time.Duration.Companion.seconds
 @ConfigurationProperties(prefix = "org.pen-tales.sentiment-analysis")
 data class SentimentAnalysisConfigProperties(
     var endpoint: String = "http://localhost:5000/evaluate",
-    var minPoolSize: Int = 5,
     var threshold: Double = 0.3,
     var intervalRate: Int = 10.seconds.toDouble(DurationUnit.MILLISECONDS).toInt(),
 )

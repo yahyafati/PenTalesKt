@@ -42,25 +42,26 @@ class SentimentAnalysisService(
     @Synchronized
     @Transactional
     fun processRequests() {
-        LOG.info("Processing sentiment analysis requests, pool size: ${pool.size}")
-        if (pool.isEmpty() || pool.size < sentimentAnalysisConfigProps.minPoolSize) {
-            return
+        try {
+            LOG.info("Processing sentiment analysis requests, pool size: ${pool.size}")
+
+            val string = objectMapper.writeValueAsString(
+                pool.map {
+                    mapOf("id" to it.id, "text" to it.text, "type" to it.type)
+                }
+            )
+
+            pool.clear()
+            val response = requestService.sendRequestSync(
+                sentimentAnalysisConfigProps.endpoint,
+                HttpMethod.POST,
+                string,
+                SentimentAnalysisResponse::class.java
+            )
+            applySentimentAnalysis(response)
+        } catch (e: Exception) {
+            LOG.error("Error processing sentiment analysis requests", e)
         }
-
-        val string = objectMapper.writeValueAsString(
-            pool.map {
-                mapOf("id" to it.id, "text" to it.text, "type" to it.type)
-            }
-        )
-
-        pool.clear()
-        val response = requestService.sendRequestSync(
-            sentimentAnalysisConfigProps.endpoint,
-            HttpMethod.POST,
-            string,
-            SentimentAnalysisResponse::class.java
-        )
-        applySentimentAnalysis(response)
     }
 
     @Transactional
