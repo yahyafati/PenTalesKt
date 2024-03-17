@@ -43,6 +43,9 @@ class SentimentAnalysisService(
     @Transactional
     fun processRequests() {
         try {
+            if (pool.isEmpty()) {
+                return
+            }
             LOG.info("Processing sentiment analysis requests, pool size: ${pool.size}")
 
             val string = objectMapper.writeValueAsString(

@@ -17,8 +17,10 @@ interface IUserProfileServices {
     fun uploadProfileCover(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile
 
     fun getFollowers(user: User, pageable: Pageable): Page<User>
+    fun getFollowers(username: String, pageable: Pageable): Page<User>
 
     fun getFollowings(user: User, pageable: Pageable): Page<User>
+    fun getFollowings(username: String, pageable: Pageable): Page<User>
     fun deleteProfilePicture(profile: UserProfile): UserProfile
     fun deleteProfileCover(profile: UserProfile): UserProfile
     fun getSuggestedFollowings(user: User): List<UserProfile>

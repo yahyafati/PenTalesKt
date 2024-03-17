@@ -157,12 +157,23 @@ class UserProfileServices(
         return follower
     }
 
+    @Transactional
+    override fun getFollowers(username: String, pageable: Pageable): Page<User> {
+        val user = userRepository.findByUsername(username) ?: throw NoEntityWithIdException.create("User", username)
+        return getFollowers(user, pageable)
+    }
+
     override fun getFollowings(user: User, pageable: Pageable): Page<User> {
         val followings = followerServices.getFollowings(user, pageable)
         followings.forEach {
             it.__isFollowed = true
         }
         return followings
+    }
+
+    override fun getFollowings(username: String, pageable: Pageable): Page<User> {
+        val user = userRepository.findByUsername(username) ?: throw NoEntityWithIdException.create("User", username)
+        return getFollowings(user, pageable)
     }
 
     @Transactional
@@ -204,8 +215,8 @@ class UserProfileServices(
             "UserProfile",
             username
         )
-        val followerCount = followerServices.countFollowingsOf(profile.user)
-        val followingCount = followerServices.countFollowersOf(profile.user)
+        val followerCount = followerServices.countFollowersOf(profile.user)
+        val followingCount = followerServices.countFollowingsOf(profile.user)
         val ratingCount = ratingRepository.countAllByUser(profile.user).toInt()
         val reviewCount = ratingRepository.countUserReviews(profile.user).toInt()
         return ProfileMetaDto(
@@ -237,4 +248,5 @@ class UserProfileServices(
         }
         return friends
     }
+
 }
