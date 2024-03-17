@@ -10,3 +10,7 @@ build
 **/package-lock.json
 .env
 keys/*
+
+*.yml
+*.yaml
+*.properties

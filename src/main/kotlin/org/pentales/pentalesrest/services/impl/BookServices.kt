@@ -221,7 +221,8 @@ class BookServices(
 
     @Transactional
     override fun saveNew(entity: Book): Book {
-        val savedBook: Book = super.saveNew(entity)
+        entity.id = 0L
+        val savedBook: Book = super.save(entity)
         val savedBookGenres = saveBookGenres(savedBook)
         savedBook.genres = savedBookGenres
         val savedBookAuthors = saveBookAuthors(savedBook)
