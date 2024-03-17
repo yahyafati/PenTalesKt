@@ -15,6 +15,7 @@ import org.pentales.pentalesrest.repo.base.*
 import org.pentales.pentalesrest.repo.specifications.*
 import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.*
 import org.springframework.web.multipart.*
 import java.nio.file.*
@@ -186,6 +187,16 @@ class BookServices(
         return bookFile
     }
 
+    override fun deleteEbook(fileId: Long, user: User) {
+        val bookFile =
+            bookFileRepository.findById(fileId).orElseThrow { NoEntityWithIdException.create("BookFile", fileId) }
+        if (bookFile.owner.id != user.id) {
+            throw AccessDeniedException("You are not the owner of this file")
+        }
+        fileService.deleteFile(bookFile.path)
+        bookFileRepository.delete(bookFile)
+    }
+
     private fun saveBookGenres(book: Book): List<BookGenre> {
         val bookGenres: List<BookGenre> = book.genres
         bookGenres.forEach { bookGenre: BookGenre ->
@@ -221,7 +232,8 @@ class BookServices(
 
     @Transactional
     override fun saveNew(entity: Book): Book {
-        val savedBook: Book = super.saveNew(entity)
+        entity.id = 0L
+        val savedBook: Book = super.save(entity)
         val savedBookGenres = saveBookGenres(savedBook)
         savedBook.genres = savedBookGenres
         val savedBookAuthors = saveBookAuthors(savedBook)

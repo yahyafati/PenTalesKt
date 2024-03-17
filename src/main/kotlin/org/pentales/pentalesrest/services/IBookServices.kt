@@ -16,5 +16,6 @@ interface IBookServices : IGenericService<Book> {
     fun updateEbookProgress(user: User, bookFile: BookFile, progress: String)
     fun getUserEbooks(user: User, book: Book, pageable: Pageable): Page<BookFile>
     fun getEbook(fileId: Long): BookFile
+    fun deleteEbook(fileId: Long, user: User)
 
 }

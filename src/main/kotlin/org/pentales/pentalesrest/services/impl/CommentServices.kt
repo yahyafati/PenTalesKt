@@ -1,5 +1,7 @@
 package org.pentales.pentalesrest.services.impl
 
+import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.*
 class CommentServices(
     private val repository: CommentRepository,
     private val pushNotificationService: PushNotificationService,
+    private val sentimentAnalysisService: SentimentAnalysisService,
 ) : ICommentServices {
 
     override fun getCommentById(id: Long): Comment {
@@ -29,7 +32,15 @@ class CommentServices(
     }
 
     override fun save(comment: Comment): Comment {
-        return repository.save(comment)
+        val saved = repository.save(comment)
+        sentimentAnalysisService.addRequest(
+            SentimentAnalysisRequest(
+                ESentimentAnalysisRequestType.COMMENT,
+                saved.id,
+                saved.comment
+            )
+        )
+        return saved
     }
 
     override fun saveNew(comment: Comment): Comment {

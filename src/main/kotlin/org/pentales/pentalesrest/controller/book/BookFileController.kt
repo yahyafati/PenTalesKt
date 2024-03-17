@@ -78,4 +78,14 @@ class BookFileController(
         val bookFile = bookServices.existsUserEbook(user, Book(id = bookId))
         return ResponseEntity.ok(BasicResponseDto.ok(bookFile))
     }
+
+    @DeleteMapping("/{fileId}")
+    fun deleteEbook(
+        @PathVariable
+        fileId: Long,
+    ): ResponseEntity<BasicResponseDto<Unit>> {
+        val user = authenticationFacade.forcedCurrentUser
+        bookServices.deleteEbook(fileId, user)
+        return ResponseEntity.ok(BasicResponseDto.ok(Unit))
+    }
 }

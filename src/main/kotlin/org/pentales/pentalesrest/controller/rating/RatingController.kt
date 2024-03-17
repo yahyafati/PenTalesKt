@@ -50,7 +50,7 @@ class RatingController(
             )
         }
         val rating = ratingDto.toRating(book, user)
-        val savedRating = ratingServices.save(rating)
+        val savedRating = ratingServices.saveNew(rating)
         return ResponseEntity.ok(
             BasicResponseDto.ok(RatingDto(savedRating, ServletUtil.getBaseURLFromCurrentRequest()))
         )

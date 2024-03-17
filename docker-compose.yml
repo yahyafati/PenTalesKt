@@ -15,6 +15,16 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  sentiment-analysis:
+    build: ./sentiment-analyzer
+    image: yahyafati/sentiment-analysis:latest
+    platform: linux/amd64
+    container_name: sentiment-analysis
+    ports:
+      - ${SENTIMENT_ANALYSIS_LOCAL_PORT}:${SENTIMENT_ANALYSIS_DOCKER_PORT}
+    environment:
+      FLASK_DOCKER_PORT: ${SENTIMENT_ANALYSIS_DOCKER_PORT}
+
   springboot-app:
     build: .
     platform: linux/amd64
@@ -36,7 +46,7 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
 
       SERVER_PORT: ${SPRINGBOOT_DOCKER_PORT}
-      SERVER_SSL_ENABLED: true
+      SERVER_SSL_ENABLED: false
       SERVER_SSL_KEY_STORE: ${KEY_STORE}
       SERVER_SSL_KEY_STORE_PASSWORD: ${KEY_STORE_PASSWORD}
       SERVER_SSL_PASSWORD: ${KEY_STORE_PASSWORD}
@@ -50,24 +60,28 @@ services:
       ORG_PEN_TALES_AWS_S3_REGION: ${AWS_REGION}
       ORG_PEN_TALES_AWS_S3_BUCKET: ${AWS_BUCKET}
       ORG_PEN_TALES_FIREBASE_CREDENTIAL_PATH: ${FIREBASE_CREDENTIAL_PATH}
+      ORG_PEN_TALES_SENTIMENT_ANALYSIS_ENDPOINT: http://sentiment-analysis:${SENTIMENT_ANALYSIS_DOCKER_PORT}/evaluate
+      ORG_PEN_TALES_SENTIMENT_ANALYSIS_INTERVAL_RATE: 10000
+      #      ORG_PEN_TALES_SENTIMENT_ANALYSIS_MIN_POOL_SIZE: 1
 
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     volumes:
       - gradle-cache:/root/.gradle  # Mount Gradle cache directory as a volume
       - upload-cache:/app/uploads  # Mount the upload directory as a volume
+      - ./src/main/resources/keys/firebase-key.json:/app/firebase-credentials.json  # Mount the Firebase credentials file as a volume
 
-  pgadmin:
-    image: dpage/pgadmin4
-    platform: linux/amd64
-    container_name: pgadmin
-    ports:
-      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    depends_on:
-      - postgres
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    platform: linux/amd64
+#    container_name: pgadmin
+#    ports:
+#      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+#    depends_on:
+#      - postgres
 
 volumes:
   postgres-data:

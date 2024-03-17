@@ -76,3 +76,6 @@ org:
           - gif
           - bmp
           - webp
+    sentiment-analysis:
+      endpoint: http://localhost:5000/evaluate
+      interval-rate: 3600000 # Time in milliseconds to wait before sending another request to the sentiment analysis service

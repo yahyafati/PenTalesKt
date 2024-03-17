@@ -1,5 +1,7 @@
 package org.pentales.pentalesrest.services.impl
 
+import org.pentales.pentalesrest.components.*
+import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.dto.user.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
@@ -18,6 +20,7 @@ class RatingServices(
     private val repository: RatingRepository,
     private val ratingLikeRepository: RatingLikeRepository,
     private val pushNotificationService: PushNotificationService,
+    private val sentimentAnalysisService: SentimentAnalysisService,
 ) : IRatingServices {
 
     override val modelProperties: Collection<KProperty1<Rating, *>>
@@ -37,6 +40,19 @@ class RatingServices(
 
     @Transactional
     override fun save(entity: Rating): Rating {
+        val saved = repository.save(entity)
+        sentimentAnalysisService.addRequest(
+            SentimentAnalysisRequest(
+                id = saved.id,
+                text = saved.review,
+                type = ESentimentAnalysisRequestType.REVIEW
+            )
+        )
+        return saved
+    }
+
+    @Transactional
+    override fun saveNew(entity: Rating): Rating {
         val existing = repository.findByBookAndUser(entity.book, entity.user)
         if (existing != null) {
             existing.value = entity.value
@@ -45,11 +61,12 @@ class RatingServices(
                 existing.hidden = false
                 existing.review = ""
             }
-            return repository.save(existing)
+            return save(existing)
         }
-        return repository.save(entity)
+        return save(entity)
     }
 
+    @Transactional
     override fun saveValue(value: Int, book: Book, user: User): Rating {
         val existing = repository.findByBookAndUser(book, user)
         if (existing != null) {
@@ -58,10 +75,10 @@ class RatingServices(
                 existing.hidden = false
                 existing.review = ""
             }
-            return repository.save(existing)
+            return save(existing)
         }
         val rating = Rating(book = book, user = user, value = value)
-        return repository.save(rating)
+        return save(rating)
     }
 
     @Transactional
