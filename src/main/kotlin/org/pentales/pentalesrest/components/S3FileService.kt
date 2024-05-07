@@ -40,11 +40,11 @@ class S3FileService(
         LOG.info("File uploaded to S3 with key $key")
     }
 
-    override fun uploadFile(key: String, bytes: ByteArray) {
+    override fun uploadFile(path: String, bytes: ByteArray) {
         try {
-            uploadFileInner(key, bytes)
+            uploadFileInner(path, bytes)
         } catch (e: Exception) {
-            LOG.error("Error uploading file to S3 with key: $key", e)
+            LOG.error("Error uploading file to S3 with key: $path", e)
             throw e
         }
     }
@@ -61,12 +61,12 @@ class S3FileService(
         return response
     }
 
-    override fun downloadFile(key: String): FileData {
+    override fun downloadFile(path: String): FileData {
         return try {
-            val response = downloadFileInner(key)
+            val response = downloadFileInner(path)
             FileData(response.response().contentType(), response.readAllBytes())
         } catch (e: Exception) {
-            LOG.error("Error downloading file from S3 with key: $key", e)
+            LOG.error("Error downloading file from S3 with key: $path", e)
             throw e
         }
     }
@@ -82,11 +82,11 @@ class S3FileService(
         LOG.info("File deleted from S3 with key $key")
     }
 
-    override fun deleteFile(key: String) {
+    override fun deleteFile(path: String) {
         try {
-            deleteFileInner(key)
+            deleteFileInner(path)
         } catch (e: Exception) {
-            LOG.error("Error deleting file from S3 with key: $key", e)
+            LOG.error("Error deleting file from S3 with key: $path", e)
             throw e
         }
     }

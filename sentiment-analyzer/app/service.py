@@ -1,7 +1,8 @@
 import bs4
 from dataclasses import dataclass
 from enum import Enum
-from textblob import TextBlob
+from textblob import Blobber
+from textblob.sentiments import NaiveBayesAnalyzer
 
 
 class MoodStatus(Enum):
@@ -18,12 +19,20 @@ class Mood:
 
 
 __THRESHOLD = 0.4
+analyzer = NaiveBayesAnalyzer()
+blob = Blobber(analyzer=analyzer)
+
+
+def get_text_content(input_text: str) -> str:
+    soup = bs4.BeautifulSoup(input_text, 'html.parser')
+    return soup.get_text()
 
 
 def get_sentiment(input_text: str) -> float:
-    soup = bs4.BeautifulSoup(input_text, 'html.parser')
-    text_content = soup.get_text()
-    return TextBlob(text_content).sentiment.polarity
+    global analyzer
+    text_content = get_text_content(input_text)
+    sentiment = blob(text_content).sentiment
+    return sentiment.p_pos
 
 
 def get_mood(input_text: str, *, threshold: float = __THRESHOLD) -> Mood:
