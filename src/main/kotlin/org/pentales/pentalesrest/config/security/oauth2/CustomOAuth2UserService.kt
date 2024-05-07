@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
+import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.embeddables.*
@@ -10,13 +11,17 @@ import org.springframework.security.core.*
 import org.springframework.security.oauth2.client.userinfo.*
 import org.springframework.security.oauth2.core.user.*
 import org.springframework.stereotype.*
+import org.springframework.transaction.annotation.*
 import kotlin.random.*
 
 @Service
 class CustomOAuth2UserService(
     private val userServices: IUserServices,
+    private val requestService: RequestService,
+    private val userProfileServices: IUserProfileServices
 ) : DefaultOAuth2UserService() {
 
+    @Transactional
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
         return try {
@@ -29,7 +34,8 @@ class CustomOAuth2UserService(
         }
     }
 
-    private fun processOAuth2User(oAuth2UserRequest: OAuth2UserRequest, oAuth2User: OAuth2User): OAuth2User {
+    @Transactional
+    fun processOAuth2User(oAuth2UserRequest: OAuth2UserRequest, oAuth2User: OAuth2User): OAuth2User {
         val oAuth2UserInfo: OAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
             oAuth2UserRequest.clientRegistration.registrationId,
             oAuth2User.attributes
@@ -72,30 +78,34 @@ class CustomOAuth2UserService(
         return uniqueUsername
     }
 
-    private fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
+    @Transactional
+    fun registerNewUser(oAuth2UserRequest: OAuth2UserRequest, oAuth2UserInfo: OAuth2UserInfo): User {
         val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
         val user = User()
+
         user.email = oAuth2UserInfo.email
         user.username = extractUniqueUsernameFromEmail(oAuth2UserInfo.email)
         user.password = ""
         user.profile = UserProfile(
             firstName = oAuth2UserInfo.firstName,
             lastName = oAuth2UserInfo.lastName,
-            profilePicture = oAuth2UserInfo.imageUrl,
+            profilePicture = null,
             user = user
         )
         user.provider = UserProvider(
             provider = provider,
             providerId = oAuth2UserInfo.id
         )
-        return userServices.save(user)
+        val savedUser = userServices.save(user)
+        val profilePicture = requestService.downloadFile(oAuth2UserInfo.imageUrl)
+        userProfileServices.uploadProfilePicture(savedUser.profile!!, profilePicture, "profile.jpg")
+        return savedUser
     }
 
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo, provider: EAuthProvider): User {
         existingUser.profile?.let {
             it.firstName = oAuth2UserInfo.name
             it.lastName = oAuth2UserInfo.name
-            it.profilePicture = oAuth2UserInfo.imageUrl
         }
         val providerEntity = existingUser.provider ?: UserProvider()
         existingUser.provider = providerEntity.apply {

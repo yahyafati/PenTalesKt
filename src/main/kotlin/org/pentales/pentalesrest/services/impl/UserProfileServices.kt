@@ -42,17 +42,14 @@ class UserProfileServices(
         const val MAX_SUGGESTED_FOLLOWINGS = 5
     }
 
-    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
-        if (uploadDto.file == null) {
-            throw GenericException("File cannot be null")
-        }
-        val extension = FileUtil.getExtension(uploadDto.file.originalFilename ?: "").lowercase()
+    fun getUploadPath(parent: String, originalFilename: String): String {
+        val extension = FileUtil.getExtension(originalFilename).lowercase()
 
         val allowedExtensions = fileConfigProperties.upload.allowedExtensions
         if (extension !in allowedExtensions) {
             throw GenericException("File extension (.$extension) not allowed")
         }
-        val fileName = FileUtil.getFilenameWithoutExtension(uploadDto.file.originalFilename ?: "")
+        val fileName = FileUtil.getFilenameWithoutExtension(originalFilename)
 
         val uniqueFileName = FileUtil.getUniqueFilename(fileName)
         return Paths.get(
@@ -60,6 +57,14 @@ class UserProfileServices(
             parent,
             uniqueFileName
         ).toString()
+    }
+
+    fun getUploadPath(parent: String, uploadDto: ImageUploadDto): String {
+        if (uploadDto.file == null) {
+            throw GenericException("File cannot be null")
+        }
+
+        return getUploadPath(parent, uploadDto.file.originalFilename ?: "")
     }
 
     fun findById(id: Long): UserProfile {
@@ -101,7 +106,6 @@ class UserProfileServices(
 
     @Transactional
     override fun uploadProfilePicture(userProfile: UserProfile, uploadDto: ImageUploadDto): UserProfile {
-        val path = getUploadPath("profile", uploadDto)
         val file = uploadDto.file ?: throw GenericException("File cannot be null")
         val extension = FileUtil.getExtension(file.originalFilename ?: "").lowercase()
 
@@ -120,11 +124,22 @@ class UserProfileServices(
             .asBufferedImage()
 
         val byteArray = FileUtil.toByteArray(scaledFile, "jpg")
+        return uploadProfilePicture(userProfile, byteArray, file.originalFilename ?: "")
+    }
+
+    override fun uploadProfilePicture(
+        userProfile: UserProfile,
+        byteArray: ByteArray,
+        originalFilename: String
+    ): UserProfile {
+        val path = getUploadPath("profile", originalFilename)
 
         fileService.uploadFile(path, byteArray)
+
         if (userProfile.profilePicture != null) {
             fileService.deleteFile(userProfile.profilePicture!!)
         }
+
         userProfileRepository.updateProfilePicture(userProfile, path)
         return findById(userProfile.id)
     }

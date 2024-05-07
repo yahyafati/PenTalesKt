@@ -28,4 +28,9 @@ interface IUserProfileServices {
     fun getProfileByUsername(username: String): UserProfile
     fun searchFriends(currentUser: User, filters: List<List<FilterDto>>, pageRequest: PageRequest): Page<UserProfile>
 
+    fun uploadProfilePicture(
+        userProfile: UserProfile,
+        byteArray: ByteArray,
+        originalFilename: String = "profile.jpg"
+    ): UserProfile
 }

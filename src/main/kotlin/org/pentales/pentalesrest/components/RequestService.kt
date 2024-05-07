@@ -58,4 +58,16 @@ class RequestService(
         val client = sendRequestSync(url, method, body)
         return objectMapper.readValue(client.toString(), clazz)
     }
+
+    fun downloadFile(url: String): ByteArray {
+        val client = webClientBuilder
+            .baseUrl(url)
+            .build()
+            .get()
+            .retrieve()
+            .bodyToMono(ByteArray::class.java)
+            .block()
+
+        return client!!
+    }
 }
