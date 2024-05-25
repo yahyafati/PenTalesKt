@@ -28,15 +28,15 @@ object FileUtil {
         }
     }
 
-    fun getUniqueFilename(fileName: String): String {
+    fun getUniqueFilename(fileName: String, extension: String? = null): String {
         val shortFileName = if (fileName.length > MAX_FILE_NAME_LENGTH) {
             fileName.substring(0, MAX_FILE_NAME_LENGTH) + "~"
         } else {
             fileName
         }
         val fileNameWithoutExtension = getFilenameWithoutExtension(shortFileName)
-        val extension = getExtension(fileName)
-        val uniqueFileName = "${fileNameWithoutExtension}_${UUID.randomUUID()}.$extension"
+        val fileExtension = extension ?: getExtension(fileName)
+        val uniqueFileName = "${fileNameWithoutExtension}_${UUID.randomUUID()}.$fileExtension"
         return uniqueFileName
     }
 

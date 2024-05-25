@@ -51,7 +51,7 @@ class UserProfileServices(
         }
         val fileName = FileUtil.getFilenameWithoutExtension(originalFilename)
 
-        val uniqueFileName = FileUtil.getUniqueFilename(fileName)
+        val uniqueFileName = FileUtil.getUniqueFilename(fileName, extension)
         return Paths.get(
             fileConfigProperties.upload.path,
             parent,
