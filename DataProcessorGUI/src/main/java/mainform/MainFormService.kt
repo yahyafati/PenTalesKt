@@ -5,8 +5,9 @@ import util.*
 import java.awt.*
 import java.io.*
 import java.util.logging.*
+import javax.swing.*
 
-class UIService private constructor() {
+class MainFormService private constructor() {
 
     init {
         LOG.info("Loaded $this")
@@ -23,7 +24,6 @@ class UIService private constructor() {
     fun refreshUI() {
         MainForm.instance.invalidate()
         MainForm.instance.repaint()
-
     }
 
     fun openFile() {
@@ -42,22 +42,41 @@ class UIService private constructor() {
         refreshUI()
     }
 
+    fun updateStartButton() {
+        MainForm.instance.startButton.text =
+            if (!MainForm.instance.mainFormData.isProcessing) "Start Processing" else
+                if (DataHandler.INSTANCE.isPaused) "Resume Processing" else "Pause Processing"
+        MainForm.instance.startButton.repaint()
+    }
+
     fun formClosing() {
         MainForm.instance.mainFormData.save()
         SettingsService.instance.saveSettings()
         DataHandler.INSTANCE.close()
     }
 
+    fun setProcessing(value: Boolean) {
+        MainForm.instance.mainFormData.isProcessing = value
+        updateStartButton()
+        refreshUI()
+    }
+
     fun startProcessing() {
         if (MainForm.instance.mainFormData.isProcessing) {
-            MainForm.instance.mainFormData.isProcessing = false
-            refreshUI()
+            setProcessing(false)
             return
         }
 
-        MainForm.instance.mainFormData.isProcessing = true
-        DataHandler.INSTANCE.startProcessing().thenRun {
-            MainForm.instance.mainFormData.isProcessing = false
+        setProcessing(true)
+        DataHandler.INSTANCE.startProcessing().thenApply {
+            JOptionPane.showMessageDialog(
+                MainForm.instance,
+                it,
+                "Processing Complete",
+                JOptionPane.INFORMATION_MESSAGE,
+                null
+            )
+            setProcessing(false)
             refreshUI()
         }
         refreshUI()
@@ -65,13 +84,13 @@ class UIService private constructor() {
 
     companion object {
 
-        private val LOG = Logger.getLogger(UIService::class.java.name)
-        private var INSTANCE: UIService? = null
+        private val LOG = Logger.getLogger(MainFormService::class.java.name)
+        private var INSTANCE: MainFormService? = null
 
-        val instance: UIService
+        val instance: MainFormService
             get() {
                 if (INSTANCE == null) {
-                    INSTANCE = UIService()
+                    INSTANCE = MainFormService()
                 }
                 return INSTANCE!!
             }

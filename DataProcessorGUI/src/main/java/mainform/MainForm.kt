@@ -32,7 +32,7 @@ class MainForm private constructor() : JFrame() {
 
     val mainFormData: MainFormData = MainFormData.instance
 
-    private val startButton = JButton("Start Processing")
+    val startButton = JButton("Start Processing")
     val statusLabel = JLabel("Status: Not Processing")
     val filePathField = JTextField(mainFormData.filePath, 20)
     private val openButton = JButton("Open File")
@@ -40,7 +40,7 @@ class MainForm private constructor() : JFrame() {
     val centerPanel = JPanel()
     val settingsToggleButton = JButton("Open Advanced Settings")
 
-    private val listeners: UIListeners = UIListeners.instance
+    private val listeners: MainFormListeners = MainFormListeners.instance
 
     init {
         LOG.info("Loaded $this")
@@ -59,7 +59,6 @@ class MainForm private constructor() : JFrame() {
 
         settingsPanel.isVisible = mainFormData.isAdvancedSettingsVisible
         filePathField.text = mainFormData.filePath
-        startButton.text = if (mainFormData.isProcessing) "Pause Processing" else "Start Processing"
     }
 
     fun initUI() {

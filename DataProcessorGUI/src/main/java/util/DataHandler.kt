@@ -14,6 +14,7 @@ class DataHandler private constructor() : Closeable {
     var mainForm: MainForm = MainForm.instance
     var settingsPanel: SettingsPanel = SettingsPanel.instance
     var count = 0
+    var foundCount = 0
 
     private var fileInputStream: FileInputStream? = null
     private var gzipInputStream: GZIPInputStream? = null
@@ -26,6 +27,11 @@ class DataHandler private constructor() : Closeable {
     private var bufferedWriter: BufferedWriter? = null
 
     private val mapper: ObjectMapper = ObjectMapper()
+    var isPaused: Boolean = false
+        set(value) {
+            field = value
+            MainFormService.instance.updateStartButton()
+        }
 
     companion object {
 
@@ -53,7 +59,7 @@ class DataHandler private constructor() : Closeable {
             inputStreamReader = gzipInputStream?.let { InputStreamReader(it) }
             bufferedReader = inputStreamReader?.let { BufferedReader(it) }
 
-            fileOutputStream = FileOutputStream(OUTPUT_FILE, true)
+            fileOutputStream = FileOutputStream(OUTPUT_FILE, false)
             gzipOutputStream = GZIPOutputStream(fileOutputStream)
             outputStreamWriter = gzipOutputStream?.let { OutputStreamWriter(it) }
             bufferedWriter = outputStreamWriter?.let { BufferedWriter(it) }
@@ -81,55 +87,56 @@ class DataHandler private constructor() : Closeable {
 
     private fun pauseProcessing() {
         try {
+            isPaused = true
             LOG.info("Pausing processing")
 //            var seconds = SettingsData.instance.sleepDuration.toLong() * 60
             var seconds = 10
             while (seconds > 0) {
+                if (shouldStopProcessing() || !isPaused) {
+                    break
+                }
+
                 val formattedTime = String.format(
                     "%02d:%02d",
                     seconds / 60,
                     seconds % 60
                 )
                 val formattedCount = String.format("%,d", count + 1)
+
                 SettingsService.instance.updateStatusLabel(
-                    "${formattedCount} records processed. " +
-                            "Pausing processing for $formattedTime"
+                    "$formattedCount records processed. Pausing processing for $formattedTime"
                 )
                 Thread.sleep(1000)
                 seconds--
             }
+            isPaused = false
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
     }
 
-    fun startProcessing(): CompletableFuture<Unit> {
+    fun startProcessing(): CompletableFuture<String> {
+        var justStarted = true
         return CompletableFuture.supplyAsync {
             LOG.info("Starting processing")
             var line: String?
 
             try {
-                if (count < SettingsData.instance.startFrom) {
-                    while ((bufferedReader?.readLine().also { line = it }) != null) {
-                        count++
-                        if (count >= SettingsData.instance.startFrom) {
-                            break
-                        }
-                    }
-                }
                 while ((bufferedReader?.readLine().also { line = it }) != null) {
                     if (shouldStopProcessing()) {
-                        break
+                        return@supplyAsync "Processing paused or stopped by user"
                     }
-                    if (SettingsData.instance.sleepInterval > 0) {
-                        if ((count + 1) % SettingsData.instance.sleepInterval == 0) {
-                            pauseProcessing()
-                        }
-                    }
+//                    if (SettingsData.instance.sleepInterval > 0 && !justStarted) {
+//                        if ((count + 1) % SettingsData.instance.sleepInterval == 0) {
+//                            pauseProcessing()
+//                        }
+//                    }
+                    justStarted = false
                     count++
-                    SettingsService.instance.updateStatusLabel("Processing line ${count + 1}")
+                    SettingsService.instance.updateStatusLabel("$foundCount / $count valid")
                     line?.let { row ->
                         processRow(row)?.let {
+                            foundCount++
                             bufferedWriter?.write(
                                 mapper.writeValueAsString(
                                     it
@@ -144,6 +151,9 @@ class DataHandler private constructor() : Closeable {
             } finally {
                 println("Processed $count records")
             }
+
+            val formattedPercentage = String.format("%.2f", (foundCount.toDouble() / count.toDouble()) * 100)
+            return@supplyAsync "$foundCount / $count ($formattedPercentage%) valid"
         }
     }
 

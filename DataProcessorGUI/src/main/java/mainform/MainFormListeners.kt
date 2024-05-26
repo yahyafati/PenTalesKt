@@ -3,18 +3,18 @@ package mainform
 import java.awt.event.*
 import java.util.logging.*
 
-class UIListeners private constructor() {
+class MainFormListeners private constructor() {
 
     companion object {
 
-        val LOG: Logger = Logger.getLogger(UIListeners::class.java.name)
+        val LOG: Logger = Logger.getLogger(MainFormListeners::class.java.name)
 
-        private var INSTANCE: UIListeners? = null
+        private var INSTANCE: MainFormListeners? = null
 
-        val instance: UIListeners
+        val instance: MainFormListeners
             get() {
                 if (INSTANCE == null) {
-                    INSTANCE = UIListeners()
+                    INSTANCE = MainFormListeners()
                 }
                 return INSTANCE!!
             }
@@ -28,14 +28,14 @@ class UIListeners private constructor() {
     fun toggleAdvancedSettingsListener(): ActionListener {
         return ActionListener {
             LOG.info("Toggle advanced settings listener triggered")
-            UIService.instance.toggleAdvancedSettings()
+            MainFormService.instance.toggleAdvancedSettings()
         }
     }
 
     fun openFileListener(): ActionListener {
         return ActionListener {
             LOG.info("Open file listener triggered")
-            UIService.instance.openFile()
+            MainFormService.instance.openFile()
         }
     }
 
@@ -43,7 +43,7 @@ class UIListeners private constructor() {
         return object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
                 LOG.info("Window closing listener triggered")
-                UIService.instance.formClosing()
+                MainFormService.instance.formClosing()
 
             }
         }
@@ -52,7 +52,7 @@ class UIListeners private constructor() {
     fun startProcessingListener(): ActionListener {
         return ActionListener {
             LOG.info("Start processing listener triggered")
-            UIService.instance.startProcessing()
+            MainFormService.instance.startProcessing()
         }
     }
 
