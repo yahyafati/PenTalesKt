@@ -7,11 +7,6 @@ class UIService private constructor() {
 
     fun toggleAdvancedSettings() {
         MainForm.INSTANCE.uiData.isAdvancedSettingsVisible = !MainForm.INSTANCE.uiData.isAdvancedSettingsVisible
-        if (MainForm.INSTANCE.uiData.isAdvancedSettingsVisible) {
-            MainForm.INSTANCE.centerPanel.add(MainForm.INSTANCE.settingsPanel, BorderLayout.CENTER)
-        } else {
-            MainForm.INSTANCE.centerPanel.remove(MainForm.INSTANCE.settingsPanel)
-        }
         MainForm.INSTANCE.settingsToggleButton.text =
             if (MainForm.INSTANCE.uiData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
         refreshUI()
@@ -37,6 +32,10 @@ class UIService private constructor() {
 
         MainForm.INSTANCE.uiData.filePath = fileDialog.directory + file
         refreshUI()
+    }
+
+    fun formClosing() {
+        MainForm.INSTANCE.uiData.save()
     }
 
     companion object {

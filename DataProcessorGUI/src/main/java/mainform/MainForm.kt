@@ -26,12 +26,13 @@ class MainForm private constructor() : JFrame() {
 
     init {
         this.title = "Data Processor"
-        this.setSize(600, 600)
+        this.setSize(600, 300)
         this.minimumSize = Dimension(600, 300)
         this.defaultCloseOperation = EXIT_ON_CLOSE
         this.setLocationRelativeTo(null)
         initUI()
         this.isVisible = true
+        this.addWindowListener(listeners.windowListener())
     }
 
     override fun paint(g: Graphics?) {

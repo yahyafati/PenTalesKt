@@ -2,9 +2,14 @@ package settings
 
 class SettingsService private constructor() {
 
+    fun saveSettings() {
+        
+        SettingsPanel.INSTANCE.settingsUIData.save()
+    }
+
     companion object {
 
-        private val INSTANCE: SettingsService = SettingsService()
+        val INSTANCE: SettingsService = SettingsService()
 
     }
 

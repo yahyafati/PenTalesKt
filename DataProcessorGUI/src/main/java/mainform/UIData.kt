@@ -1,28 +1,16 @@
 package mainform
 
-import com.fasterxml.jackson.annotation.*
 import util.*
 import java.util.logging.*
 
 class UIData(
-    isAdvancedSettingsVisible: Boolean = false,
-    filePath: String = "",
-) : ISerializable {
-
-    var isAdvancedSettingsVisible by ChangeDelegate(isAdvancedSettingsVisible, this::save)
-    var filePath by ChangeDelegate(filePath, this::save)
+    var isAdvancedSettingsVisible: Boolean = false,
+    var filePath: String = "",
+) : SerializableTemplate("UIData.json") {
 
     companion object {
 
         val LOG: Logger = Logger.getLogger(UIData::class.java.name)
-    }
-
-    @JsonIgnore
-    override val fileName = "UIData.json"
-
-    init {
-        LOG.info("UIData initialized: $this")
-        load()
     }
 
     override fun load() {
@@ -37,11 +25,6 @@ class UIData(
         } catch (e: Exception) {
             LOG.warning("Error loading $fileName: $e")
         }
-    }
-
-    @Synchronized
-    override fun save() {
-        super.save()
     }
 
     override fun toString(): String {

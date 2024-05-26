@@ -26,4 +26,13 @@ class UIListeners private constructor() {
         }
     }
 
+    fun windowListener(): WindowAdapter {
+        return object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                LOG.info("Window closing listener triggered")
+                UIService.INSTANCE.formClosing()
+            }
+        }
+    }
+
 }
