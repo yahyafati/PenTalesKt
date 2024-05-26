@@ -19,4 +19,11 @@ class UIListeners private constructor() {
         }
     }
 
+    fun openFileListener(): ActionListener {
+        return ActionListener {
+            LOG.info("Open file listener triggered")
+            UIService.INSTANCE.openFile()
+        }
+    }
+
 }

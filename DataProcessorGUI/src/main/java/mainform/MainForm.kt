@@ -15,7 +15,7 @@ class MainForm private constructor() : JFrame() {
     }
 
     private val button = JButton("Click me")
-    private val textField = JTextField(20)
+    val filePathField = JTextField(20)
     private val openButton = JButton("Open File")
     val settingsPanel = SettingsPanel()
     val centerPanel = JPanel()
@@ -40,7 +40,7 @@ class MainForm private constructor() : JFrame() {
         LOG.info("Main form painted")
 
         settingsPanel.isVisible = uiData.isAdvancedSettingsVisible
-        LOG.info("Settings panel visibility set to: ${settingsPanel.isVisible}")
+        filePathField.text = uiData.filePath
     }
 
     fun initUI() {
@@ -50,8 +50,9 @@ class MainForm private constructor() : JFrame() {
 
         val topPanel = JPanel()
         topPanel.layout = BorderLayout()
-        topPanel.add(textField, BorderLayout.CENTER)
+        topPanel.add(filePathField, BorderLayout.CENTER)
         topPanel.add(openButton, BorderLayout.EAST)
+        openButton.addActionListener(listeners.openFileListener())
         panel.add(topPanel, BorderLayout.NORTH)
 
         centerPanel.layout = BorderLayout()

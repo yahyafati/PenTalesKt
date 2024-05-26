@@ -1,6 +1,7 @@
 package mainform
 
 import java.awt.*
+import java.io.*
 
 class UIService private constructor() {
 
@@ -20,6 +21,22 @@ class UIService private constructor() {
         MainForm.INSTANCE.invalidate()
         MainForm.INSTANCE.repaint()
 
+    }
+
+    fun openFile() {
+        val allowedFileExtensions = arrayOf("gz")
+        val fileDialog = FileDialog(MainForm.INSTANCE, "Choose a file", FileDialog.LOAD)
+        fileDialog.filenameFilter = FilenameFilter { dir, name ->
+            allowedFileExtensions.any { name.endsWith(".$it") }
+        }
+        fileDialog.isVisible = true
+        val file = fileDialog.file
+        if (file == null || file.isEmpty()) {
+            return
+        }
+
+        MainForm.INSTANCE.uiData.filePath = fileDialog.directory + file
+        refreshUI()
     }
 
     companion object {
