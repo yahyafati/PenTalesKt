@@ -2,7 +2,6 @@ package mainform
 
 import settings.*
 import java.awt.*
-import java.util.logging.*
 import javax.swing.*
 
 class MainForm private constructor() : JFrame() {
@@ -11,7 +10,6 @@ class MainForm private constructor() : JFrame() {
 
         val INSTANCE: MainForm by lazy { MainForm() }
 
-        val LOG: Logger = Logger.getLogger(MainForm::class.java.name)
     }
 
     private val startButton = JButton("Start Processing")
@@ -21,7 +19,7 @@ class MainForm private constructor() : JFrame() {
     val centerPanel = JPanel()
     val settingsToggleButton = JButton("Open Advanced Settings")
 
-    val uiData: UIData = UIData()
+    val mainFormData: MainFormData = MainFormData()
     private val listeners: UIListeners = UIListeners.INSTANCE
 
     init {
@@ -36,12 +34,11 @@ class MainForm private constructor() : JFrame() {
     }
 
     override fun paint(g: Graphics?) {
-        LOG.info("Painting main form")
         super.paint(g)
-        LOG.info("Main form painted")
 
-        settingsPanel.isVisible = uiData.isAdvancedSettingsVisible
-        filePathField.text = uiData.filePath
+        settingsPanel.isVisible = mainFormData.isAdvancedSettingsVisible
+        filePathField.text = mainFormData.filePath
+        startButton.text = if (mainFormData.isProcessing) "Pause Processing" else "Start Processing"
     }
 
     fun initUI() {
@@ -58,7 +55,7 @@ class MainForm private constructor() : JFrame() {
 
         centerPanel.layout = BorderLayout()
         settingsToggleButton.text =
-            if (uiData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
+            if (mainFormData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
         settingsToggleButton.addActionListener(listeners.toggleAdvancedSettingsListener())
         centerPanel.add(settingsToggleButton, BorderLayout.NORTH)
         centerPanel.add(settingsPanel, BorderLayout.CENTER)

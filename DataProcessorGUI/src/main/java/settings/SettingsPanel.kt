@@ -17,7 +17,7 @@ class SettingsPanel : JPanel() {
 
     val minimumRatingTextField = JTextField(settingsUIData.minimumRating.toString(), 10)
     val sleepIntervalTextField = JTextField(settingsUIData.sleepInterval.toString(), 10)
-    val sleepLengthTextField = JTextField(settingsUIData.sleepLength.toString(), 10)
+    val sleepDurationTextField = JTextField(settingsUIData.sleepDuration.toString(), 10)
     val startFromTextField = JTextField(settingsUIData.startFrom.toString(), 10)
     val endAtTextField = JTextField(settingsUIData.endAt.toString(), 10)
     val saveButton = JButton("Save Settings")
@@ -45,9 +45,9 @@ class SettingsPanel : JPanel() {
 
         val sleepLengthPanel = JPanel()
         sleepLengthPanel.layout = BoxLayout(sleepLengthPanel, BoxLayout.X_AXIS)
-        sleepLengthPanel.add(JLabel("Sleep Length: "))
-        sleepLengthTextField.toolTipText = "The amount of time to sleep between requests"
-        sleepLengthPanel.add(sleepLengthTextField)
+        sleepLengthPanel.add(JLabel("Sleep Duration: "))
+        sleepDurationTextField.toolTipText = "The duration of the sleep in minutes"
+        sleepLengthPanel.add(sleepDurationTextField)
         sleepPanel.add(sleepLengthPanel)
 
         val rangePanel = JPanel()

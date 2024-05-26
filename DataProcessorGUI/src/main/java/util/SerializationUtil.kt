@@ -9,14 +9,14 @@ object SerializationUtil {
 
     val LOG: Logger = Logger.getLogger(SerializationUtil::class.java.name)
 
-    val resourcesPath: String
+    private val resourcesPath: String
         get() = SerializationUtil::class.java.getResource("/")?.path ?: ""
 
     val mapper: ObjectMapper = ObjectMapper().apply {
         enable(SerializationFeature.INDENT_OUTPUT)
     }
 
-    fun getAbsoluteResourcePathOrCreate(fileName: String): String {
+    private fun getAbsoluteResourcePathOrCreate(fileName: String): String {
         val path = Paths.get(resourcesPath, fileName).toFile()
         if (!path.exists()) {
             Files.createDirectories(path.parentFile.toPath())
@@ -33,7 +33,7 @@ object SerializationUtil {
         return path.absolutePath
     }
 
-    fun serialize(obj: Any): String {
+    private fun serialize(obj: Any): String {
         return mapper.writeValueAsString(obj)
     }
 

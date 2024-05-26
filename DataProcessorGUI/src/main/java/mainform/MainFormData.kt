@@ -1,22 +1,26 @@
 package mainform
 
+import com.fasterxml.jackson.annotation.*
 import util.*
 import java.util.logging.*
 
-class UIData(
+class MainFormData(
     var isAdvancedSettingsVisible: Boolean = false,
     var filePath: String = "",
 ) : SerializableTemplate("UIData.json") {
 
+    @JsonIgnore
+    var isProcessing: Boolean = false
+
     companion object {
 
-        val LOG: Logger = Logger.getLogger(UIData::class.java.name)
+        val LOG: Logger = Logger.getLogger(MainFormData::class.java.name)
     }
 
     override fun load() {
         LOG.info("Loading $fileName: $this")
         try {
-            val data = SerializationUtil.deserializeFromFile<UIData>(fileName)
+            val data = SerializationUtil.deserializeFromFile<MainFormData>(fileName)
             if (data != null) {
                 this.isAdvancedSettingsVisible = data.isAdvancedSettingsVisible
                 this.filePath = data.filePath
@@ -28,7 +32,7 @@ class UIData(
     }
 
     override fun toString(): String {
-        return "UIData(isAdvancedSettingsVisible=$isAdvancedSettingsVisible, filePath='$filePath')"
+        return "${this.javaClass.name}(isAdvancedSettingsVisible=$isAdvancedSettingsVisible, filePath='$filePath')"
     }
 }
 
