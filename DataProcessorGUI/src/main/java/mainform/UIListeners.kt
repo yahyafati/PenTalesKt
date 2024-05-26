@@ -35,4 +35,11 @@ class UIListeners private constructor() {
         }
     }
 
+    fun startProcessingListener(): ActionListener {
+        return ActionListener {
+            LOG.info("Start processing listener triggered")
+            UIService.INSTANCE.startProcessing()
+        }
+    }
+
 }

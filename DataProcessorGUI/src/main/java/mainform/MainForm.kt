@@ -14,7 +14,7 @@ class MainForm private constructor() : JFrame() {
         val LOG: Logger = Logger.getLogger(MainForm::class.java.name)
     }
 
-    private val button = JButton("Click me")
+    private val startButton = JButton("Start Processing")
     val filePathField = JTextField(20)
     private val openButton = JButton("Open File")
     val settingsPanel = SettingsPanel()
@@ -64,7 +64,9 @@ class MainForm private constructor() : JFrame() {
         centerPanel.add(settingsPanel, BorderLayout.CENTER)
 
         panel.add(centerPanel, BorderLayout.CENTER)
-        panel.add(button, BorderLayout.SOUTH)
+
+        startButton.addActionListener(listeners.startProcessingListener())
+        panel.add(startButton, BorderLayout.SOUTH)
 
         add(panel)
     }

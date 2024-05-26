@@ -38,6 +38,10 @@ class UIService private constructor() {
         MainForm.INSTANCE.uiData.save()
     }
 
+    fun startProcessing() {
+
+    }
+
     companion object {
 
         val INSTANCE: UIService by lazy { UIService() }
