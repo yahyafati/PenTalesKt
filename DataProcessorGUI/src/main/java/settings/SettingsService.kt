@@ -1,5 +1,6 @@
 package settings
 
+import mainform.*
 import java.util.logging.*
 
 class SettingsService private constructor() {
@@ -27,6 +28,11 @@ class SettingsService private constructor() {
         println("Saving settings: $settingsPanel")
         data.save()
 
+    }
+
+    fun updateStatusLabel(value: String, prefix: String = "Status: ") {
+        MainForm.instance.statusLabel.text = "$prefix$value"
+        MainForm.instance.statusLabel.repaint()
     }
 
     init {

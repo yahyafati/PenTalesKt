@@ -5,8 +5,6 @@ import mainform.*
 import settings.*
 import java.io.*
 import java.nio.file.*
-import java.time.*
-import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.logging.*
 import java.util.zip.*
@@ -84,12 +82,22 @@ class DataHandler private constructor() : Closeable {
     private fun pauseProcessing() {
         try {
             LOG.info("Pausing processing")
-            Thread.sleep(
-                Duration.of(
-                    SettingsData.instance.sleepDuration.toLong(),
-                    ChronoUnit.MINUTES
+//            var seconds = SettingsData.instance.sleepDuration.toLong() * 60
+            var seconds = 10
+            while (seconds > 0) {
+                val formattedTime = String.format(
+                    "%02d:%02d",
+                    seconds / 60,
+                    seconds % 60
                 )
-            )
+                val formattedCount = String.format("%,d", count + 1)
+                SettingsService.instance.updateStatusLabel(
+                    "${formattedCount} records processed. " +
+                            "Pausing processing for $formattedTime"
+                )
+                Thread.sleep(1000)
+                seconds--
+            }
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
@@ -101,8 +109,15 @@ class DataHandler private constructor() : Closeable {
             var line: String?
 
             try {
+                if (count < SettingsData.instance.startFrom) {
+                    while ((bufferedReader?.readLine().also { line = it }) != null) {
+                        count++
+                        if (count >= SettingsData.instance.startFrom) {
+                            break
+                        }
+                    }
+                }
                 while ((bufferedReader?.readLine().also { line = it }) != null) {
-                    
                     if (shouldStopProcessing()) {
                         break
                     }
@@ -112,7 +127,7 @@ class DataHandler private constructor() : Closeable {
                         }
                     }
                     count++
-                    println("Processing line $count")
+                    SettingsService.instance.updateStatusLabel("Processing line ${count + 1}")
                     line?.let { row ->
                         processRow(row)?.let {
                             bufferedWriter?.write(

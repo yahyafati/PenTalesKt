@@ -33,6 +33,7 @@ class MainForm private constructor() : JFrame() {
     val mainFormData: MainFormData = MainFormData.instance
 
     private val startButton = JButton("Start Processing")
+    val statusLabel = JLabel("Status: Not Processing")
     val filePathField = JTextField(mainFormData.filePath, 20)
     private val openButton = JButton("Open File")
     val settingsPanel = SettingsPanel.instance
@@ -83,7 +84,12 @@ class MainForm private constructor() : JFrame() {
         panel.add(centerPanel, BorderLayout.CENTER)
 
         startButton.addActionListener(listeners.startProcessingListener())
-        panel.add(startButton, BorderLayout.SOUTH)
+
+        val bottomPanel = JPanel()
+        bottomPanel.layout = BorderLayout()
+        bottomPanel.add(startButton, BorderLayout.WEST)
+        bottomPanel.add(statusLabel, BorderLayout.CENTER)
+        panel.add(bottomPanel, BorderLayout.SOUTH)
 
         add(panel)
     }
