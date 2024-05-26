@@ -4,28 +4,44 @@ import java.awt.*
 import java.util.logging.*
 import javax.swing.*
 
-class SettingsPanel : JPanel() {
+class SettingsPanel private constructor() : JPanel() {
 
     companion object {
 
         val LOG: Logger = Logger.getLogger(SettingsPanel::class.java.name)
 
-        val INSTANCE: SettingsPanel by lazy { SettingsPanel() }
+        private var INSTANCE: SettingsPanel? = null
+
+        val instance: SettingsPanel
+            get() {
+                LOG.info("SettingsPanel: $INSTANCE")
+                if (INSTANCE == null) {
+                    LOG.info("Creating new SettingsPanel")
+                    INSTANCE = SettingsPanel()
+                }
+                return INSTANCE as SettingsPanel
+            }
+
     }
 
-    val settingsUIData: SettingsData = SettingsData()
+    val minimumRatingTextField = JTextField("3000", 10)
+    val sleepIntervalTextField = JTextField(10)
+    val sleepDurationTextField = JTextField(10)
+    val startFromTextField = JTextField(10)
+    val endAtTextField = JTextField(10)
+    private val saveButton = JButton("Save Settings")
 
-    val minimumRatingTextField = JTextField(settingsUIData.minimumRating.toString(), 10)
-    val sleepIntervalTextField = JTextField(settingsUIData.sleepInterval.toString(), 10)
-    val sleepDurationTextField = JTextField(settingsUIData.sleepDuration.toString(), 10)
-    val startFromTextField = JTextField(settingsUIData.startFrom.toString(), 10)
-    val endAtTextField = JTextField(settingsUIData.endAt.toString(), 10)
-    val saveButton = JButton("Save Settings")
-
-    private val settingsListeners: SettingsListeners = SettingsListeners.INSTANCE
+    private val settingsListeners: SettingsListeners = SettingsListeners.instance
 
     init {
+        LOG.info("SettingsPanel: $this")
         this.layout = BorderLayout()
+
+        this.minimumRatingTextField.text = SettingsData.instance.minimumRating.toString()
+        this.sleepIntervalTextField.text = SettingsData.instance.sleepInterval.toString()
+        this.sleepDurationTextField.text = SettingsData.instance.sleepDuration.toString()
+        this.startFromTextField.text = SettingsData.instance.startFrom.toString()
+        this.endAtTextField.text = SettingsData.instance.endAt.toString()
 
         val contentPanel = JPanel()
         contentPanel.layout = BoxLayout(contentPanel, BoxLayout.Y_AXIS)
@@ -78,6 +94,5 @@ class SettingsPanel : JPanel() {
         contentPanel.add(buttonPanel)
 
         this.add(contentPanel, BorderLayout.NORTH)
-
     }
 }

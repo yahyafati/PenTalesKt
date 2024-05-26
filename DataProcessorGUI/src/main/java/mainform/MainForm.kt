@@ -2,27 +2,47 @@ package mainform
 
 import settings.*
 import java.awt.*
+import java.util.logging.*
 import javax.swing.*
 
 class MainForm private constructor() : JFrame() {
 
     companion object {
 
-        val INSTANCE: MainForm by lazy { MainForm() }
+        private var INSTANCE: MainForm? = null
+            set(value) {
+                if (field == null) {
+                    field = value
+                } else {
+                    throw IllegalStateException("MainForm already created")
+                }
+            }
+
+        private val LOG = Logger.getLogger(MainForm::class.java.name)
+
+        val instance: MainForm
+            get() {
+                if (INSTANCE == null) {
+                    INSTANCE = MainForm()
+                }
+                return INSTANCE!!
+            }
 
     }
 
+    val mainFormData: MainFormData = MainFormData.instance
+
     private val startButton = JButton("Start Processing")
-    val filePathField = JTextField(20)
+    val filePathField = JTextField(mainFormData.filePath, 20)
     private val openButton = JButton("Open File")
-    val settingsPanel = SettingsPanel()
+    val settingsPanel = SettingsPanel.instance
     val centerPanel = JPanel()
     val settingsToggleButton = JButton("Open Advanced Settings")
 
-    val mainFormData: MainFormData = MainFormData()
-    private val listeners: UIListeners = UIListeners.INSTANCE
+    private val listeners: UIListeners = UIListeners.instance
 
     init {
+        LOG.info("Loaded $this")
         this.title = "Data Processor"
         this.setSize(600, 300)
         this.minimumSize = Dimension(600, 300)

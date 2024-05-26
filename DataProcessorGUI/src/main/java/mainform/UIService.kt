@@ -1,28 +1,34 @@
 package mainform
 
+import settings.*
 import util.*
 import java.awt.*
 import java.io.*
+import java.util.logging.*
 
 class UIService private constructor() {
 
+    init {
+        LOG.info("Loaded $this")
+    }
+
     fun toggleAdvancedSettings() {
-        MainForm.INSTANCE.mainFormData.isAdvancedSettingsVisible =
-            !MainForm.INSTANCE.mainFormData.isAdvancedSettingsVisible
-        MainForm.INSTANCE.settingsToggleButton.text =
-            if (MainForm.INSTANCE.mainFormData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
+        MainForm.instance.mainFormData.isAdvancedSettingsVisible =
+            !MainForm.instance.mainFormData.isAdvancedSettingsVisible
+        MainForm.instance.settingsToggleButton.text =
+            if (MainForm.instance.mainFormData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
         refreshUI()
     }
 
     fun refreshUI() {
-        MainForm.INSTANCE.invalidate()
-        MainForm.INSTANCE.repaint()
+        MainForm.instance.invalidate()
+        MainForm.instance.repaint()
 
     }
 
     fun openFile() {
         val allowedFileExtensions = arrayOf("gz")
-        val fileDialog = FileDialog(MainForm.INSTANCE, "Choose a file", FileDialog.LOAD)
+        val fileDialog = FileDialog(MainForm.instance, "Choose a file", FileDialog.LOAD)
         fileDialog.filenameFilter = FilenameFilter { dir, name ->
             allowedFileExtensions.any { name.endsWith(".$it") }
         }
@@ -32,25 +38,26 @@ class UIService private constructor() {
             return
         }
 
-        MainForm.INSTANCE.mainFormData.filePath = fileDialog.directory + file
+        MainForm.instance.mainFormData.filePath = fileDialog.directory + file
         refreshUI()
     }
 
     fun formClosing() {
-        MainForm.INSTANCE.mainFormData.save()
+        MainForm.instance.mainFormData.save()
+        SettingsService.instance.saveSettings()
         DataHandler.INSTANCE.close()
     }
 
     fun startProcessing() {
-        if (MainForm.INSTANCE.mainFormData.isProcessing) {
-            MainForm.INSTANCE.mainFormData.isProcessing = false
+        if (MainForm.instance.mainFormData.isProcessing) {
+            MainForm.instance.mainFormData.isProcessing = false
             refreshUI()
             return
         }
 
-        MainForm.INSTANCE.mainFormData.isProcessing = true
+        MainForm.instance.mainFormData.isProcessing = true
         DataHandler.INSTANCE.startProcessing().thenRun {
-            MainForm.INSTANCE.mainFormData.isProcessing = false
+            MainForm.instance.mainFormData.isProcessing = false
             refreshUI()
         }
         refreshUI()
@@ -58,6 +65,15 @@ class UIService private constructor() {
 
     companion object {
 
-        val INSTANCE: UIService by lazy { UIService() }
+        private val LOG = Logger.getLogger(UIService::class.java.name)
+        private var INSTANCE: UIService? = null
+
+        val instance: UIService
+            get() {
+                if (INSTANCE == null) {
+                    INSTANCE = UIService()
+                }
+                return INSTANCE!!
+            }
     }
 }

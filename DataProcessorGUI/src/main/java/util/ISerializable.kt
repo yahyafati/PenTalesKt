@@ -1,25 +1,16 @@
 package util
 
-import com.fasterxml.jackson.annotation.*
 import java.util.logging.*
 
-abstract class SerializableTemplate(
-    @JsonIgnore
-    val fileName: String
-) {
+interface ISerializable {
 
     companion object {
 
-        private val LOG: Logger = Logger.getLogger(SerializableTemplate::class.java.name)
+        private val LOG: Logger = Logger.getLogger(ISerializable::class.java.name)
     }
 
-    init {
-        load()
-    }
+    val fileName: String
 
-    abstract fun load()
-
-    @Synchronized
     fun save() {
         LOG.info("Saving $fileName: $this")
         try {

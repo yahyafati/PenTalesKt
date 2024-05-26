@@ -13,8 +13,8 @@ import java.util.zip.*
 
 class DataHandler private constructor() : Closeable {
 
-    var mainForm: MainForm = MainForm.INSTANCE
-    var settingsPanel: SettingsPanel = SettingsPanel.INSTANCE
+    var mainForm: MainForm = MainForm.instance
+    var settingsPanel: SettingsPanel = SettingsPanel.instance
     var count = 0
 
     private var fileInputStream: FileInputStream? = null
@@ -26,8 +26,6 @@ class DataHandler private constructor() : Closeable {
     private var gzipOutputStream: GZIPOutputStream? = null
     private var outputStreamWriter: OutputStreamWriter? = null
     private var bufferedWriter: BufferedWriter? = null
-
-    private var currentSeek: Long = 0
 
     private val mapper: ObjectMapper = ObjectMapper()
 
@@ -53,7 +51,6 @@ class DataHandler private constructor() : Closeable {
     private fun openFile() {
         try {
             fileInputStream = FileInputStream(mainForm.mainFormData.filePath)
-            fileInputStream?.channel?.position(currentSeek)
             gzipInputStream = GZIPInputStream(fileInputStream)
             inputStreamReader = gzipInputStream?.let { InputStreamReader(it) }
             bufferedReader = inputStreamReader?.let { BufferedReader(it) }
@@ -73,7 +70,7 @@ class DataHandler private constructor() : Closeable {
 
         val ratingsCount = row.getOrDefault("ratings_count", "0").toString().toIntOrNull() ?: 0
 
-        if (ratingsCount > settingsPanel.settingsUIData.minimumRating) {
+        if (ratingsCount > SettingsData.instance.minimumRating) {
             return row
         }
 
@@ -89,7 +86,7 @@ class DataHandler private constructor() : Closeable {
             LOG.info("Pausing processing")
             Thread.sleep(
                 Duration.of(
-                    settingsPanel.settingsUIData.sleepDuration.toLong(),
+                    SettingsData.instance.sleepDuration.toLong(),
                     ChronoUnit.MINUTES
                 )
             )
@@ -105,12 +102,12 @@ class DataHandler private constructor() : Closeable {
 
             try {
                 while ((bufferedReader?.readLine().also { line = it }) != null) {
-                    currentSeek = fileInputStream?.channel?.position() ?: 0
+                    
                     if (shouldStopProcessing()) {
                         break
                     }
-                    if (settingsPanel.settingsUIData.sleepInterval > 0) {
-                        if ((count + 1) % settingsPanel.settingsUIData.sleepInterval == 0) {
+                    if (SettingsData.instance.sleepInterval > 0) {
+                        if ((count + 1) % SettingsData.instance.sleepInterval == 0) {
                             pauseProcessing()
                         }
                     }

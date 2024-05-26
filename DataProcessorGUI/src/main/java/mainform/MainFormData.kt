@@ -4,32 +4,54 @@ import com.fasterxml.jackson.annotation.*
 import util.*
 import java.util.logging.*
 
-class MainFormData(
-    var isAdvancedSettingsVisible: Boolean = false,
-    var filePath: String = "",
-) : SerializableTemplate("UIData.json") {
+class MainFormData private constructor(var isAdvancedSettingsVisible: Boolean = false, var filePath: String = "") :
+    ISerializable {
 
-    @JsonIgnore
+    @Deprecated("Use INSTANCE", ReplaceWith("MainFormData.INSTANCE"))
+    constructor() : this(false, "")
+
     var isProcessing: Boolean = false
+        @JsonIgnore
+        get
 
     companion object {
 
-        val LOG: Logger = Logger.getLogger(MainFormData::class.java.name)
+        private val FILENAME = Companion::class.java.name + ".json"
+        private fun load(): MainFormData {
+            val fileName = FILENAME
+            LOG.info("Loading ${fileName}: $this")
+            return try {
+                SerializationUtil.deserializeFromFile<MainFormData>(fileName) ?: return MainFormData(
+                    isAdvancedSettingsVisible = false,
+                    filePath = ""
+                )
+            } catch (e: Exception) {
+                LOG.warning("Error loading $fileName: $e")
+                MainFormData(
+                    isAdvancedSettingsVisible = false,
+                    filePath = ""
+                )
+            }
+        }
+
+        private val LOG: Logger = Logger.getLogger(MainFormData::class.java.name)
+        private var INSTANCE: MainFormData? = null
+
+        val instance: MainFormData
+            get() {
+                if (INSTANCE == null) {
+                    INSTANCE = load()
+                }
+                return INSTANCE!!
+            }
+
     }
 
-    override fun load() {
-        LOG.info("Loading $fileName: $this")
-        try {
-            val data = SerializationUtil.deserializeFromFile<MainFormData>(fileName)
-            if (data != null) {
-                this.isAdvancedSettingsVisible = data.isAdvancedSettingsVisible
-                this.filePath = data.filePath
-                LOG.info("Loaded $fileName: $this")
-            }
-        } catch (e: Exception) {
-            LOG.warning("Error loading $fileName: $e")
-        }
+    init {
+        LOG.info("Loaded $this")
     }
+
+    override val fileName: String = FILENAME
 
     override fun toString(): String {
         return "${this.javaClass.name}(isAdvancedSettingsVisible=$isAdvancedSettingsVisible, filePath='$filePath')"
