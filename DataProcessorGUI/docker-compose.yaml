@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  data-processor-gui:
+    build: .
+    image: yahyafati/data-processor-gui:latest
+    platform: linux/amd64
+    container_name: data-processor-gui
+    volumes:
+      - .:/app
