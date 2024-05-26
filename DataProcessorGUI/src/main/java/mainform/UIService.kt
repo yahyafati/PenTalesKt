@@ -1,7 +1,10 @@
 package mainform
 
+import settings.*
+import util.*
 import java.awt.*
 import java.io.*
+import java.util.zip.*
 
 class UIService private constructor() {
 
@@ -39,7 +42,42 @@ class UIService private constructor() {
     }
 
     fun startProcessing() {
+        var line: String?
+        val resultList = mutableListOf<Map<*, *>>()
+        var count = 0
+        try {
+            FileInputStream(
+                MainForm.INSTANCE.uiData.filePath
+            ).use { fis ->
+                GZIPInputStream(fis).use { gzis ->
+                    InputStreamReader(gzis).use { reader ->
+                        BufferedReader(reader).use { br ->
+                            while ((br.readLine().also { line = it }) != null) {
+                                count++
+                                val result = SerializationUtil.mapper.readValue(line, Map::class.java)
+                                val ratingsCount =
+                                    result.getOrDefault("ratings_count", "0").toString().toIntOrNull() ?: 0
+                                println("ratingsCount: $ratingsCount")
 
+                                if (ratingsCount > SettingsPanel.INSTANCE.settingsUIData.minimumRating) {
+                                    resultList.add(result)
+                                }
+
+                                if (resultList.size >= 100) {
+                                    println("Already processed 10 records after just $count records, stopping now")
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            println("Processed $count records")
+            println("Result list size: ${resultList.size}")
+        }
     }
 
     companion object {
