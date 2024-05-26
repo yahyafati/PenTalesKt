@@ -2,31 +2,45 @@ package mainform
 
 import settings.*
 import java.awt.*
+import java.util.logging.*
 import javax.swing.*
 
 class MainForm private constructor() : JFrame() {
 
     companion object {
 
-        val INSTANCE: MainForm
-            get() = MainForm()
+        val INSTANCE: MainForm by lazy { MainForm() }
+
+        val LOG: Logger = Logger.getLogger(MainForm::class.java.name)
     }
 
     private val button = JButton("Click me")
     private val textField = JTextField(20)
     private val openButton = JButton("Open File")
-    private val settingsPanel = SettingsPanel()
-    private val settingsToggleButton = JButton("Advanced Settings")
+    val settingsPanel = SettingsPanel()
+    val centerPanel = JPanel()
+    val settingsToggleButton = JButton("Open Advanced Settings")
+
+    val uiData: UIData = UIData()
+    private val listeners: UIListeners = UIListeners.INSTANCE
 
     init {
         this.title = "Data Processor"
-        this.setSize(800, 600)
+        this.setSize(600, 600)
+        this.minimumSize = Dimension(600, 300)
         this.defaultCloseOperation = EXIT_ON_CLOSE
         this.setLocationRelativeTo(null)
         initUI()
-        this.pack()
-        this.isResizable = false
         this.isVisible = true
+    }
+
+    override fun paint(g: Graphics?) {
+        LOG.info("Painting main form")
+        super.paint(g)
+        LOG.info("Main form painted")
+
+        settingsPanel.isVisible = uiData.isAdvancedSettingsVisible
+        LOG.info("Settings panel visibility set to: ${settingsPanel.isVisible}")
     }
 
     fun initUI() {
@@ -40,8 +54,10 @@ class MainForm private constructor() : JFrame() {
         topPanel.add(openButton, BorderLayout.EAST)
         panel.add(topPanel, BorderLayout.NORTH)
 
-        val centerPanel = JPanel()
         centerPanel.layout = BorderLayout()
+        settingsToggleButton.text =
+            if (uiData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
+        settingsToggleButton.addActionListener(listeners.toggleAdvancedSettingsListener())
         centerPanel.add(settingsToggleButton, BorderLayout.NORTH)
         centerPanel.add(settingsPanel, BorderLayout.CENTER)
 

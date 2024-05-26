@@ -1,9 +1,12 @@
 import mainform.*
+import javax.swing.*
 
 fun main() {
-    println("Hello World!")
 
-    val form = MainForm.INSTANCE
-    form.isVisible = true
+//    execute on a separate thread using ExecutorService
+
+    SwingUtilities.invokeLater {
+        MainForm.INSTANCE
+    }
 
 }
