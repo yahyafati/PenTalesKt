@@ -50,9 +50,22 @@ class MainFormService private constructor() {
     }
 
     fun formClosing() {
-        MainForm.instance.mainFormData.save()
-        SettingsService.instance.saveSettings()
-        DataHandler.INSTANCE.close()
+        val result = JOptionPane.showConfirmDialog(
+            MainForm.instance,
+            "Are you sure you want to exit?",
+            "Exit",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        )
+
+        if (result == JOptionPane.YES_OPTION) {
+            MainForm.instance.mainFormData.save()
+            SettingsService.instance.saveSettings()
+            DataHandler.INSTANCE.close()
+
+            MainForm.instance.dispose()
+        }
+
     }
 
     fun setProcessing(value: Boolean) {

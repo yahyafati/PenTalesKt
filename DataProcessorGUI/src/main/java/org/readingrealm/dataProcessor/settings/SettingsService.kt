@@ -6,17 +6,6 @@ import java.util.logging.*
 class SettingsService private constructor() {
 
     fun saveSettings() {
-        val settingsPanel = SettingsPanel.instance
-
-        println("Loading settings: ${settingsPanel.hashCode()}")
-        println(
-            "Text: ${SettingsPanel.instance.minimumRatingTextField.text}" +
-                    " ${SettingsPanel.instance.sleepIntervalTextField.text}" +
-                    " ${SettingsPanel.instance.sleepDurationTextField.text}" +
-                    " ${SettingsPanel.instance.startFromTextField.text}" +
-                    " ${SettingsPanel.instance.endAtTextField.text}"
-        )
-
         val data = SettingsData.instance
 
         data.minimumRating = SettingsPanel.instance.minimumRatingTextField.text.toIntOrNull() ?: DEFAULT_MINIMUM_RATING
@@ -25,7 +14,6 @@ class SettingsService private constructor() {
         data.startFrom = SettingsPanel.instance.startFromTextField.text.toIntOrNull() ?: DEFAULT_START_FROM
         data.endAt = SettingsPanel.instance.endAtTextField.text.toIntOrNull() ?: DEFAULT_END_AT
 
-        println("Saving settings: $settingsPanel")
         data.save()
 
     }
