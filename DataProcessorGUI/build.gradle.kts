@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.jsoup:jsoup:1.17.2")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -33,7 +34,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    
+
     manifest {
         attributes["Main-Class"] = "org.readingrealm.dataProcessor.DataProcessorGUIApplicationKt"
     }

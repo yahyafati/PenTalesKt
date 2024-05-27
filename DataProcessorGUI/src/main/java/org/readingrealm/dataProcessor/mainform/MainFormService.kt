@@ -58,6 +58,9 @@ class MainFormService private constructor() {
     fun setProcessing(value: Boolean) {
         MainForm.instance.mainFormData.isProcessing = value
         updateStartButton()
+        if (!value) {
+            SettingsService.instance.updateStatusLabel("Status: Pausing...")
+        }
         refreshUI()
     }
 
@@ -77,6 +80,7 @@ class MainFormService private constructor() {
                 null
             )
             setProcessing(false)
+            SettingsService.instance.updateStatusLabel(it)
             refreshUI()
         }
         refreshUI()

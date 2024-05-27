@@ -46,12 +46,13 @@ class MainForm private constructor() : JFrame() {
         LOG.info("Loaded $this")
         this.title = "Data Processor"
         this.setSize(600, 300)
-        this.minimumSize = Dimension(600, 300)
+        this.minimumSize = Dimension(600, 120)
         this.defaultCloseOperation = EXIT_ON_CLOSE
         this.setLocationRelativeTo(null)
         initUI()
         this.isVisible = true
         this.addWindowListener(listeners.windowListener())
+        this.pack()
     }
 
     override fun paint(g: Graphics?) {
@@ -77,8 +78,8 @@ class MainForm private constructor() : JFrame() {
         settingsToggleButton.text =
             if (mainFormData.isAdvancedSettingsVisible) "Close Advanced Settings" else "Open Advanced Settings"
         settingsToggleButton.addActionListener(listeners.toggleAdvancedSettingsListener())
-        centerPanel.add(settingsToggleButton, BorderLayout.NORTH)
-        centerPanel.add(settingsPanel, BorderLayout.CENTER)
+//        centerPanel.add(settingsToggleButton, BorderLayout.NORTH)
+//        centerPanel.add(settingsPanel, BorderLayout.CENTER)
 
         panel.add(centerPanel, BorderLayout.CENTER)
 
