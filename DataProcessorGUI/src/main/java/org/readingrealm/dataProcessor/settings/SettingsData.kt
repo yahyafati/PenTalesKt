@@ -1,12 +1,12 @@
-package settings
+package org.readingrealm.dataProcessor.settings
 
-import util.*
+import org.readingrealm.dataProcessor.util.*
 import java.util.logging.*
 
 class SettingsData private constructor(
     var minimumRating: Int = 2000,
     var sleepInterval: Int = 25_000,
-    var sleepDuration: Int = 3,
+    var sleepDuration: Int = 1,
     var startFrom: Int = 0,
     var endAt: Int = 0,
 ) : ISerializable {

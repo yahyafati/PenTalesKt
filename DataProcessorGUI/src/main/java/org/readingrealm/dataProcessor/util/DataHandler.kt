@@ -1,8 +1,9 @@
-package util
+package org.readingrealm.dataProcessor.util
 
 import com.fasterxml.jackson.databind.*
-import mainform.*
-import settings.*
+import org.jsoup.*
+import org.readingrealm.dataProcessor.mainform.*
+import org.readingrealm.dataProcessor.settings.*
 import java.io.*
 import java.nio.file.*
 import java.util.concurrent.*
@@ -13,8 +14,11 @@ class DataHandler private constructor() : Closeable {
 
     var mainForm: MainForm = MainForm.instance
     var settingsPanel: SettingsPanel = SettingsPanel.instance
-    var count = 0
-    var foundCount = 0
+    private var count = 0
+    private var foundCount = 0
+    private var consecutiveFetchFailCount = 0
+    private var pauseFetchUntil = 0L
+    private var skippedBooks = mutableListOf<String>()
 
     private var fileInputStream: FileInputStream? = null
     private var gzipInputStream: GZIPInputStream? = null
@@ -27,6 +31,7 @@ class DataHandler private constructor() : Closeable {
     private var bufferedWriter: BufferedWriter? = null
 
     private val mapper: ObjectMapper = ObjectMapper()
+
     var isPaused: Boolean = false
         set(value) {
             field = value
@@ -70,12 +75,13 @@ class DataHandler private constructor() : Closeable {
     }
 
     private fun processRow(line: String): Map<*, *>? {
-        val row = SerializationUtil.mapper.readValue(line, Map::class.java)
+        val row = SerializationUtil.mapper.readValue(line, Map::class.java).toMutableMap()
 
         val ratingsCount = row.getOrDefault("ratings_count", "0").toString().toIntOrNull() ?: 0
 
         if (ratingsCount > SettingsData.instance.minimumRating) {
-            return row
+            row["image_url"] = getOriginalImageURL(row)
+            return row.toMap()
         }
 
         return null
@@ -89,8 +95,7 @@ class DataHandler private constructor() : Closeable {
         try {
             isPaused = true
             LOG.info("Pausing processing")
-//            var seconds = SettingsData.instance.sleepDuration.toLong() * 60
-            var seconds = 10
+            var seconds = SettingsData.instance.sleepDuration.toLong() * 60
             while (seconds > 0) {
                 if (shouldStopProcessing() || !isPaused) {
                     break
@@ -115,6 +120,47 @@ class DataHandler private constructor() : Closeable {
         }
     }
 
+    private fun getOriginalImageURL(row: Map<*, *>): String {
+        if (MainFormData.instance.isProcessing) {
+            SettingsService.instance.updateStatusLabel("$foundCount / $count: Fetching image for book ${row["book_id"]}...")
+        }
+
+
+        if (consecutiveFetchFailCount > 10 && pauseFetchUntil < System.currentTimeMillis()) {
+            pauseFetchUntil = System.currentTimeMillis() + 60_000
+        }
+
+        if (pauseFetchUntil > System.currentTimeMillis()) {
+            consecutiveFetchFailCount = 0
+            LOG.warning("Too many consecutive fetch failures. Pausing for 1 minute")
+            skippedBooks.add(row.getOrDefault("book_id", "").toString())
+            return row.getOrDefault("image_url", "").toString()
+        }
+        
+        pauseFetchUntil = 0
+
+        val urlTemplate = "https://www.goodreads.com/book/show/%s"
+        val defaultImageURL = row.getOrDefault("image_url", "").toString()
+        val id = row.getOrDefault("book_id", "").toString()
+        if (id.isEmpty()) {
+            return defaultImageURL
+        }
+
+        return try {
+            val doc = Jsoup.connect(urlTemplate.format(id)).get()
+            val img = doc.select("div.BookCover__image img").first()
+            val src = img?.attr("src")
+
+            consecutiveFetchFailCount = 0
+            src ?: defaultImageURL
+        } catch (e: Exception) {
+            consecutiveFetchFailCount++
+            skippedBooks.add(id)
+            LOG.warning("Failed to fetch image for book $id")
+            defaultImageURL
+        }
+    }
+
     fun startProcessing(): CompletableFuture<String> {
         var justStarted = true
         return CompletableFuture.supplyAsync {
@@ -124,13 +170,13 @@ class DataHandler private constructor() : Closeable {
             try {
                 while ((bufferedReader?.readLine().also { line = it }) != null) {
                     if (shouldStopProcessing()) {
-                        return@supplyAsync "Processing paused or stopped by user"
+                        return@supplyAsync "PAUSED! $foundCount / $count valid"
                     }
-//                    if (SettingsData.instance.sleepInterval > 0 && !justStarted) {
-//                        if ((count + 1) % SettingsData.instance.sleepInterval == 0) {
-//                            pauseProcessing()
-//                        }
-//                    }
+                    if (SettingsData.instance.sleepInterval > 0 && !justStarted) {
+                        if ((count + 1) % SettingsData.instance.sleepInterval == 0) {
+                            pauseProcessing()
+                        }
+                    }
                     justStarted = false
                     count++
                     SettingsService.instance.updateStatusLabel("$foundCount / $count valid")
@@ -153,11 +199,19 @@ class DataHandler private constructor() : Closeable {
             }
 
             val formattedPercentage = String.format("%.2f", (foundCount.toDouble() / count.toDouble()) * 100)
-            return@supplyAsync "$foundCount / $count ($formattedPercentage%) valid"
+            return@supplyAsync "Completed! $foundCount / $count ($formattedPercentage%) valid"
         }
     }
 
     override fun close() {
+//        Save Skipped Books to File
+        val skippedBooksFile = Paths.get(
+            DataHandler::class.java.getResource("/")?.path ?: "",
+            "skipped_books.csv"
+        ).toFile().absolutePath
+
+        File(skippedBooksFile).writeText(skippedBooks.joinToString("\n"))
+
         LOG.info("Closing DataHandler")
         bufferedReader?.close()
         inputStreamReader?.close()

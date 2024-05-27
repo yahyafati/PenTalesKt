@@ -1,4 +1,4 @@
-package util
+package org.readingrealm.dataProcessor.util
 
 import com.fasterxml.jackson.databind.*
 import java.io.*

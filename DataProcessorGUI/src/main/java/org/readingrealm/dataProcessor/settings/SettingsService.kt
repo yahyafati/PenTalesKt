@@ -1,6 +1,6 @@
-package settings
+package org.readingrealm.dataProcessor.settings
 
-import mainform.*
+import org.readingrealm.dataProcessor.mainform.*
 import java.util.logging.*
 
 class SettingsService private constructor() {

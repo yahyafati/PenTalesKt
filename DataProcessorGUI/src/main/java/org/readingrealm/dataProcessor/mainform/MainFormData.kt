@@ -1,7 +1,7 @@
-package mainform
+package org.readingrealm.dataProcessor.mainform
 
 import com.fasterxml.jackson.annotation.*
-import util.*
+import org.readingrealm.dataProcessor.util.*
 import java.util.logging.*
 
 class MainFormData private constructor(var isAdvancedSettingsVisible: Boolean = false, var filePath: String = "") :

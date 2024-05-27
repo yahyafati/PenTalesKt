@@ -1,4 +1,4 @@
-package mainform
+package org.readingrealm.dataProcessor.mainform
 
 import java.awt.event.*
 import java.util.logging.*

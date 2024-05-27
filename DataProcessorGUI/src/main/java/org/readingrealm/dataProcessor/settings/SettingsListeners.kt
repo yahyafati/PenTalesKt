@@ -1,4 +1,4 @@
-package settings
+package org.readingrealm.dataProcessor.settings
 
 import java.awt.event.*
 import java.util.logging.*

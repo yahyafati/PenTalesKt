@@ -1,7 +1,7 @@
-package mainform
+package org.readingrealm.dataProcessor.mainform
 
-import settings.*
-import util.*
+import org.readingrealm.dataProcessor.settings.*
+import org.readingrealm.dataProcessor.util.*
 import java.awt.*
 import java.io.*
 import java.util.logging.*
@@ -58,6 +58,9 @@ class MainFormService private constructor() {
     fun setProcessing(value: Boolean) {
         MainForm.instance.mainFormData.isProcessing = value
         updateStartButton()
+        if (!value) {
+            SettingsService.instance.updateStatusLabel("Status: Pausing...")
+        }
         refreshUI()
     }
 
@@ -77,6 +80,7 @@ class MainFormService private constructor() {
                 null
             )
             setProcessing(false)
+            SettingsService.instance.updateStatusLabel(it)
             refreshUI()
         }
         refreshUI()
