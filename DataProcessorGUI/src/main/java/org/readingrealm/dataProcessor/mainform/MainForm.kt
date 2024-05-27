@@ -1,6 +1,6 @@
-package mainform
+package org.readingrealm.dataProcessor.mainform
 
-import settings.*
+import org.readingrealm.dataProcessor.settings.*
 import java.awt.*
 import java.util.logging.*
 import javax.swing.*

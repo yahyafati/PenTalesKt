@@ -1,6 +1,6 @@
-package settings
+package org.readingrealm.dataProcessor.settings
 
-import util.*
+import org.readingrealm.dataProcessor.util.*
 import java.util.logging.*
 
 class SettingsData private constructor(

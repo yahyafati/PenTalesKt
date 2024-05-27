@@ -1,4 +1,6 @@
-import mainform.*
+package org.readingrealm.dataProcessor
+
+import org.readingrealm.dataProcessor.mainform.*
 import javax.swing.*
 
 fun main() {

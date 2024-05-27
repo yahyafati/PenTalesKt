@@ -1,4 +1,4 @@
-package util
+package org.readingrealm.dataProcessor.util
 
 class ChangeDelegate<T>(
     private var value: T,

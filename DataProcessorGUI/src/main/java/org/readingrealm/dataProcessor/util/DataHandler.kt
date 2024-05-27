@@ -1,8 +1,8 @@
-package util
+package org.readingrealm.dataProcessor.util
 
 import com.fasterxml.jackson.databind.*
-import mainform.*
-import settings.*
+import org.readingrealm.dataProcessor.mainform.*
+import org.readingrealm.dataProcessor.settings.*
 import java.io.*
 import java.nio.file.*
 import java.util.concurrent.*
