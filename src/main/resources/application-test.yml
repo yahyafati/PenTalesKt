@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reading_realm_test
+    username: postgres # Change to your username
+    password: password # Change to your password
+  jpa:
+    show-sql: true # Set to true to see SQL queries in the console
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1028431354998-uf7rjm8jc4vbok31a052f8lei0p9t52n.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+server:
+  port: 8080
+  ssl:
+    enabled: false
+    key-store: classpath:keys/keystore.p12 # Path to the keystore file
+    key-store-password: MaaloNadabarsii1115! # Password for the keystore
+    key-alias: reading_realm # Alias for the key in the keystore
+    key-store-type: PKCS12 # Type of the keystore
+
+org:
+  pen-tales:
+    security:
+      jwt:
+        secret: SUPER_SECRET_KEY # Secret key for JWT
+      oauth2:
+        authorized-redirect-origins:
+          - http://localhost:5173
+      cors:
+        allowed-origins:
+          - http://localhost:5173
+    aws:
+      s3:
+        bucket: reading-realm # Name of the S3 bucket
+        region: eu-north-1  # Region of the S3 bucket
+
+    firebase:
+      credential-path: classpath:keys/firebase-key.json # Path to the Firebase Admin SDK credentials file
