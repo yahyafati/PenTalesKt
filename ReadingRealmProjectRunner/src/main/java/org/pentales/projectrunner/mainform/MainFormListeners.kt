@@ -1,9 +1,36 @@
 package org.pentales.projectrunner.mainform
 
 import org.pentales.projectrunner.util.*
+import java.awt.event.*
 import java.util.logging.*
+import javax.swing.*
 
 class MainFormListeners private constructor() {
+
+    companion object {
+
+        const val APP_DIR_NAME = "__app"
+
+        private var INSTANCE: MainFormListeners? = null
+
+        private val LOG = Logger.getLogger(MainFormListeners::class.java.name)
+
+        fun getInstance(mainForm: MainForm): MainFormListeners {
+            if (INSTANCE == null) {
+                LOG.info("Creating new instance of MainFormListeners")
+                INSTANCE = MainFormListeners(mainForm)
+            }
+            return INSTANCE!!
+        }
+    }
+
+    private lateinit var mainForm: MainForm
+    private val backendServices = listOf("postgres", "sentiment-analysis", "springboot-app")
+    private val frontendServices = listOf("frontend")
+
+    constructor(mainForm: MainForm) : this() {
+        this.mainForm = mainForm
+    }
 
     private var backendProcess: Process? = null
     private var frontendProcess: Process? = null
@@ -18,12 +45,11 @@ class MainFormListeners private constructor() {
 
     private fun startBackend() {
         LOG.info("Starting backend")
-        FileUtils.copyResourceToFile("/docker-compose.yml", "backend/docker-compose.yml")
-        FileUtils.copyResourceToFile("/backend.env", "backend/.env")
-        FileUtils.copyResourceToFile("/keys/firebase-key.json", "backend/firebase-key.json")
+        FileUtils.copyResourceToFile("/docker-compose.yml", "$APP_DIR_NAME/docker-compose.yml")
+        FileUtils.copyResourceToFile("/backend.env", "$APP_DIR_NAME/.env")
+        FileUtils.copyResourceToFile("/keys/firebase-key.json", "$APP_DIR_NAME/firebase-key.json")
 
-        //        Open a command prompt and run the command "docker-compose up"
-        backendProcess = ProcessUtils.startProcess(listOf("docker-compose", "up"), "backend")
+        backendProcess = ProcessUtils.startProcess(listOf("docker-compose", "up") + backendServices, APP_DIR_NAME)
         if (backendProcess == null) {
             LOG.severe("Could not start backend")
             return
@@ -37,6 +63,7 @@ class MainFormListeners private constructor() {
             mainForm.backendStatus = MainForm.BackendStatus.STOPPING
             stopBackend()
             mainForm.backendStatus = MainForm.BackendStatus.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Backend stopped successfully")
         }.start()
     }
 
@@ -48,7 +75,10 @@ class MainFormListeners private constructor() {
         }
         ProcessUtils.stopProcess(backendProcess!!)
 
-        val process = ProcessUtils.startProcess(listOf("docker-compose", "down"), "backend")
+        val process = ProcessUtils.startProcess(
+            listOf("docker-compose", "down") + backendServices,
+            APP_DIR_NAME
+        )
         if (process == null) {
             LOG.severe("Could not stop backend")
             return
@@ -61,59 +91,18 @@ class MainFormListeners private constructor() {
             mainForm.backendStatus = MainForm.BackendStatus.UPDATING
             updateBackend()
             mainForm.backendStatus = MainForm.BackendStatus.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Backend updated successfully")
         }.start()
     }
 
     private fun updateBackend() {
         LOG.info("Updating backend")
-        val process = ProcessUtils.startProcess(listOf("docker-compose", "pull"), "backend")
+        val process = ProcessUtils.startProcess(
+            listOf("docker-compose", "pull") + backendServices,
+            APP_DIR_NAME
+        )
         if (process == null) {
             LOG.severe("Could not update backend")
-            return
-        }
-        ProcessUtils.waitAndPrintOutput(process)
-    }
-
-    fun downloadFrontendListener() {
-        Thread {
-            mainForm.frontendStatus = MainForm.FrontendStatus.DOWNLOADING
-            downloadFrontend()
-            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
-        }.start()
-    }
-
-    private fun downloadFrontend() {
-        LOG.info("Downloading frontend")
-        FileUtils.deleteDirectory("frontend")
-        val repo = "git@github.com:yahyafati/book-review-react.git"
-        val process = ProcessUtils.startProcess(
-            listOf("git", "clone", repo, "."),
-            "frontend"
-        )
-        if (process == null) {
-            LOG.severe("Could not download frontend")
-            return
-        }
-        ProcessUtils.waitAndPrintOutput(process)
-        LOG.info("Downloaded frontend")
-    }
-
-    fun installModulesListener() {
-        Thread {
-            mainForm.frontendStatus = MainForm.FrontendStatus.INSTALLING
-            installModules()
-            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
-        }.start()
-    }
-
-    private fun installModules() {
-        LOG.info("Installing frontend modules")
-        val process = ProcessUtils.startProcess(
-            listOf("npm", "install"),
-            "frontend"
-        )
-        if (process == null) {
-            LOG.severe("Could not install frontend modules")
             return
         }
         ProcessUtils.waitAndPrintOutput(process)
@@ -129,10 +118,10 @@ class MainFormListeners private constructor() {
 
     private fun startFrontend() {
         LOG.info("Starting frontend")
-        FileUtils.copyResourceToFile("/frontend.env", "frontend/.env")
+        FileUtils.copyResourceToFile("/frontend.env", "$APP_DIR_NAME/frontend.env")
         frontendProcess = ProcessUtils.startProcess(
-            listOf("npm", "run", "dev"),
-            "frontend"
+            listOf("docker-compose", "up") + frontendServices,
+            APP_DIR_NAME
         )
         if (frontendProcess == null) {
             LOG.severe("Could not start frontend")
@@ -157,6 +146,16 @@ class MainFormListeners private constructor() {
             return
         }
         ProcessUtils.stopProcess(frontendProcess!!)
+
+        val process = ProcessUtils.startProcess(
+            listOf("docker-compose", "down") + frontendServices,
+            APP_DIR_NAME
+        )
+        if (process == null) {
+            LOG.severe("Could not stop frontend")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
     }
 
     fun updateFrontendListener() {
@@ -170,8 +169,8 @@ class MainFormListeners private constructor() {
     private fun updateFrontend() {
         LOG.info("Updating frontend")
         val process = ProcessUtils.startProcess(
-            listOf("git", "pull"),
-            "frontend"
+            listOf("docker-compose", "pull", "frontend"),
+            APP_DIR_NAME
         )
         if (process == null) {
             LOG.severe("Could not update frontend")
@@ -180,25 +179,22 @@ class MainFormListeners private constructor() {
         ProcessUtils.waitAndPrintOutput(process)
     }
 
-    companion object {
-
-        private var INSTANCE: MainFormListeners? = null
-
-        private val LOG = Logger.getLogger(MainFormListeners::class.java.name)
-
-        fun getInstance(mainForm: MainForm): MainFormListeners {
-            if (INSTANCE == null) {
-                LOG.info("Creating new instance of MainFormListeners")
-                INSTANCE = MainFormListeners(mainForm)
+    fun windowListener(): WindowListener {
+        return object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                val command = listOf("docker-compose", "down") + backendServices + frontendServices
+                mainForm.updateStatusLabel("Status: Stopping all services, please wait...")
+                LOG.info("Stopping all services")
+                val process = ProcessUtils.startProcess(command, APP_DIR_NAME)
+                if (process == null) {
+                    LOG.severe("Could not stop all services")
+                    return
+                }
+                ProcessUtils.waitAndPrintOutput(process)
+                mainForm.updateStatusLabel("Status: All services stopped")
+                super.windowClosing(e)
             }
-            return INSTANCE!!
         }
-    }
-
-    private lateinit var mainForm: MainForm
-
-    constructor(mainForm: MainForm) : this() {
-        this.mainForm = mainForm
     }
 
 }

@@ -66,19 +66,32 @@ services:
       - upload-cache:/app/uploads  # Mount the upload directory as a volume
       - ./firebase-key.json:/app/firebase-credentials.json  # Mount the Firebase credentials file as a volume
 
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    platform: linux/amd64
-#    container_name: pgadmin
-#    ports:
-#      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-#    depends_on:
-#      - postgres
+  pgadmin:
+    image: dpage/pgadmin4
+    platform: linux/amd64
+    container_name: pgadmin
+    ports:
+      - ${PGADMIN_LOCAL_PORT}:${PGADMIN_DOCKER_PORT}
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+
+  frontend:
+    depends_on:
+      - springboot-app
+    container_name: reading-realm-frontend
+    image: yahyafati/reading-realm-frontend
+    build: .
+    volumes:
+      - node_modules:/app/node_modules
+      - ./frontend.env:/app/.env
+    ports:
+      - "5173:5173"
 
 volumes:
   postgres-data:
   gradle-cache:
   upload-cache:
+  node_modules:

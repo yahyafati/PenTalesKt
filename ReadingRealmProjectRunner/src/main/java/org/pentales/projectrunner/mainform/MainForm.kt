@@ -19,42 +19,44 @@ class MainForm : JFrame() {
         STOPPED,
         STOPPING,
         UPDATING,
-        INSTALLING,
-        DOWNLOADING
     }
 
     private val startBackendButton = JButton("Start Backend")
     private val stopBackendButton = JButton("Stop Backend")
     private val updateBackendButton = JButton("Update Backend")
 
-    private val downloadFrontendButton = JButton("Download From Git")
-    private val installModulesButton = JButton("Install Modules")
     private val startFrontendButton = JButton("Start Frontend")
     private val stopFrontendButton = JButton("Stop Frontend")
     private val updateFrontendButton = JButton("Update Frontend")
 
-    private val exitAllButton = JButton("Exit All")
+    private val statusLabel = JLabel("")
 
     private val listeners = MainFormListeners.getInstance(this)
 
     var backendStatus = BackendStatus.STOPPED
         set(value) {
             field = value
+            backendStatusLabel.text = value.name
             repaint()
         }
     var frontendStatus = FrontendStatus.STOPPED
         set(value) {
             field = value
+            frontendStatusLabel.text = value.name
             repaint()
         }
+
+    private val backendStatusLabel = JLabel(backendStatus.name)
+    private val frontendStatusLabel = JLabel(frontendStatus.name)
 
     init {
         title = "Main Form"
         defaultCloseOperation = EXIT_ON_CLOSE
-        minimumSize = Dimension(400, 200)
+        minimumSize = Dimension(400, 380)
         setLocationRelativeTo(null)
         initUI()
         initListeners()
+        addWindowListener(listeners.windowListener())
         pack()
     }
 
@@ -68,8 +70,6 @@ class MainForm : JFrame() {
         startFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
         stopFrontendButton.isEnabled = frontendStatus == FrontendStatus.STARTED
         updateFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
-        installModulesButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
-        downloadFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
     }
 
     private fun initListeners() {
@@ -77,13 +77,9 @@ class MainForm : JFrame() {
         stopBackendButton.addActionListener { listeners.stopBackendListener() }
         updateBackendButton.addActionListener { listeners.updateBackendListener() }
 
-        downloadFrontendButton.addActionListener { listeners.downloadFrontendListener() }
-        installModulesButton.addActionListener { listeners.installModulesListener() }
         startFrontendButton.addActionListener { listeners.startFrontendListener() }
         stopFrontendButton.addActionListener { listeners.stopFrontendListener() }
         updateFrontendButton.addActionListener { listeners.updateFrontendListener() }
-//
-//        exitAllButton.addActionListener { listeners.exitAll() }
     }
 
     private fun initUI() {
@@ -98,18 +94,31 @@ class MainForm : JFrame() {
 
         val backendPanel = JPanel()
         backendPanel.layout = BoxLayout(backendPanel, BoxLayout.Y_AXIS)
-        val backendLabel = JLabel("Backend")
-        backendPanel.add(backendLabel)
+        backendPanel.border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
+
+        val backendLabelPanel = JPanel()
+        backendLabelPanel.layout = BoxLayout(backendLabelPanel, BoxLayout.X_AXIS)
+
+        val backendLabel = JLabel("Backend - ")
+        backendLabelPanel.add(backendLabel)
+        backendLabelPanel.add(backendStatusLabel)
+
+        backendPanel.add(backendLabelPanel)
         backendPanel.add(startBackendButton)
         backendPanel.add(stopBackendButton)
         backendPanel.add(updateBackendButton)
 
         val frontendPanel = JPanel()
         frontendPanel.layout = BoxLayout(frontendPanel, BoxLayout.Y_AXIS)
-        val frontendLabel = JLabel("Frontend")
-        frontendPanel.add(frontendLabel)
-        frontendPanel.add(downloadFrontendButton)
-        frontendPanel.add(installModulesButton)
+        frontendPanel.border = BorderFactory.createEmptyBorder(10, 0, 0, 0)
+
+        val frontendLabelPanel = JPanel()
+        frontendLabelPanel.layout = BoxLayout(frontendLabelPanel, BoxLayout.X_AXIS)
+        val frontendLabel = JLabel("Frontend - ")
+        frontendLabelPanel.add(frontendLabel)
+        frontendLabelPanel.add(frontendStatusLabel)
+
+        frontendPanel.add(frontendLabelPanel)
         frontendPanel.add(startFrontendButton)
         frontendPanel.add(stopFrontendButton)
         frontendPanel.add(updateFrontendButton)
@@ -117,8 +126,16 @@ class MainForm : JFrame() {
         boxPanel.add(backendPanel)
         boxPanel.add(frontendPanel)
 
-        add(boxPanel, BorderLayout.NORTH)
-        add(exitAllButton, BorderLayout.SOUTH)
+        add(boxPanel, BorderLayout.CENTER)
 
+        val statusPanel = JPanel()
+        statusPanel.layout = BoxLayout(statusPanel, BoxLayout.Y_AXIS)
+        statusPanel.add(statusLabel)
+        add(statusPanel, BorderLayout.SOUTH)
+    }
+
+    fun updateStatusLabel(status: String) {
+        statusLabel.text = "Status: $status"
+        statusLabel.repaint()
     }
 }
