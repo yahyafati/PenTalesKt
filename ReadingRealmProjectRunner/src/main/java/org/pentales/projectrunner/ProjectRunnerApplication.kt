@@ -1,4 +1,4 @@
-package org.commandlink.server.org.pentales.projectrunner
+package org.pentales.projectrunner
 
 import org.pentales.projectrunner.mainform.*
 import org.pentales.projectrunner.util.*
@@ -12,6 +12,7 @@ fun main() {
     FileUtils.copyResourceToFile("/docker-compose.yml", "${MainFormListeners.APP_DIR_NAME}/docker-compose.yml")
     FileUtils.copyResourceToFile("/backend.env", "${MainFormListeners.APP_DIR_NAME}/.env")
     FileUtils.copyResourceToFile("/keys/firebase-key.json", "${MainFormListeners.APP_DIR_NAME}/firebase-key.json")
+    FileUtils.copyResourceToFile("/init.sql", "${MainFormListeners.APP_DIR_NAME}/init.sql")
 
     SwingUtilities.invokeLater {
         val mainForm = MainForm()

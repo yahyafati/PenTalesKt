@@ -41,4 +41,14 @@ object ProcessUtils {
     fun stopProcess(process: Process) {
         process.destroy()
     }
+
+    fun getOutput(process: Process): String {
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        val output = StringBuilder()
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            output.append(line).append("\n")
+        }
+        return output.toString()
+    }
 }

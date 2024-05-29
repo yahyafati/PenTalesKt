@@ -25,6 +25,7 @@ class MainForm : JFrame() {
 
     private val startBackendButton = JButton("Start Backend")
     private val stopBackendButton = JButton("Stop Backend")
+    private val populateBackendButton = JButton("Populate Backend")
     private val updateBackendButton = JButton("Update Backend")
     private val clearBackendButton = JButton("Clear Backend")
 
@@ -71,6 +72,7 @@ class MainForm : JFrame() {
         stopBackendButton.isEnabled = backendStatus == BackendStatus.STARTED
         updateBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
         clearBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
+        populateBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
 
         startFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
         stopFrontendButton.isEnabled = frontendStatus == FrontendStatus.STARTED
@@ -83,6 +85,7 @@ class MainForm : JFrame() {
         stopBackendButton.addActionListener { listeners.stopBackendListener() }
         updateBackendButton.addActionListener { listeners.updateBackendListener() }
         clearBackendButton.addActionListener { listeners.clearBackendListener() }
+        populateBackendButton.addActionListener { listeners.populateBackendListener() }
 
         startFrontendButton.addActionListener { listeners.startFrontendListener() }
         stopFrontendButton.addActionListener { listeners.stopFrontendListener() }
@@ -113,6 +116,7 @@ class MainForm : JFrame() {
 
         backendPanel.add(backendLabelPanel)
         backendPanel.add(startBackendButton)
+        backendPanel.add(populateBackendButton)
         backendPanel.add(stopBackendButton)
         backendPanel.add(updateBackendButton)
         backendPanel.add(clearBackendButton)

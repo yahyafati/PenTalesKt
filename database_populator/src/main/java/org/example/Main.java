@@ -12,6 +12,7 @@ public class Main {
     public static final int PROGRAM_TIMESTAMP = (int) (System.currentTimeMillis() / 1000);
 
     public static void main(String[] args) {
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %5$s%6$s%n");
         DatabaseConnector connector = DatabaseConnector.getInstance();
         Scanner scanner = new Scanner(System.in);
         int maxBooks = 50_000;

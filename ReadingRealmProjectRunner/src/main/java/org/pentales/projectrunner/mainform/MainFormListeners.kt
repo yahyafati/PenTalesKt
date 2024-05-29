@@ -261,4 +261,143 @@ class MainFormListeners private constructor() {
         ProcessUtils.waitAndPrintOutput(process)
     }
 
+    fun populateBackendListener() {
+        Thread {
+            mainForm.backendStatus = MainForm.BackendStatus.STARTING
+            populateBackend()
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Backend populated successfully")
+        }.start()
+    }
+
+    private fun populateBackend() {
+        LOG.info("Populating backend")
+        val postgresProcess = ProcessUtils.startProcess(
+            listOf("docker-compose", "up", "postgres"),
+            APP_DIR_NAME
+        )
+
+        if (postgresProcess == null) {
+            LOG.severe("Could not start postgres")
+            return
+        }
+
+        var count = 0
+        val maxCount = 10
+
+        do {
+            LOG.info("Waiting for postgres to start, sleeping for 10 seconds")
+            Thread.sleep(10000)
+
+            val process = ProcessUtils.startProcess(
+                listOf("docker", "exec", "postgres-db", "pg_isready"),
+                APP_DIR_NAME
+            )
+
+            if (process == null) {
+                LOG.severe("Could not check if postgres is ready")
+                ProcessUtils.stopProcess(postgresProcess)
+                return
+            }
+
+            val output = ProcessUtils.getOutput(process).trim()
+            LOG.info("Output: $output")
+
+            if ("accepting connections" in output) {
+                LOG.info("Postgres is ready")
+                break
+            }
+            count++
+        } while (count < maxCount)
+
+        if (count == maxCount) {
+            LOG.severe("Postgres did not start")
+            ProcessUtils.stopProcess(postgresProcess)
+            return
+        }
+
+        val sqlFilePath = "init.sql"
+        val containerName = "postgres-db"
+
+        val dbUser = "postgres"
+        val dbName = "reading_realm"
+        val pgPassword = "password"
+
+        val containerIdProcess = ProcessUtils.startProcess(
+            listOf("docker", "ps", "-f", "name=$containerName", "--format", "{{.ID}}"),
+            APP_DIR_NAME
+        )
+
+        if (containerIdProcess == null) {
+            LOG.severe("Could not get container ID")
+            return
+        }
+        val containerId = ProcessUtils.getOutput(containerIdProcess).trim()
+        LOG.info("Container ID: $containerId")
+
+        val dropDbCmd = "DROP DATABASE IF EXISTS $dbName;"
+        val createDbCmd = "CREATE DATABASE $dbName;"
+
+        val commands = listOf(
+            "Copying" to listOf(
+                "docker",
+                "cp",
+                sqlFilePath,
+                "$containerId:/tmp/init.sql"
+            ),
+            "Dropping database" to listOf(
+                "docker",
+                "exec",
+                "-e",
+                "PGPASSWORD=$pgPassword",
+                containerId,
+                "psql",
+                "-U",
+                dbUser,
+                "-c",
+                dropDbCmd
+            ),
+            "Creating database" to listOf(
+                "docker",
+                "exec",
+                "-e",
+                "PGPASSWORD=$pgPassword",
+                containerId,
+                "psql",
+                "-U",
+                dbUser,
+                "-c",
+                createDbCmd
+            ),
+            "Populating database" to listOf(
+                "docker",
+                "exec",
+                "-e",
+                "PGPASSWORD=$pgPassword",
+                containerId,
+                "psql",
+                "-U",
+                dbUser,
+                "-d",
+                dbName,
+                "-f",
+                "/tmp/init.sql"
+            )
+        )
+
+
+        for ((label, command) in commands) {
+            LOG.info("Running $label")
+            val process = ProcessUtils.startProcess(command, APP_DIR_NAME)
+            if (process == null) {
+                LOG.severe("Could not $label")
+                return
+            }
+            ProcessUtils.waitAndPrintOutput(process)
+            LOG.info("$label completed")
+        }
+
+        ProcessUtils.stopProcess(postgresProcess)
+    }
+
 }
