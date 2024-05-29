@@ -4,3 +4,4 @@ plugins {
 rootProject.name = "PenTalesREST"
 include("database_populator")
 include("DataProcessorGUI")
+include("ReadingRealmProjectRunner")

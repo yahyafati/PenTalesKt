@@ -44,7 +44,6 @@ class MainFormListeners private constructor() {
             override fun windowClosing(e: WindowEvent?) {
                 LOG.info("Window closing listener triggered")
                 MainFormService.instance.formClosing()
-
             }
         }
     }

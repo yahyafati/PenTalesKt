@@ -136,7 +136,7 @@ class DataHandler private constructor() : Closeable {
             skippedBooks.add(row.getOrDefault("book_id", "").toString())
             return row.getOrDefault("image_url", "").toString()
         }
-        
+
         pauseFetchUntil = 0
 
         val urlTemplate = "https://www.goodreads.com/book/show/%s"
@@ -195,7 +195,7 @@ class DataHandler private constructor() : Closeable {
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
-                println("Processed $count records")
+                LOG.info("Processed $count records")
             }
 
             val formattedPercentage = String.format("%.2f", (foundCount.toDouble() / count.toDouble()) * 100)

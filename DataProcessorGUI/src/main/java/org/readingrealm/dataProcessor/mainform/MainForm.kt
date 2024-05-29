@@ -47,7 +47,7 @@ class MainForm private constructor() : JFrame() {
         this.title = "Data Processor"
         this.setSize(600, 300)
         this.minimumSize = Dimension(600, 120)
-        this.defaultCloseOperation = EXIT_ON_CLOSE
+        this.defaultCloseOperation = DO_NOTHING_ON_CLOSE
         this.setLocationRelativeTo(null)
         initUI()
         this.isVisible = true

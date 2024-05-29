@@ -49,3 +49,4 @@ uploads
 
 *.p12
 keys/
+__app/

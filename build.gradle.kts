@@ -86,7 +86,8 @@ tasks {
     }
 }
 
-flyway {
-    configFiles = arrayOf("flyway.properties")
+tasks.withType<Test> {
+    useJUnitPlatform()
+    systemProperty("spring.profiles.active", "test")
 }
 
