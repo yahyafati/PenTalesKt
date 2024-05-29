@@ -19,3 +19,21 @@ tasks.test {
 kotlin {
     jvmToolchain(17)
 }
+
+sourceSets {
+    main {
+        java {
+            srcDir("src/main/kotlin")
+        }
+    }
+}
+
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes["Main-Class"] = "org.pentales.projectrunner.ProjectRunnerApplicationKt"
+    }
+
+    from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
