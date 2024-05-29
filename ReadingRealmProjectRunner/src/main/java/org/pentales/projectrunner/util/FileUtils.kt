@@ -31,4 +31,14 @@ object FileUtils {
 
     }
 
+    fun deleteDirectory(s: String) {
+        val path = Paths.get(s)
+        if (Files.exists(path)) {
+            Files.walk(path)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach { it.delete() }
+        }
+    }
+
 }

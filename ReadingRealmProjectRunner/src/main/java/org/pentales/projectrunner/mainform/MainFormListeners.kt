@@ -6,19 +6,20 @@ import java.util.logging.*
 class MainFormListeners private constructor() {
 
     private var backendProcess: Process? = null
+    private var frontendProcess: Process? = null
 
     fun startBackendListener() {
         Thread {
-            mainForm.backendStatus = MainForm.Status.STARTING
+            mainForm.backendStatus = MainForm.BackendStatus.STARTING
             startBackend()
-            mainForm.backendStatus = MainForm.Status.STOPPED
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPED
         }.start()
     }
 
     private fun startBackend() {
         LOG.info("Starting backend")
         FileUtils.copyResourceToFile("/docker-compose.yml", "backend/docker-compose.yml")
-        FileUtils.copyResourceToFile("/.env", "backend/.env")
+        FileUtils.copyResourceToFile("/backend.env", "backend/.env")
         FileUtils.copyResourceToFile("/keys/firebase-key.json", "backend/firebase-key.json")
 
         //        Open a command prompt and run the command "docker-compose up"
@@ -27,15 +28,15 @@ class MainFormListeners private constructor() {
             LOG.severe("Could not start backend")
             return
         }
-        mainForm.backendStatus = MainForm.Status.STARTED
+        mainForm.backendStatus = MainForm.BackendStatus.STARTED
         ProcessUtils.waitAndPrintOutput(backendProcess!!)
     }
 
     fun stopBackendListener() {
         Thread {
-            mainForm.backendStatus = MainForm.Status.STOPPING
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPING
             stopBackend()
-            mainForm.backendStatus = MainForm.Status.STOPPED
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPED
         }.start()
     }
 
@@ -57,9 +58,9 @@ class MainFormListeners private constructor() {
 
     fun updateBackendListener() {
         Thread {
-            mainForm.backendStatus = MainForm.Status.UPDATING
+            mainForm.backendStatus = MainForm.BackendStatus.UPDATING
             updateBackend()
-            mainForm.backendStatus = MainForm.Status.STOPPED
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPED
         }.start()
     }
 
@@ -68,6 +69,112 @@ class MainFormListeners private constructor() {
         val process = ProcessUtils.startProcess(listOf("docker-compose", "pull"), "backend")
         if (process == null) {
             LOG.severe("Could not update backend")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
+    }
+
+    fun downloadFrontendListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.DOWNLOADING
+            downloadFrontend()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+        }.start()
+    }
+
+    private fun downloadFrontend() {
+        LOG.info("Downloading frontend")
+        FileUtils.deleteDirectory("frontend")
+        val repo = "git@github.com:yahyafati/book-review-react.git"
+        val process = ProcessUtils.startProcess(
+            listOf("git", "clone", repo, "."),
+            "frontend"
+        )
+        if (process == null) {
+            LOG.severe("Could not download frontend")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
+        LOG.info("Downloaded frontend")
+    }
+
+    fun installModulesListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.INSTALLING
+            installModules()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+        }.start()
+    }
+
+    private fun installModules() {
+        LOG.info("Installing frontend modules")
+        val process = ProcessUtils.startProcess(
+            listOf("npm", "install"),
+            "frontend"
+        )
+        if (process == null) {
+            LOG.severe("Could not install frontend modules")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
+    }
+
+    fun startFrontendListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.STARTING
+            startFrontend()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+        }.start()
+    }
+
+    private fun startFrontend() {
+        LOG.info("Starting frontend")
+        FileUtils.copyResourceToFile("/frontend.env", "frontend/.env")
+        frontendProcess = ProcessUtils.startProcess(
+            listOf("npm", "run", "dev"),
+            "frontend"
+        )
+        if (frontendProcess == null) {
+            LOG.severe("Could not start frontend")
+            return
+        }
+        mainForm.frontendStatus = MainForm.FrontendStatus.STARTED
+        ProcessUtils.waitAndPrintOutput(frontendProcess!!)
+    }
+
+    fun stopFrontendListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPING
+            stopFrontend()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+        }.start()
+    }
+
+    private fun stopFrontend() {
+        LOG.info("Stopping frontend")
+        if (frontendProcess == null) {
+            LOG.info("Frontend is not running")
+            return
+        }
+        ProcessUtils.stopProcess(frontendProcess!!)
+    }
+
+    fun updateFrontendListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.UPDATING
+            updateFrontend()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+        }.start()
+    }
+
+    private fun updateFrontend() {
+        LOG.info("Updating frontend")
+        val process = ProcessUtils.startProcess(
+            listOf("git", "pull"),
+            "frontend"
+        )
+        if (process == null) {
+            LOG.severe("Could not update frontend")
             return
         }
         ProcessUtils.waitAndPrintOutput(process)
