@@ -1,12 +1,11 @@
 package org.pentales.projectrunner.mainform
 
-import java.io.*
-import java.nio.file.*
+import org.pentales.projectrunner.util.*
 import java.util.logging.*
 
 class MainFormListeners private constructor() {
 
-    var backendProcess: Process? = null
+    private var backendProcess: Process? = null
 
     fun startBackendListener() {
         Thread {
@@ -18,75 +17,25 @@ class MainFormListeners private constructor() {
 
     private fun startBackend() {
         LOG.info("Starting backend")
-        Files.createDirectories(File("backend").toPath())
-        val dockerComposeFile = File("backend/docker-compose.yml")
-        if (!dockerComposeFile.exists()) {
-            LOG.info("Copying docker-compose.yml file to backend directory")
-            val inputStream = javaClass.getResourceAsStream("/docker-compose.yml")
-            val outputStream = FileOutputStream("backend/docker-compose.yml")
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input?.copyTo(output) ?: {
-                        LOG.severe("Could not copy docker-compose.yml file to backend directory")
-                        throw IOException("Could not copy docker-compose.yml file to backend directory")
-                    }
-                }
-            }
-        }
-
-        val environmentFile = File("backend/.env")
-        if (!environmentFile.exists()) {
-            LOG.info("Copying .env file to backend directory")
-            val inputStream = javaClass.getResourceAsStream("/.env")
-            val outputStream = FileOutputStream("backend/.env")
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input?.copyTo(output) ?: {
-                        LOG.severe("Could not copy .env file to backend directory")
-                        throw IOException("Could not copy .env file to backend directory")
-                    }
-                }
-            }
-        }
-
-        val firebaseKeyFile = File("backend/firebase-key.json")
-        if (!firebaseKeyFile.exists()) {
-            LOG.info("Copying firebase-key.json file to backend directory")
-            val inputStream = javaClass.getResourceAsStream("/keys/firebase-key.json")
-            val outputStream = FileOutputStream("backend/firebase-key.json")
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input?.copyTo(output) ?: {
-                        LOG.severe("Could not copy firebase-key.json file to backend directory")
-                        throw IOException("Could not copy firebase-key.json file to backend directory")
-                    }
-                }
-            }
-        }
+        FileUtils.copyResourceToFile("/docker-compose.yml", "backend/docker-compose.yml")
+        FileUtils.copyResourceToFile("/.env", "backend/.env")
+        FileUtils.copyResourceToFile("/keys/firebase-key.json", "backend/firebase-key.json")
 
         //        Open a command prompt and run the command "docker-compose up"
-        val processBuilder = ProcessBuilder("docker-compose", "up")
-        processBuilder.directory(File("backend"))
-        processBuilder.redirectErrorStream(true)
-        backendProcess = processBuilder.start()
-        mainForm.backendStatus = MainForm.Status.STARTED
+        backendProcess = ProcessUtils.startProcess(listOf("docker-compose", "up"), "backend")
         if (backendProcess == null) {
             LOG.severe("Could not start backend")
             return
         }
-        val reader = BufferedReader(InputStreamReader(backendProcess!!.inputStream))
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            LOG.info(line)
-        }
-        backendProcess!!.waitFor()
-        backendProcess = null
+        mainForm.backendStatus = MainForm.Status.STARTED
+        ProcessUtils.waitAndPrintOutput(backendProcess!!)
     }
 
     fun stopBackendListener() {
         Thread {
             mainForm.backendStatus = MainForm.Status.STOPPING
             stopBackend()
+            mainForm.backendStatus = MainForm.Status.STOPPED
         }.start()
     }
 
@@ -96,24 +45,14 @@ class MainFormListeners private constructor() {
             LOG.info("Backend is not running")
             return
         }
-        backendProcess!!.destroy()
+        ProcessUtils.stopProcess(backendProcess!!)
 
-//        Stop Docker containers
-        val processBuilder = ProcessBuilder("docker-compose", "down")
-        processBuilder.directory(File("backend"))
-        processBuilder.redirectErrorStream(true)
-        val process = processBuilder.start()
+        val process = ProcessUtils.startProcess(listOf("docker-compose", "down"), "backend")
         if (process == null) {
             LOG.severe("Could not stop backend")
             return
         }
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            LOG.info(line)
-        }
-        process.waitFor()
-        mainForm.backendStatus = MainForm.Status.STOPPED
+        ProcessUtils.waitAndPrintOutput(process)
     }
 
     fun updateBackendListener() {
@@ -126,20 +65,12 @@ class MainFormListeners private constructor() {
 
     private fun updateBackend() {
         LOG.info("Updating backend")
-        val processBuilder = ProcessBuilder("docker-compose", "pull")
-        processBuilder.directory(File("backend"))
-        processBuilder.redirectErrorStream(true)
-        val process = processBuilder.start()
+        val process = ProcessUtils.startProcess(listOf("docker-compose", "pull"), "backend")
         if (process == null) {
             LOG.severe("Could not update backend")
             return
         }
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            LOG.info(line)
-        }
-        process.waitFor()
+        ProcessUtils.waitAndPrintOutput(process)
     }
 
     companion object {
