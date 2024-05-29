@@ -10,7 +10,8 @@ class MainForm : JFrame() {
         STARTING,
         STOPPED,
         STOPPING,
-        UPDATING
+        UPDATING,
+        CLEARING,
     }
 
     enum class FrontendStatus {
@@ -19,15 +20,18 @@ class MainForm : JFrame() {
         STOPPED,
         STOPPING,
         UPDATING,
+        CLEARING,
     }
 
     private val startBackendButton = JButton("Start Backend")
     private val stopBackendButton = JButton("Stop Backend")
     private val updateBackendButton = JButton("Update Backend")
+    private val clearBackendButton = JButton("Clear Backend")
 
     private val startFrontendButton = JButton("Start Frontend")
     private val stopFrontendButton = JButton("Stop Frontend")
     private val updateFrontendButton = JButton("Update Frontend")
+    private val clearFrontendButton = JButton("Clear Frontend")
 
     private val statusLabel = JLabel("")
 
@@ -66,20 +70,24 @@ class MainForm : JFrame() {
         startBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
         stopBackendButton.isEnabled = backendStatus == BackendStatus.STARTED
         updateBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
+        clearBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
 
         startFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
         stopFrontendButton.isEnabled = frontendStatus == FrontendStatus.STARTED
         updateFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
+        clearFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
     }
 
     private fun initListeners() {
         startBackendButton.addActionListener { listeners.startBackendListener() }
         stopBackendButton.addActionListener { listeners.stopBackendListener() }
         updateBackendButton.addActionListener { listeners.updateBackendListener() }
+        clearBackendButton.addActionListener { listeners.clearBackendListener() }
 
         startFrontendButton.addActionListener { listeners.startFrontendListener() }
         stopFrontendButton.addActionListener { listeners.stopFrontendListener() }
         updateFrontendButton.addActionListener { listeners.updateFrontendListener() }
+        clearFrontendButton.addActionListener { listeners.clearFrontendListener() }
     }
 
     private fun initUI() {
@@ -107,6 +115,7 @@ class MainForm : JFrame() {
         backendPanel.add(startBackendButton)
         backendPanel.add(stopBackendButton)
         backendPanel.add(updateBackendButton)
+        backendPanel.add(clearBackendButton)
 
         val frontendPanel = JPanel()
         frontendPanel.layout = BoxLayout(frontendPanel, BoxLayout.Y_AXIS)
@@ -122,6 +131,7 @@ class MainForm : JFrame() {
         frontendPanel.add(startFrontendButton)
         frontendPanel.add(stopFrontendButton)
         frontendPanel.add(updateFrontendButton)
+        frontendPanel.add(clearFrontendButton)
 
         boxPanel.add(backendPanel)
         boxPanel.add(frontendPanel)

@@ -197,4 +197,68 @@ class MainFormListeners private constructor() {
         }
     }
 
+    fun clearBackendListener() {
+        Thread {
+            mainForm.backendStatus = MainForm.BackendStatus.CLEARING
+            val result = JOptionPane.showConfirmDialog(
+                mainForm,
+                "Are you sure you want to clear the data?\n\nThis will delete all data from the database.",
+                "Clear backend",
+                JOptionPane.YES_NO_OPTION
+            )
+            if (result != JOptionPane.YES_OPTION) {
+                mainForm.backendStatus = MainForm.BackendStatus.STOPPED
+                return@Thread
+            }
+            clearBackend()
+            mainForm.backendStatus = MainForm.BackendStatus.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Backend cleared successfully")
+        }.start()
+    }
+
+    private fun clearBackend() {
+        LOG.info("Clearing backend")
+        val process = ProcessUtils.startProcess(
+            listOf("docker-compose", "down", "--volumes") + backendServices,
+            APP_DIR_NAME
+        )
+        if (process == null) {
+            LOG.severe("Could not clear backend")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
+    }
+
+    fun clearFrontendListener() {
+        Thread {
+            mainForm.frontendStatus = MainForm.FrontendStatus.CLEARING
+            val result = JOptionPane.showConfirmDialog(
+                mainForm,
+                "Are you sure you want to clear the data?",
+                "Clear frontend",
+                JOptionPane.YES_NO_OPTION
+            )
+            if (result != JOptionPane.YES_OPTION) {
+                mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+                return@Thread
+            }
+            clearFrontend()
+            mainForm.frontendStatus = MainForm.FrontendStatus.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Frontend cleared successfully")
+        }.start()
+    }
+
+    private fun clearFrontend() {
+        LOG.info("Clearing frontend")
+        val process = ProcessUtils.startProcess(
+            listOf("docker-compose", "down", "--volumes") + frontendServices,
+            APP_DIR_NAME
+        )
+        if (process == null) {
+            LOG.severe("Could not clear frontend")
+            return
+        }
+        ProcessUtils.waitAndPrintOutput(process)
+    }
+
 }
