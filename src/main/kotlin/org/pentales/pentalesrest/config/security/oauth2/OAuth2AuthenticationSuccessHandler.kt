@@ -4,6 +4,7 @@ import jakarta.servlet.http.*
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
 import org.pentales.pentalesrest.utils.*
+import org.slf4j.*
 import org.springframework.security.core.*
 import org.springframework.security.web.authentication.*
 import org.springframework.stereotype.*
@@ -19,7 +20,7 @@ class OAuth2AuthenticationSuccessHandler(
 
     companion object {
 
-        val LOG = org.slf4j.LoggerFactory.getLogger(OAuth2AuthenticationSuccessHandler::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(OAuth2AuthenticationSuccessHandler::class.java)
     }
 
     override fun onAuthenticationSuccess(

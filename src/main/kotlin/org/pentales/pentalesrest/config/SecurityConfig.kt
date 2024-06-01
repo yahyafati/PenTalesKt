@@ -85,11 +85,16 @@ class SecurityConfig(
                     ).permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
                     .requestMatchers("/oauth2/**", "/auth/**", "/oauth/**").permitAll()
+                    .requestMatchers("/actuator/**").permitAll()
                     .requestMatchers("/test/unsecured").permitAll()
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                    .requestMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html", "/swagger-ui/**", "/swagger-ui.html/**",
+                    ).permitAll()
                     .anyRequest()
                     .authenticated()
-            }.oauth2Login { oauth2 ->
+            }
+            .oauth2Login { oauth2 ->
                 oauth2
                     .authorizationEndpoint {
                         it.baseUri("/oauth2/authorize")
@@ -102,11 +107,16 @@ class SecurityConfig(
                         it.userService(oauthUserService)
                     }
                     .successHandler(oAuth2AuthenticationSuccessHandler)
-                    .failureHandler { request, response, exception ->
-                        LOG.error("Failure handler")
-                        println(exception)
+                    .failureHandler { _, _, exception ->
+                        LOG.error("OAuth2 Login Failure: ${exception.message}")
                     }
-            }.build()
+            }
+            .exceptionHandling {
+                it.authenticationEntryPoint { _, response, _ ->
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.reasonPhrase)
+                }
+            }
+            .build()
     }
 
     @Bean
