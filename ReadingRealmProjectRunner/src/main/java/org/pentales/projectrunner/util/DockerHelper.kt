@@ -1,5 +1,6 @@
 package org.pentales.projectrunner.util
 
+import org.pentales.projectrunner.mainform.*
 import java.util.logging.*
 
 object DockerHelper {
@@ -7,6 +8,16 @@ object DockerHelper {
     private val LOG = Logger.getLogger(DockerHelper::class.java.name)
 
     val SERVICES = listOf("postgres", "springboot-app", "frontend", "sentiment-analysis", "pgadmin")
+
+    fun isDockerInstalled(): Boolean {
+        val process = ProcessUtils.startProcess(listOf("docker", "--version"), MainFormListeners.APP_DIR_NAME)
+        return process != null
+    }
+
+    fun isDockerComposeInstalled(): Boolean {
+        val process = ProcessUtils.startProcess(listOf("docker-compose", "--version"), MainFormListeners.APP_DIR_NAME)
+        return process != null
+    }
 
     fun startContainers(directory: String, containers: List<String> = listOf()): Process {
         val command = mutableListOf("docker-compose", "up")

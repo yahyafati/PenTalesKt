@@ -45,8 +45,23 @@ class MainFormListeners private constructor() {
         LOG.info("Starting container")
 
         process = DockerHelper.startContainers(APP_DIR_NAME)
-        mainForm.status = MainForm.Status.STARTED
+
+        Thread {
+            val wait = ServicesUtil.waitUntilBackendIsRunning()
+            if (!wait) {
+                LOG.severe("Could not start container")
+                return@Thread
+            }
+            LOG.info("Spring Boot API is running")
+            mainForm.status = MainForm.Status.STARTED
+
+            LOG.info("Opening browser at http://localhost:5173/")
+            WebUtils.openBrowser("http://localhost:5173/")
+            LOG.info("Browser opened")
+        }.start()
+
         ProcessUtils.waitAndPrintOutput(process!!)
+
     }
 
     fun stopListener() {
