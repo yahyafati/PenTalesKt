@@ -26,6 +26,10 @@ object ProcessUtils {
         }
     }
 
+    fun wait(process: Process) {
+        process.waitFor()
+    }
+
     fun waitAndPrintOutput(process: Process) {
         val reader = BufferedReader(InputStreamReader(process.inputStream))
         val errorReader = BufferedReader(InputStreamReader(process.errorStream))
@@ -35,7 +39,7 @@ object ProcessUtils {
         Thread {
             writeReaderToLog(errorReader)
         }.start()
-        process.waitFor()
+        wait(process)
     }
 
     fun stopProcess(process: Process) {

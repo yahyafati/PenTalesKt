@@ -1,11 +1,13 @@
 package org.pentales.projectrunner.mainform
 
+import org.pentales.projectrunner.util.*
 import java.awt.*
+import java.util.*
 import javax.swing.*
 
 class MainForm : JFrame() {
 
-    enum class BackendStatus {
+    enum class Status {
         STARTED,
         STARTING,
         STOPPED,
@@ -14,83 +16,81 @@ class MainForm : JFrame() {
         CLEARING,
     }
 
-    enum class FrontendStatus {
-        STARTED,
-        STARTING,
-        STOPPED,
-        STOPPING,
-        UPDATING,
-        CLEARING,
-    }
-
-    private val startBackendButton = JButton("Start Backend")
-    private val stopBackendButton = JButton("Stop Backend")
-    private val populateBackendButton = JButton("Populate Backend")
-    private val updateBackendButton = JButton("Update Backend")
-    private val clearBackendButton = JButton("Clear Backend")
-
-    private val startFrontendButton = JButton("Start Frontend")
-    private val stopFrontendButton = JButton("Stop Frontend")
-    private val updateFrontendButton = JButton("Update Frontend")
-    private val clearFrontendButton = JButton("Clear Frontend")
-
+    private val startButton = JButton("Start")
+    private val stopButton = JButton("Stop")
+    private val populateDatabaseButton = JButton("Populate Database")
+    private val updateContainerButton = JButton("Update Container")
+    private val clearDataButton = JButton("Clear Data")
     private val statusLabel = JLabel("")
+
+    private val dockerStatusLabel = JLabel("")
+    private val dockerComposeStatusLabel = JLabel("")
 
     private val listeners = MainFormListeners.getInstance(this)
 
-    var backendStatus = BackendStatus.STOPPED
+    var status = Status.STOPPED
         set(value) {
             field = value
-            backendStatusLabel.text = value.name
-            repaint()
-        }
-    var frontendStatus = FrontendStatus.STOPPED
-        set(value) {
-            field = value
-            frontendStatusLabel.text = value.name
+            servicesStatusLabel.text = value.name
             repaint()
         }
 
-    private val backendStatusLabel = JLabel(backendStatus.name)
-    private val frontendStatusLabel = JLabel(frontendStatus.name)
+    private val servicesStatusLabel = JLabel(status.name)
 
     init {
         title = "Main Form"
         defaultCloseOperation = EXIT_ON_CLOSE
-        minimumSize = Dimension(400, 380)
-        setLocationRelativeTo(null)
+        minimumSize = Dimension(300, 0)
         initUI()
         initListeners()
         addWindowListener(listeners.windowListener())
         pack()
+        setLocationRelativeTo(null)
     }
 
     override fun paint(g: Graphics?) {
         super.paint(g)
+        val DARK_GREEN = Color(0, 153, 0)
+        val DARK_RED = Color(153, 0, 0)
 
-        startBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
-        stopBackendButton.isEnabled = backendStatus == BackendStatus.STARTED
-        updateBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
-        clearBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
-        populateBackendButton.isEnabled = backendStatus == BackendStatus.STOPPED
+        startButton.isEnabled = status == Status.STOPPED
+        stopButton.isEnabled = status in listOf(
+            Status.STARTED,
+            Status.STARTING,
+            Status.STOPPED
+        )
+        updateContainerButton.isEnabled = status == Status.STOPPED
+        clearDataButton.isEnabled = status == Status.STOPPED
+        populateDatabaseButton.isEnabled = status == Status.STOPPED
 
-        startFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
-        stopFrontendButton.isEnabled = frontendStatus == FrontendStatus.STARTED
-        updateFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
-        clearFrontendButton.isEnabled = frontendStatus == FrontendStatus.STOPPED
+        servicesStatusLabel.text =
+            status.name.lowercase()
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        servicesStatusLabel.foreground = when (status) {
+            Status.STARTED -> DARK_GREEN
+            Status.STARTING -> Color.BLUE
+            Status.STOPPED -> DARK_RED
+            Status.STOPPING -> Color.BLUE
+            Status.UPDATING -> Color.BLUE
+            Status.CLEARING -> Color.BLUE
+        }
+
+        val dockerStatus = DockerHelper.isDockerInstalled()
+        dockerStatusLabel.text = if (dockerStatus) "Installed" else "Not Installed"
+        dockerStatusLabel.foreground = if (dockerStatus) DARK_GREEN else DARK_RED
+
+        val dockerComposeStatus = DockerHelper.isDockerComposeInstalled()
+        dockerComposeStatusLabel.text = if (dockerComposeStatus) "Installed" else "Not Installed"
+        dockerComposeStatusLabel.foreground = if (dockerComposeStatus) DARK_GREEN else DARK_RED
+
     }
 
     private fun initListeners() {
-        startBackendButton.addActionListener { listeners.startBackendListener() }
-        stopBackendButton.addActionListener { listeners.stopBackendListener() }
-        updateBackendButton.addActionListener { listeners.updateBackendListener() }
-        clearBackendButton.addActionListener { listeners.clearBackendListener() }
-        populateBackendButton.addActionListener { listeners.populateBackendListener() }
-
-        startFrontendButton.addActionListener { listeners.startFrontendListener() }
-        stopFrontendButton.addActionListener { listeners.stopFrontendListener() }
-        updateFrontendButton.addActionListener { listeners.updateFrontendListener() }
-        clearFrontendButton.addActionListener { listeners.clearFrontendListener() }
+        startButton.addActionListener { listeners.startListener() }
+        stopButton.addActionListener { listeners.stopListener() }
+        updateContainerButton.addActionListener { listeners.updateContainerListener() }
+        clearDataButton.addActionListener { listeners.clearDataListener() }
+        populateDatabaseButton.addActionListener { listeners.populateDatabaseListener() }
     }
 
     private fun initUI() {
@@ -99,48 +99,56 @@ class MainForm : JFrame() {
         contentPanel.layout = BorderLayout()
         contentPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
-        val boxPanel = JPanel()
-        boxPanel.layout = BoxLayout(boxPanel, BoxLayout.Y_AXIS)
-        boxPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        val installedPanel = JPanel()
+        installedPanel.layout = BoxLayout(installedPanel, BoxLayout.Y_AXIS)
+        installedPanel.border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
 
-        val backendPanel = JPanel()
-        backendPanel.layout = BoxLayout(backendPanel, BoxLayout.Y_AXIS)
-        backendPanel.border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
+        val dockerPanel = JPanel()
+        val font = this.dockerStatusLabel.font
+        dockerPanel.layout = BoxLayout(dockerPanel, BoxLayout.X_AXIS)
+        val dockerStatusLabel = JLabel("Docker Status: ")
+        dockerPanel.add(dockerStatusLabel)
 
-        val backendLabelPanel = JPanel()
-        backendLabelPanel.layout = BoxLayout(backendLabelPanel, BoxLayout.X_AXIS)
+        this.dockerStatusLabel.font = font.deriveFont(font.style or Font.BOLD)
+        dockerPanel.add(this.dockerStatusLabel)
 
-        val backendLabel = JLabel("Backend - ")
-        backendLabelPanel.add(backendLabel)
-        backendLabelPanel.add(backendStatusLabel)
+        val dockerComposePanel = JPanel()
+        dockerComposePanel.layout = BoxLayout(dockerComposePanel, BoxLayout.X_AXIS)
 
-        backendPanel.add(backendLabelPanel)
-        backendPanel.add(startBackendButton)
-        backendPanel.add(populateBackendButton)
-        backendPanel.add(stopBackendButton)
-        backendPanel.add(updateBackendButton)
-        backendPanel.add(clearBackendButton)
+        val dockerComposeStatusLabel = JLabel("Docker Compose Status: ")
+        dockerComposePanel.add(dockerComposeStatusLabel)
+        this.dockerComposeStatusLabel.font = font.deriveFont(font.style or Font.BOLD)
+        dockerComposePanel.add(this.dockerComposeStatusLabel)
 
-        val frontendPanel = JPanel()
-        frontendPanel.layout = BoxLayout(frontendPanel, BoxLayout.Y_AXIS)
-        frontendPanel.border = BorderFactory.createEmptyBorder(10, 0, 0, 0)
+        val servicesLabelPanel = JPanel()
+        servicesLabelPanel.layout = BoxLayout(servicesLabelPanel, BoxLayout.X_AXIS)
+        val servicesLabel = JLabel("Services - ")
+        servicesLabelPanel.add(servicesLabel)
+        servicesStatusLabel.font = font.deriveFont(font.style or Font.BOLD)
+        servicesLabelPanel.add(servicesStatusLabel)
 
-        val frontendLabelPanel = JPanel()
-        frontendLabelPanel.layout = BoxLayout(frontendLabelPanel, BoxLayout.X_AXIS)
-        val frontendLabel = JLabel("Frontend - ")
-        frontendLabelPanel.add(frontendLabel)
-        frontendLabelPanel.add(frontendStatusLabel)
+        installedPanel.add(dockerPanel)
+        installedPanel.add(dockerComposePanel)
+        installedPanel.add(Box.createVerticalStrut(10))
+        installedPanel.add(servicesLabelPanel)
 
-        frontendPanel.add(frontendLabelPanel)
-        frontendPanel.add(startFrontendButton)
-        frontendPanel.add(stopFrontendButton)
-        frontendPanel.add(updateFrontendButton)
-        frontendPanel.add(clearFrontendButton)
 
-        boxPanel.add(backendPanel)
-        boxPanel.add(frontendPanel)
+        contentPanel.add(installedPanel, BorderLayout.NORTH)
 
-        add(boxPanel, BorderLayout.CENTER)
+        val servicesPanel = JPanel()
+        servicesPanel.layout = BoxLayout(servicesPanel, BoxLayout.Y_AXIS)
+        servicesPanel.border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
+
+
+
+        servicesPanel.add(startButton)
+        servicesPanel.add(populateDatabaseButton)
+        servicesPanel.add(stopButton)
+        servicesPanel.add(updateContainerButton)
+        servicesPanel.add(clearDataButton)
+
+
+        add(servicesPanel, BorderLayout.CENTER)
 
         val statusPanel = JPanel()
         statusPanel.layout = BoxLayout(statusPanel, BoxLayout.Y_AXIS)
