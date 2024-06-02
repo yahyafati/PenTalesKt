@@ -3,6 +3,7 @@ package org.pentales.pentalesrest.controller.book
 import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.dto.book.*
+import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.pentales.pentalesrest.models.enums.*
@@ -11,6 +12,7 @@ import org.pentales.pentalesrest.utils.*
 import org.springframework.data.domain.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.*
 
 @RestController
 @RequestMapping("/api/book")
@@ -30,7 +32,8 @@ class BookController(
         filters: List<FilterDto>? = listOf()
     ): ResponseEntity<Page<BookDTO>> {
         val pageRequest = ServletUtil.getPageRequest()
-        val response = service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it) }
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val response = service.findAll(pageRequest, filters ?: listOf()).map { BookDTO(it, baseURL) }
         return ResponseEntity.ok(response)
     }
 
@@ -41,7 +44,13 @@ class BookController(
     ): ResponseEntity<BasicResponseDto<NowReadingDto?>> {
         val currentUsername = authenticationFacade.forcedCurrentUser.username
         val userBookStatus = userBookStatusServices.getNowReadingBook(username ?: currentUsername)
-        val dto = userBookStatus?.book?.let { NowReadingDto(book = BookDTO(it), startedAt = userBookStatus.createdAt) }
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val dto = userBookStatus?.book?.let {
+            NowReadingDto(
+                book = BookDTO(it, baseURL),
+                startedAt = userBookStatus.createdAt
+            )
+        }
         return ResponseEntity.ok(BasicResponseDto.ok(dto))
     }
 
@@ -51,7 +60,8 @@ class BookController(
         id: Long,
     ): ResponseEntity<BasicResponseDto<BookDTO>> {
         val book = service.findById(id)
-        return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(book)))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(book, baseURL)))
     }
 
     @GetMapping("/{id}/rating-info")
@@ -102,7 +112,8 @@ class BookController(
     ): ResponseEntity<BasicResponseDto<Page<BookDTO>>> {
         val pageRequest = ServletUtil.getPageRequest()
         val books = bookServices.getRelatedBooks(bookId, pageRequest)
-        return ResponseEntity.ok(BasicResponseDto.ok(books.map { BookDTO(it) }))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(books.map { BookDTO(it, baseURL) }))
     }
 
     @GetMapping("/{bookId}/status")
@@ -133,10 +144,31 @@ class BookController(
     fun saveBook(
         @RequestBody
         bookDTO: BookDTO
-    ): ResponseEntity<BookDTO> {
+    ): ResponseEntity<BasicResponseDto<BookDTO>> {
         val book = bookDTO.toBook()
         val savedBook = service.saveNew(book)
-        return ResponseEntity.ok(BookDTO(savedBook))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(savedBook, baseURL)))
+    }
+
+    @PostMapping(
+        "/{bookId}/upload-cover",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun uploadBookCover(
+        @PathVariable
+        bookId: Long,
+        @RequestBody
+        file: MultipartFile
+    ): ResponseEntity<BasicResponseDto<BookDTO>> {
+
+        val imageUploadDto = ImageUploadDto(file = file)
+        val book = service.uploadBookCover(bookId, imageUploadDto)
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(
+            BasicResponseDto.ok(BookDTO(book, baseURL))
+        )
     }
 
     @PutMapping("/{id}")
@@ -147,10 +179,11 @@ class BookController(
         bookDTO: BookDTO,
         @RequestParam(required = false)
         includeFields: List<String>?
-    ): ResponseEntity<BookDTO> {
+    ): ResponseEntity<BasicResponseDto<BookDTO>> {
         val book = bookDTO.toBook()
         val updatedBook = service.update(id, book, includeFields ?: emptyList())
-        return ResponseEntity.ok(BookDTO(updatedBook))
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(updatedBook, baseURL)))
     }
 
     @PostMapping("/{id}/add-to-shelf")

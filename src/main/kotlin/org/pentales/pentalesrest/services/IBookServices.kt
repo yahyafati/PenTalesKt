@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.services
 
+import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.models.*
 import org.springframework.data.domain.*
@@ -17,5 +18,6 @@ interface IBookServices : IGenericService<Book> {
     fun getUserEbooks(user: User, book: Book, pageable: Pageable): Page<BookFile>
     fun getEbook(fileId: Long): BookFile
     fun deleteEbook(fileId: Long, user: User)
+    fun uploadBookCover(bookId: Long, uploadDto: ImageUploadDto): Book
 
 }
