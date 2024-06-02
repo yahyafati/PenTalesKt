@@ -43,7 +43,9 @@ object ProcessUtils {
     }
 
     fun stopProcess(process: Process) {
+        LOG.info("Stopping process")
         process.destroy()
+        process.waitFor()
     }
 
     fun getOutput(process: Process): String {

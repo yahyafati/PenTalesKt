@@ -21,7 +21,7 @@ data class RatingDto(
         value = rating.value,
         review = rating.review,
         user = UserDto(rating.user, baseURL),
-        book = BookDTO(rating.book),
+        book = BookDTO(rating.book, baseURL),
         createdAt = rating.createdAt.time,
         updatedAt = rating.updatedAt.time,
         likes = rating.__likes,

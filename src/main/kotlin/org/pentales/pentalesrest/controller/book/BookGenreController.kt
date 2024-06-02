@@ -2,6 +2,7 @@ package org.pentales.pentalesrest.controller.book
 
 import org.pentales.pentalesrest.dto.book.*
 import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.utils.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 
@@ -22,6 +23,6 @@ class BookGenreController(private val bookIntermediatesServices: org.pentales.pe
         delete: Boolean = false
     ): ResponseEntity<BookDTO> {
         val book = bookIntermediatesServices.updateGenres(bookId, genres, delete)
-        return ResponseEntity.ok(BookDTO(book))
+        return ResponseEntity.ok(BookDTO(book, ServletUtil.getBaseURLFromCurrentRequest()))
     }
 }

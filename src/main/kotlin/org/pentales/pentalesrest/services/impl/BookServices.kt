@@ -5,6 +5,7 @@ import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.dto.*
+import org.pentales.pentalesrest.dto.file.*
 import org.pentales.pentalesrest.dto.rating.*
 import org.pentales.pentalesrest.exceptions.*
 import org.pentales.pentalesrest.models.*
@@ -195,6 +196,34 @@ class BookServices(
         }
         fileService.deleteFile(bookFile.path)
         bookFileRepository.delete(bookFile)
+    }
+
+    @Transactional
+    override fun uploadBookCover(bookId: Long, uploadDto: ImageUploadDto): Book {
+        val file = uploadDto.file ?: throw GenericException("File cannot be null")
+        val book = bookRepository.findById(bookId).orElseThrow { NoEntityWithIdException.create("Book", bookId) }
+        val uniqueFileName = FileUtil.getUniqueFilename(file.originalFilename ?: "")
+
+        val byteArray = file.bytes
+        val path = Paths.get(
+            fileConfigProperties.upload.path,
+            "books",
+            bookId.toString(),
+            "cover",
+            uniqueFileName
+        ).toString()
+
+        fileService.uploadFile(path, byteArray)
+
+        if (book.coverImage.isNotBlank()) {
+            val oldPath = book.coverImage
+            if (oldPath.startsWith("http").not()) {
+                fileService.deleteFile(oldPath)
+            }
+        }
+
+        book.coverImage = path
+        return bookRepository.save(book)
     }
 
     private fun saveBookGenres(book: Book): List<BookGenre> {

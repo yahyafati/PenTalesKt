@@ -17,7 +17,7 @@ data class BookFileDto(
         id = bookFile.id,
         path = UserDto.getURLWithBaseURL(bookFile.path, baseURL) ?: "",
         owner = UserDto(bookFile.owner, baseURL),
-        book = BookDTO(bookFile.book),
+        book = BookDTO(bookFile.book, baseURL),
         progress = bookFile.__progress,
         isPublic = bookFile.isPublic,
         lastRead = bookFile.__lastRead?.time
