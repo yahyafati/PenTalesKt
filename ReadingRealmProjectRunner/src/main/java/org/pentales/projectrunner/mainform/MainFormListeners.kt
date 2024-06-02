@@ -36,7 +36,6 @@ class MainFormListeners private constructor() {
         Thread {
             mainForm.status = MainForm.Status.STARTING
             startContainer()
-            mainForm.status = MainForm.Status.STOPPED
         }.start()
     }
 
@@ -47,9 +46,9 @@ class MainFormListeners private constructor() {
         process = DockerHelper.startContainers(APP_DIR_NAME)
 
         Thread {
+            ServicesUtil.waitUntilBackendIsRunningThreadControl.shouldStop = false
             val wait = ServicesUtil.waitUntilBackendIsRunning()
             if (!wait) {
-                LOG.severe("Could not start container")
                 return@Thread
             }
             LOG.info("Spring Boot API is running")
@@ -80,6 +79,7 @@ class MainFormListeners private constructor() {
         } else {
             ProcessUtils.stopProcess(process!!)
         }
+        ServicesUtil.waitUntilBackendIsRunningThreadControl.shouldStop = true
 
         val process = DockerHelper.stopContainers(APP_DIR_NAME)
         ProcessUtils.waitAndPrintOutput(process)

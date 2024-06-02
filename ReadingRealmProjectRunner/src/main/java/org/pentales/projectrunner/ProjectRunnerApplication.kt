@@ -17,6 +17,16 @@ fun main() {
     FileUtils.copyResourceToFile("/init.sql", "${MainFormListeners.APP_DIR_NAME}/init.sql")
 
     SwingUtilities.invokeLater {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel")
+        } catch (e: Exception) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         val mainForm = MainForm()
         mainForm.isVisible = true
     }
