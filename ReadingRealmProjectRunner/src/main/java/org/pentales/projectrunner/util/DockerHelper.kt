@@ -7,7 +7,14 @@ object DockerHelper {
 
     private val LOG = Logger.getLogger(DockerHelper::class.java.name)
 
-    val SERVICES = listOf("postgres", "backend", "frontend", "sentiment-analysis", "pgadmin")
+    enum class SERVICES(val service: String, val container: String) {
+        ALL("", ""),
+        POSTGRES("database", "database"),
+        BACKEND("backend", "backend"),
+        FRONTEND("frontend", "frontend"),
+        SENTIMENT_ANALYSIS("sentiment-analysis", "sentiment-analysis"),
+        PGADMIN("pgadmin", "pgadmin")
+    }
 
     fun isDockerInstalled(): Boolean {
         val process = ProcessUtils.startProcess(listOf("docker", "--version"), MainFormListeners.APP_DIR_NAME)
@@ -19,12 +26,13 @@ object DockerHelper {
         return process != null
     }
 
-    fun startContainers(directory: String, containers: List<String> = listOf(), detached: Boolean = false): Process {
+    fun startContainers(directory: String, containers: List<SERVICES> = listOf(), detached: Boolean = false): Process {
         val command = mutableListOf("docker-compose", "up")
+        command.addAll(containers.map { it.service })
         if (detached) {
             command.add("-d")
         }
-        command.addAll(containers)
+
         val process = ProcessUtils.startProcess(command, directory)
         if (process == null) {
             LOG.severe("Could not run docker-compose up command")
@@ -33,9 +41,9 @@ object DockerHelper {
         return process
     }
 
-    fun stopContainers(directory: String, containers: List<String> = listOf()): Process {
+    fun stopContainers(directory: String, containers: List<SERVICES> = listOf()): Process {
         val command = mutableListOf("docker-compose", "down")
-        command.addAll(containers)
+        command.addAll(containers.map { it.service })
         val process = ProcessUtils.startProcess(command, directory)
         if (process == null) {
             LOG.severe("Could not run docker-compose down command")
@@ -44,9 +52,9 @@ object DockerHelper {
         return process
     }
 
-    fun clearContainers(directory: String, containers: List<String> = listOf()): Process {
+    fun clearContainers(directory: String, containers: List<SERVICES> = listOf()): Process {
         val command = mutableListOf("docker-compose", "down", "--volumes")
-        command.addAll(containers)
+        command.addAll(containers.map { it.service })
         val process = ProcessUtils.startProcess(command, directory)
         if (process == null) {
             LOG.severe("Could not run docker-compose down --volumes command")
@@ -55,12 +63,12 @@ object DockerHelper {
         return process
     }
 
-    fun startLogging(container: String, directory: String, follow: Boolean = true): Process {
+    fun startLogging(container: SERVICES, directory: String, follow: Boolean = true): Process {
         val command = mutableListOf("docker", "logs")
+        command.add(container.container)
         if (follow) {
             command.add("-f")
         }
-        command.add(container)
         val process = ProcessUtils.startProcess(command, directory)
         if (process == null) {
             LOG.severe("Could not run docker logs command")
@@ -69,9 +77,9 @@ object DockerHelper {
         return process
     }
 
-    fun getContainerId(container: String, directory: String): String {
+    fun getContainerId(container: SERVICES, directory: String): String {
         val process = ProcessUtils.startProcess(
-            listOf("docker", "ps", "-q", "-f", "name=$container"),
+            listOf("docker", "ps", "-q", "-f", "name=${container.container}"),
             directory
         )
         if (process == null) {
@@ -81,7 +89,7 @@ object DockerHelper {
         return ProcessUtils.getOutput(process).trim()
     }
 
-    fun checkIfContainerIsRunning(container: String, directory: String): Boolean {
+    private fun checkIfContainerIsRunning(container: SERVICES, directory: String): Boolean {
         val containerId = getContainerId(container, directory)
 
         if (containerId.isEmpty()) {
@@ -104,7 +112,7 @@ object DockerHelper {
     }
 
     fun waitUntilContainerIsRunning(
-        container: String,
+        container: SERVICES,
         directory: String,
         maxCount: Int = 10,
         sleepTime: Long = 1000
@@ -113,7 +121,7 @@ object DockerHelper {
     }
 
     fun waitUntilContainersAreRunning(
-        containers: List<String>,
+        containers: List<SERVICES>,
         directory: String,
         maxCount: Int = 10,
         sleepTime: Long = 10_000

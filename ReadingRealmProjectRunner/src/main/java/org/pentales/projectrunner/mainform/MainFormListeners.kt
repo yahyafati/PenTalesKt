@@ -73,15 +73,14 @@ class MainFormListeners private constructor() {
 
     private fun stopContainer() {
         LOG.info("Stopping container")
-        if (process == null) {
-            LOG.info("Container is not running")
-        } else {
-            ProcessUtils.stopProcess(process!!)
-        }
         ServicesUtil.waitUntilBackendIsRunningThreadControl.shouldStop = true
 
         val process = DockerHelper.stopContainers(APP_DIR_NAME)
         ProcessUtils.waitAndPrintOutput(process)
+
+        if (this.process != null) {
+            ProcessUtils.stopProcess(this.process!!)
+        }
     }
 
     fun updateContainerListener() {
@@ -145,22 +144,20 @@ class MainFormListeners private constructor() {
     private fun populateDatabase() {
         stopContainer()
         LOG.info("Populating backend")
-        val postgresProcess = DockerHelper.startContainers(APP_DIR_NAME, listOf("postgres"))
+        val postgresProcess = DockerHelper.startContainers(APP_DIR_NAME, listOf(DockerHelper.SERVICES.POSTGRES))
 
-        val wait = DockerHelper.waitUntilContainerIsRunning("postgres", APP_DIR_NAME)
+        val wait = DockerHelper.waitUntilContainerIsRunning(DockerHelper.SERVICES.POSTGRES, APP_DIR_NAME)
 
         if (!wait) {
-            LOG.severe("Could not start postgres container")
+            LOG.severe("Could not start ${DockerHelper.SERVICES.POSTGRES.container} container")
             return
         }
-
-        val containerName = "postgres-db"
 
         val dbUser = "postgres"
         val dbName = "reading_realm"
         val pgPassword = "password"
 
-        val containerId = DockerHelper.getContainerId(containerName, APP_DIR_NAME)
+        val containerId = DockerHelper.getContainerId(DockerHelper.SERVICES.POSTGRES, APP_DIR_NAME)
         LOG.info("Container ID: $containerId")
 
         val dropDbCmd = "DROP DATABASE IF EXISTS $dbName;"
@@ -203,6 +200,32 @@ class MainFormListeners private constructor() {
                 super.windowClosing(e)
             }
         }
+    }
+
+    fun resetListener() {
+        val result = JOptionPane.showConfirmDialog(
+            mainForm,
+            "Are you sure you want to reset the configuration files?\n\n" +
+                    "This will delete all data from the database and any changes " +
+                    "made to the configuration files.",
+            "Reset configuration files",
+            JOptionPane.YES_NO_OPTION
+        )
+
+        if (result != JOptionPane.YES_OPTION) {
+            return
+        }
+        Thread {
+            mainForm.status = MainForm.Status.STOPPING
+            reset()
+            mainForm.status = MainForm.Status.STOPPED
+            JOptionPane.showMessageDialog(mainForm, "Configuration files reset successfully")
+        }.start()
+    }
+
+    private fun reset() {
+        stopContainer()
+        AppHelper.resetConfigurationFiles()
     }
 
 }

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   database:
     image: postgres:latest
@@ -34,7 +36,7 @@ services:
       - database
     environment:
       SPRING_PROFILES_ACTIVE: local  # Set the active profile to "local"
-      SPRING_DATASOURCE_URL: jdbc:${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_DOCKER_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_DOCKER_PORT}/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 

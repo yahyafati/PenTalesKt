@@ -1,11 +1,12 @@
 package org.pentales.projectrunner.mainform.logPanel.serviceTab
 
+import org.pentales.projectrunner.util.*
 import java.awt.*
 import javax.swing.*
 import javax.swing.event.*
 
 class ServiceTab(
-    val serviceName: String,
+    val service: DockerHelper.SERVICES,
     private val hideStartStopButtons: Boolean = false
 ) : JPanel() {
 
@@ -21,6 +22,7 @@ class ServiceTab(
     private val startLoggingButton = JButton("Start Logging")
     private val stopLoggingButton = JButton("Stop Logging")
     private val anchorToBottomButton = JToggleButton("Anchor", anchorToBottom)
+    private val clearButton = JButton("Clear")
     private val scrollPane = JScrollPane(textArea)
 
     private val listener = ServiceTabListener(this)
@@ -66,6 +68,10 @@ class ServiceTab(
             }
         }
 
+        clearButton.addActionListener {
+            textArea.text = ""
+        }
+
         textArea.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent?) {
                 scrollToEnd()
@@ -99,7 +105,7 @@ class ServiceTab(
         layout = BorderLayout()
 
         val label =
-            JLabel("<html>Full log for $serviceName can be found below in <b>$serviceName.log</b></html>").apply {
+            JLabel("<html>Full log for $service can be found below in <b>$service.log</b></html>").apply {
                 isOpaque = true
                 background = Color(0, 0, 0, 0)
                 border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -110,11 +116,12 @@ class ServiceTab(
             layout = BoxLayout(this, BoxLayout.LINE_AXIS)
 
             add(anchorToBottomButton)
+            add(clearButton)
             if (!hideStartStopButtons) {
                 add(startLoggingButton)
                 add(stopLoggingButton)
             }
-            add(label)
+//            add(label)
         }
 
         add(northPanel, BorderLayout.NORTH)

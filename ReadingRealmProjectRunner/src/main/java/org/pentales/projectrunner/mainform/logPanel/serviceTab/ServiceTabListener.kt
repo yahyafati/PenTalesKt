@@ -15,7 +15,7 @@ class ServiceTabListener(private val serviceTab: ServiceTab) {
     private var logProcess: Process? = null
 
     fun startLoggingListener() {
-        LOG.info("Starting logging for ${serviceTab.serviceName}")
+        LOG.info("Starting logging for ${serviceTab.service}")
         Thread {
             serviceTab.status = ServiceTab.Status.STARTING
             startLogging()
@@ -23,7 +23,7 @@ class ServiceTabListener(private val serviceTab: ServiceTab) {
     }
 
     private fun startLogging() {
-        logProcess = DockerHelper.startLogging(serviceTab.serviceName, MainFormListeners.APP_DIR_NAME, true)
+        logProcess = DockerHelper.startLogging(serviceTab.service, MainFormListeners.APP_DIR_NAME, true)
         serviceTab.status = ServiceTab.Status.STARTED
 
         val currentTime = LocalDateTime.now()
@@ -41,7 +41,7 @@ class ServiceTabListener(private val serviceTab: ServiceTab) {
     }
 
     fun stopLoggingListener() {
-        LOG.info("Stopping logging for ${serviceTab.serviceName}")
+        LOG.info("Stopping logging for ${serviceTab.service}")
         Thread {
             serviceTab.status = ServiceTab.Status.STOPPING
             stopLogging()

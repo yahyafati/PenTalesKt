@@ -22,6 +22,7 @@ class MainForm : JFrame() {
     private val populateDatabaseButton = JButton("Populate Database")
     private val updateContainerButton = JButton("Update Container")
     private val clearDataButton = JButton("Clear Data")
+    private val resetButton = JButton("Reset")
     private val statusLabel = JLabel("")
 
     private val dockerStatusLabel = JLabel("")
@@ -65,6 +66,7 @@ class MainForm : JFrame() {
         updateContainerButton.isEnabled = status == Status.STOPPED
         clearDataButton.isEnabled = status == Status.STOPPED
         populateDatabaseButton.isEnabled = status == Status.STOPPED
+        resetButton.isEnabled = status == Status.STOPPED
 
         servicesStatusLabel.text =
             status.name.lowercase()
@@ -94,6 +96,7 @@ class MainForm : JFrame() {
         updateContainerButton.addActionListener { listeners.updateContainerListener() }
         clearDataButton.addActionListener { listeners.clearDataListener() }
         populateDatabaseButton.addActionListener { listeners.populateDatabaseListener() }
+        resetButton.addActionListener { listeners.resetListener() }
     }
 
     private fun initUI() {
@@ -144,6 +147,7 @@ class MainForm : JFrame() {
         servicesPanel.add(stopButton)
         servicesPanel.add(updateContainerButton)
         servicesPanel.add(clearDataButton)
+        servicesPanel.add(resetButton)
 
         val statusPanel = JPanel()
         statusPanel.layout = BoxLayout(statusPanel, BoxLayout.Y_AXIS)

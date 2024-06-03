@@ -22,17 +22,18 @@ class LogTabbedPanel private constructor() : JTabbedPane() {
     init {
         minimumSize = Dimension(300, 300)
 
-        val allTab = ServiceTab("all", true)
+        val allTab = ServiceTab(DockerHelper.SERVICES.ALL, true)
         ProcessUtils.addLogListener(object : ProcessUtils.ProcessOutputListener {
             override fun onOutput(line: String?) {
                 allTab.textArea.append(line + "\n")
             }
         })
         addTab("All Services", allTab)
-        addTab("Database Service", ServiceTab("database"))
-        addTab("Backend Service", ServiceTab("backend"))
-        addTab("Frontend Service", ServiceTab("frontend"))
-        addTab("Sentiment Analysis Service", ServiceTab("sentiment-analysis"))
+        addTab("Database Service", ServiceTab(DockerHelper.SERVICES.POSTGRES))
+        addTab("Backend Service", ServiceTab(DockerHelper.SERVICES.BACKEND))
+        addTab("Frontend Service", ServiceTab(DockerHelper.SERVICES.FRONTEND))
+        addTab("Sentiment Analysis Service", ServiceTab(DockerHelper.SERVICES.SENTIMENT_ANALYSIS))
+        addTab("pgAdmin", ServiceTab(DockerHelper.SERVICES.PGADMIN))
     }
 
 }
