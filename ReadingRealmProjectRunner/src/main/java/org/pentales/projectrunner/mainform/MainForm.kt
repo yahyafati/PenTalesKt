@@ -1,5 +1,6 @@
 package org.pentales.projectrunner.mainform
 
+import org.pentales.projectrunner.mainform.logPanel.*
 import org.pentales.projectrunner.util.*
 import java.awt.*
 import java.util.*
@@ -26,6 +27,8 @@ class MainForm : JFrame() {
     private val dockerStatusLabel = JLabel("")
     private val dockerComposeStatusLabel = JLabel("")
 
+    private val loggedTabbedPanel = LogTabbedPanel.getInstance()
+
     private val listeners = MainFormListeners.getInstance(this)
 
     var status = Status.STOPPED
@@ -38,9 +41,9 @@ class MainForm : JFrame() {
     private val servicesStatusLabel = JLabel(status.name)
 
     init {
-        title = "Main Form"
+        title = "Reading Realm Project Runner"
         defaultCloseOperation = EXIT_ON_CLOSE
-        minimumSize = Dimension(300, 0)
+        minimumSize = Dimension(300, 400)
         initUI()
         initListeners()
         addWindowListener(listeners.windowListener())
@@ -121,7 +124,7 @@ class MainForm : JFrame() {
         dockerComposePanel.add(this.dockerComposeStatusLabel)
 
         val servicesLabelPanel = JPanel()
-        servicesLabelPanel.layout = BoxLayout(servicesLabelPanel, BoxLayout.X_AXIS)
+        servicesLabelPanel.layout = BoxLayout(servicesLabelPanel, BoxLayout.LINE_AXIS)
         val servicesLabel = JLabel("Services - ")
         servicesLabelPanel.add(servicesLabel)
         servicesStatusLabel.font = font.deriveFont(font.style or Font.BOLD)
@@ -132,14 +135,9 @@ class MainForm : JFrame() {
         installedPanel.add(Box.createVerticalStrut(10))
         installedPanel.add(servicesLabelPanel)
 
-
-        contentPanel.add(installedPanel, BorderLayout.NORTH)
-
         val servicesPanel = JPanel()
-        servicesPanel.layout = BoxLayout(servicesPanel, BoxLayout.Y_AXIS)
+        servicesPanel.layout = BoxLayout(servicesPanel, BoxLayout.X_AXIS)
         servicesPanel.border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
-
-
 
         servicesPanel.add(startButton)
         servicesPanel.add(populateDatabaseButton)
@@ -147,12 +145,17 @@ class MainForm : JFrame() {
         servicesPanel.add(updateContainerButton)
         servicesPanel.add(clearDataButton)
 
-
-        add(servicesPanel, BorderLayout.CENTER)
-
         val statusPanel = JPanel()
         statusPanel.layout = BoxLayout(statusPanel, BoxLayout.Y_AXIS)
         statusPanel.add(statusLabel)
+
+        val northPanel = JPanel()
+        northPanel.layout = BoxLayout(northPanel, BoxLayout.Y_AXIS)
+        northPanel.add(installedPanel)
+        northPanel.add(servicesPanel)
+
+        add(northPanel, BorderLayout.NORTH)
+        add(loggedTabbedPanel, BorderLayout.CENTER)
         add(statusPanel, BorderLayout.SOUTH)
     }
 

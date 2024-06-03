@@ -7,7 +7,30 @@ import java.util.logging.*
 
 object ProcessUtils {
 
-    val LOG = Logger.getLogger(MainFormListeners::class.java.name)
+    private val LOG = Logger.getLogger(MainFormListeners::class.java.name)
+
+    interface ProcessOutputListener {
+
+        fun onOutput(line: String?)
+    }
+
+    private val logListener = object : ProcessOutputListener {
+        override fun onOutput(line: String?) {
+            LOG.info(line)
+        }
+    }
+
+    private val logListeners = mutableListOf<ProcessOutputListener>(
+        logListener
+    )
+
+    fun addLogListener(listener: ProcessOutputListener) {
+        logListeners.add(listener)
+    }
+
+    fun removeLogListener(listener: ProcessOutputListener) {
+        logListeners.remove(listener)
+    }
 
     fun startProcess(commands: List<String>, directory: String): Process? {
         val directoryFile = File(directory)
@@ -19,10 +42,12 @@ object ProcessUtils {
         return process
     }
 
-    private fun writeReaderToLog(reader: BufferedReader) {
+    private fun writeReaderToLog(reader: BufferedReader, listeners: List<ProcessOutputListener> = logListeners) {
         var line: String?
         while (reader.readLine().also { line = it } != null) {
-            LOG.info(line)
+            listeners.forEach { listener ->
+                listener.onOutput(line)
+            }
         }
     }
 
@@ -30,22 +55,23 @@ object ProcessUtils {
         process.waitFor()
     }
 
-    fun waitAndPrintOutput(process: Process) {
+    fun waitAndPrintOutput(process: Process, listeners: List<ProcessOutputListener> = logListeners) {
         val reader = BufferedReader(InputStreamReader(process.inputStream))
         val errorReader = BufferedReader(InputStreamReader(process.errorStream))
         Thread {
-            writeReaderToLog(reader)
+            writeReaderToLog(reader, listeners)
         }.start()
         Thread {
-            writeReaderToLog(errorReader)
+            writeReaderToLog(errorReader, listeners)
         }.start()
         wait(process)
     }
 
     fun stopProcess(process: Process) {
-        LOG.info("Stopping process")
+        LOG.info("Stopping process - ${process.pid()}")
         process.destroy()
         process.waitFor()
+        LOG.info("Process stopped - ${process.pid()}")
     }
 
     fun getOutput(process: Process): String {

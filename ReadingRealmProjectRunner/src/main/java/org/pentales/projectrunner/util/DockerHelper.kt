@@ -7,7 +7,7 @@ object DockerHelper {
 
     private val LOG = Logger.getLogger(DockerHelper::class.java.name)
 
-    val SERVICES = listOf("postgres", "springboot-app", "frontend", "sentiment-analysis", "pgadmin")
+    val SERVICES = listOf("postgres", "backend", "frontend", "sentiment-analysis", "pgadmin")
 
     fun isDockerInstalled(): Boolean {
         val process = ProcessUtils.startProcess(listOf("docker", "--version"), MainFormListeners.APP_DIR_NAME)
@@ -19,8 +19,11 @@ object DockerHelper {
         return process != null
     }
 
-    fun startContainers(directory: String, containers: List<String> = listOf()): Process {
+    fun startContainers(directory: String, containers: List<String> = listOf(), detached: Boolean = false): Process {
         val command = mutableListOf("docker-compose", "up")
+        if (detached) {
+            command.add("-d")
+        }
         command.addAll(containers)
         val process = ProcessUtils.startProcess(command, directory)
         if (process == null) {
@@ -48,6 +51,20 @@ object DockerHelper {
         if (process == null) {
             LOG.severe("Could not run docker-compose down --volumes command")
             throw Exception("Could not run docker-compose down --volumes command")
+        }
+        return process
+    }
+
+    fun startLogging(container: String, directory: String, follow: Boolean = true): Process {
+        val command = mutableListOf("docker", "logs")
+        if (follow) {
+            command.add("-f")
+        }
+        command.add(container)
+        val process = ProcessUtils.startProcess(command, directory)
+        if (process == null) {
+            LOG.severe("Could not run docker logs command")
+            throw Exception("Could not run docker logs command")
         }
         return process
     }

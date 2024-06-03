@@ -18,13 +18,9 @@ fun main() {
 
     SwingUtilities.invokeLater {
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel")
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
         } catch (e: Exception) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            e.printStackTrace()
         }
 
         val mainForm = MainForm()

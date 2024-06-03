@@ -68,7 +68,6 @@ class MainFormListeners private constructor() {
             mainForm.status = MainForm.Status.STOPPING
             stopContainer()
             mainForm.status = MainForm.Status.STOPPED
-            JOptionPane.showMessageDialog(mainForm, "Container stopped successfully")
         }.start()
     }
 
