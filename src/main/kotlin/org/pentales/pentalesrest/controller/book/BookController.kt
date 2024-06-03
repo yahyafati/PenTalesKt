@@ -64,6 +64,14 @@ class BookController(
         return ResponseEntity.ok(BasicResponseDto.ok(BookDTO(book, baseURL)))
     }
 
+    @GetMapping("/random")
+    fun getRandomBook(): ResponseEntity<BasicResponseDto<ActivityBookDto>> {
+        val book = service.getRandomBook()
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val dto = ActivityBookDto(ActivityBook(book), baseURL)
+        return ResponseEntity.ok(BasicResponseDto.ok(dto))
+    }
+
     @GetMapping("/{id}/rating-info")
     fun getBookRatingInfoById(
         @PathVariable

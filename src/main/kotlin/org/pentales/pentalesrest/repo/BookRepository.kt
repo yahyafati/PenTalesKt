@@ -9,4 +9,7 @@ interface BookRepository : IRepoSpecification<Book, Long> {
     @Query("SELECT b FROM ActivityBook b WHERE b.id = :id")
     fun findActivityBookById(id: Long): ActivityBook?
 
+    @Query("SELECT b FROM Book b ORDER BY RANDOM() LIMIT 1")
+    fun findRandomBook(): Book?
+
 }

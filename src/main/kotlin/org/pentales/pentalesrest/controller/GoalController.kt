@@ -79,7 +79,8 @@ class GoalController(
         val userBookActivities = userBookActivityServices.getBooksByStatusInYear(
             userId, EUserBookReadStatus.READ, yearToLoad, PageRequest.of(0, 50)
         )
-        val response = userBookActivities.map { ActivityBookDto(it.book) }
+        val baseURL = ServletUtil.getBaseURLFromCurrentRequest()
+        val response = userBookActivities.map { ActivityBookDto(it.book, baseURL) }
         return ResponseEntity.ok(BasicResponseDto.ok(response))
     }
 

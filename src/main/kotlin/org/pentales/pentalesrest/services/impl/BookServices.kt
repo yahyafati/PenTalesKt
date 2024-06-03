@@ -226,6 +226,10 @@ class BookServices(
         return bookRepository.save(book)
     }
 
+    override fun getRandomBook(): Book {
+        return bookRepository.findRandomBook() ?: throw NoEntityFoundException("Book")
+    }
+
     private fun saveBookGenres(book: Book): List<BookGenre> {
         val bookGenres: List<BookGenre> = book.genres
         bookGenres.forEach { bookGenre: BookGenre ->

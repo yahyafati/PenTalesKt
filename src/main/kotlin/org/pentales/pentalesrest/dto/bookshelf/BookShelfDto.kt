@@ -22,7 +22,7 @@ data class BookShelfDto(
         title = bookShelf.title,
         description = bookShelf.description,
         access = bookShelf.access,
-        books = bookShelf.books.map { ActivityBookDto(it.book) },
+        books = bookShelf.books.map { ActivityBookDto(it.book, baseURL) },
         owner = UserDto(bookShelf.owner, baseURL),
         readLater = bookShelf.readLater,
         shelfType = if (bookShelf.readLater) EShelfType.READ_LATER else EShelfType.NORMAL

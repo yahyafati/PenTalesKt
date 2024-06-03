@@ -25,7 +25,7 @@ data class ActivityDto(
         type = activityView.type
         updatedAt = activityView.updatedAt.time
         rating = activityView.getEffectiveRating()?.let { ActivityRatingDto(it, baseURL) }
-        book = activityView.activityBook?.let { ActivityBookDto(it) }
+        book = activityView.activityBook?.let { ActivityBookDto(it, baseURL) }
         data = when (type) {
             EActivityType.RATING -> null
             EActivityType.COMMENT -> CommentDto(activityView.comment!!, baseURL)
