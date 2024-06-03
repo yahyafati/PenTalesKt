@@ -1,13 +1,17 @@
 #!/bin/bash
 
 # Variables
-DB_NAME="DB_NAME"
-DB_USER="DB_USER"
-BACKUP_FILE="db_backups/backup_$(date +%Y%m%d%H%M%S).sql"
+DB_NAME="reading_realm"
+DB_USER="postgres"
+PARENT_DIR="db_backups"
+BACKUP_FILE="$PARENT_DIR/backup_$(date +%Y%m%d%H%M%S).sql"
+
+# Set Password environment variable
+export PGPASSWORD="DB_PASSWORD"
 
 # Create the backup directory
-mkdir -p db_backups
+mkdir -p PARENT_DIR
 
 # Perform the backup
-pg_dump -U $DB_USER -F c -f "$BACKUP_FILE" $DB_NAME
+pg_dump -U $DB_USER -d $DB_NAME -f "$BACKUP_FILE"
 
