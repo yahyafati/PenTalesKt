@@ -1,8 +1,10 @@
+version: '3.8'
+
 services:
-  postgres:
+  database:
     image: postgres:latest
     platform: linux/amd64
-    container_name: postgres-db
+    container_name: database
     env_file: .env
     ports:
       - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
@@ -23,18 +25,18 @@ services:
     environment:
       FLASK_DOCKER_PORT: ${SENTIMENT_ANALYSIS_DOCKER_PORT}
 
-  springboot-app:
+  backend:
     platform: linux/amd64
-    container_name: springboot-app
+    container_name: backend
     image: yahyafati/reading-realm-backend:latest
     env_file: .env
     ports:
       - ${SPRINGBOOT_LOCAL_PORT}:${SPRINGBOOT_DOCKER_PORT}
     depends_on:
-      - postgres
+      - database
     environment:
       SPRING_PROFILES_ACTIVE: local  # Set the active profile to "local"
-      SPRING_DATASOURCE_URL: jdbc:${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_DOCKER_PORT}/${POSTGRES_DB}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_DOCKER_PORT}/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
@@ -74,12 +76,12 @@ services:
     volumes:
       - ./init.sql:/tmp/init.sql
     depends_on:
-      - postgres
+      - database
 
   frontend:
     depends_on:
-      - springboot-app
-    container_name: reading-realm-frontend
+      - backend
+    container_name: frontend
     image: yahyafati/reading-realm-frontend:latest
     volumes:
       - node_modules:/app/node_modules
