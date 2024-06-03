@@ -19,5 +19,6 @@ interface IBookServices : IGenericService<Book> {
     fun getEbook(fileId: Long): BookFile
     fun deleteEbook(fileId: Long, user: User)
     fun uploadBookCover(bookId: Long, uploadDto: ImageUploadDto): Book
+    fun getRandomBook(): Book
 
 }

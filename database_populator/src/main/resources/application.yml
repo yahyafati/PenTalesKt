@@ -3,7 +3,7 @@ username: postgres
 password: password
 driver-class-name: org.postgresql.Driver
 author-dataset-file-path: /Users/yahyahaji/Documents/GoodReads/author_dataset.csv
-goodreads-dataset-file-path: /Users/yahyahaji/Documents/GoodReads/goodreads_books.json.gz
+goodreads-dataset-file-path: /Users/yahyahaji/Documents/GoodReads/output.json.gz
 genres:
   Fantasy:
     - Fantasy
