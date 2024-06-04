@@ -5,6 +5,7 @@ import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.config.security.oauth2.*
 import org.pentales.pentalesrest.services.*
 import org.slf4j.*
+import org.springframework.beans.factory.annotation.*
 import org.springframework.context.annotation.*
 import org.springframework.http.*
 import org.springframework.security.access.expression.method.*
@@ -34,8 +35,11 @@ class SecurityConfig(
 
     companion object {
 
-        val LOG = LoggerFactory.getLogger(SecurityConfig::class.java)
+        private val LOG = LoggerFactory.getLogger(SecurityConfig::class.java)
     }
+
+    @Value("\${server.ssl.enabled}")
+    private val requireSecure = false
 
     @Bean
     fun roleHierarchy(): RoleHierarchy {
@@ -66,7 +70,11 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .cors(Customizer.withDefaults())
-//            .requiresChannel { it.anyRequest().requiresSecure() }
+            .requiresChannel {
+                if (requireSecure) {
+                    it.anyRequest().requiresSecure()
+                }
+            }
             .csrf { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
