@@ -196,7 +196,8 @@ class UserProfileServices(
         if (profile.profilePicture != null) {
             fileService.deleteFile(profile.profilePicture!!)
         }
-        userProfileRepository.updateProfilePicture(profile, null)
+        val newProfilePicture = UserUtils.getProfileAvatar(profile.firstName, profile.lastName)
+        userProfileRepository.updateProfilePicture(profile, newProfilePicture)
         return findById(profile.id)
     }
 

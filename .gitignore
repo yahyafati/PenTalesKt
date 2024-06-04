@@ -50,4 +50,5 @@ uploads
 *.p12
 keys/
 __app/
-venv
+venv/
+db_backups/

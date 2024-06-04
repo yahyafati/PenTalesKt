@@ -146,7 +146,17 @@ class MainFormListeners private constructor() {
         LOG.info("Populating backend")
         val postgresProcess = DockerHelper.startContainers(APP_DIR_NAME, listOf(DockerHelper.SERVICES.POSTGRES))
 
-        val wait = DockerHelper.waitUntilContainerIsRunning(DockerHelper.SERVICES.POSTGRES, APP_DIR_NAME)
+        val wait = DockerHelper.waitUntilContainerIsRunning(
+            DockerHelper.SERVICES.POSTGRES,
+            APP_DIR_NAME,
+            checkingFunction = { _, _ ->
+                DockerHelper.checkIfPostgresIsAcceptingConnections(
+                    DockerHelper.SERVICES.POSTGRES,
+                    APP_DIR_NAME
+                )
+            }
+
+        )
 
         if (!wait) {
             LOG.severe("Could not start ${DockerHelper.SERVICES.POSTGRES.container} container")
@@ -186,7 +196,12 @@ class MainFormListeners private constructor() {
             LOG.info("$label completed")
         }
 
+        val stopProcess = DockerHelper.stopContainers(APP_DIR_NAME, listOf(DockerHelper.SERVICES.POSTGRES))
+        ProcessUtils.waitAndPrintOutput(stopProcess)
+        ProcessUtils.stopProcess(stopProcess)
+
         ProcessUtils.stopProcess(postgresProcess)
+
     }
 
     fun windowListener(): WindowListener {
