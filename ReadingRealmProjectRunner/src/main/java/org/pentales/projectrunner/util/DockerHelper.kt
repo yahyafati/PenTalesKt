@@ -111,25 +111,49 @@ object DockerHelper {
         return output == "true"
     }
 
+    fun checkIfPostgresIsAcceptingConnections(container: SERVICES, directory: String): Boolean {
+        val containerId = getContainerId(container, directory)
+
+        if (containerId.isEmpty()) {
+            return false
+        }
+
+        val process = ProcessUtils.startProcess(
+            listOf("docker", "exec", containerId, "pg_isready"),
+            directory
+        )
+
+        if (process == null) {
+            LOG.severe("Could not check if postgres is accepting connections")
+            throw Exception("Could not check if postgres is accepting connections")
+        }
+
+        val output = ProcessUtils.getOutput(process).trim()
+
+        return "accepting connections" in output
+    }
+
     fun waitUntilContainerIsRunning(
         container: SERVICES,
         directory: String,
         maxCount: Int = 10,
-        sleepTime: Long = 1000
+        sleepTime: Long = 1000,
+        checkingFunction: (SERVICES, String) -> Boolean = ::checkIfContainerIsRunning
     ): Boolean {
-        return waitUntilContainersAreRunning(listOf(container), directory, maxCount, sleepTime)
+        return waitUntilContainersAreRunning(listOf(container), directory, maxCount, sleepTime, checkingFunction)
     }
 
     fun waitUntilContainersAreRunning(
         containers: List<SERVICES>,
         directory: String,
         maxCount: Int = 10,
-        sleepTime: Long = 10_000
+        sleepTime: Long = 10_000,
+        checkingFunction: (SERVICES, String) -> Boolean = ::checkIfContainerIsRunning
     ): Boolean {
         var count = 0
 
         var mapped = containers.associateWith { container ->
-            checkIfContainerIsRunning(container, directory)
+            checkingFunction(container, directory)
         }
 
         while (mapped.containsValue(false) && count < maxCount) {
@@ -138,7 +162,7 @@ object DockerHelper {
             count++
 
             mapped = containers.associateWith { container ->
-                checkIfContainerIsRunning(container, directory)
+                checkingFunction(container, directory)
             }
         }
 
