@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.io.*
 
 @MappedSuperclass
+@Cacheable
 abstract class IModel : Serializable, IAudit() {
 
     @Id
