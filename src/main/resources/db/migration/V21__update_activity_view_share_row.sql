@@ -33,4 +33,3 @@ SELECT 'SHARE'::text                                             AS type,
        s.created_at
 FROM public.share s;
 -- we are deleting all share rows from the activity view once the rating is deleted
-    ALTER VIEW public.activity OWNER TO postgres;
