@@ -81,4 +81,10 @@ class ActivityViewServices(
         return activity
     }
 
+    override fun getExploreActivities(user: User, pageable: Pageable): Page<ActivityView> {
+        val activities = activityViewRepository.findAll(pageable)
+        activities.forEach { processActivity(it, user) }
+        return activities
+    }
+
 }
