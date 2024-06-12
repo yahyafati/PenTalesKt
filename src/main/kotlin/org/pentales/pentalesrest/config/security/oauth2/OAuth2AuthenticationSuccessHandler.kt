@@ -1,8 +1,8 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
 import jakarta.servlet.http.*
-import org.pentales.pentalesrest.components.configProperties.*
-import org.pentales.pentalesrest.config.*
+import org.pentales.pentalesrest.config.properties.*
+import org.pentales.pentalesrest.models.misc.jwt.*
 import org.pentales.pentalesrest.utils.*
 import org.slf4j.*
 import org.springframework.security.core.*
@@ -15,7 +15,7 @@ import java.net.*
 class OAuth2AuthenticationSuccessHandler(
     private val httpCookieOAuth2AuthorizationRequestRepository: HttpCookieOAuth2AuthorizationRequestRepository,
     private val jwtService: JwtService,
-    private val oAuth2Properties: SecurityConfigProperties.OAuth2Properties,
+    private val oAuth2Properties: SecurityProperties.OAuth2Properties,
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
     companion object {

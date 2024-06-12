@@ -5,11 +5,12 @@ import com.auth0.jwt.algorithms.*
 import com.fasterxml.jackson.databind.*
 import jakarta.servlet.*
 import jakarta.servlet.http.*
-import org.pentales.pentalesrest.components.*
-import org.pentales.pentalesrest.components.configProperties.*
 import org.pentales.pentalesrest.config.*
-import org.pentales.pentalesrest.dto.*
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.config.properties.*
+import org.pentales.pentalesrest.global.dto.*
+import org.pentales.pentalesrest.models.entities.*
+import org.pentales.pentalesrest.models.entities.user.*
+import org.pentales.pentalesrest.models.misc.jwt.*
 import org.slf4j.*
 import org.springframework.http.*
 import org.springframework.security.authentication.*
@@ -21,7 +22,7 @@ import java.util.*
 
 class JWTAuthenticationFilter(
     private val authenticationManager: AuthenticationManager,
-    securityConfigProperties: SecurityConfigProperties,
+    securityProperties: SecurityProperties,
     private val jwtService: JwtService,
 ) : UsernamePasswordAuthenticationFilter() {
 
@@ -32,11 +33,11 @@ class JWTAuthenticationFilter(
         private val LOG = LoggerFactory.getLogger(JWTAuthenticationFilter::class.java)
     }
 
-    private val jwtProperties: SecurityConfigProperties.JwtProperties = securityConfigProperties.jwt
+    private val jwtProperties: SecurityProperties.JwtProperties = securityProperties.jwt
 
     init {
-        setFilterProcessesUrl(securityConfigProperties.loginUrl)
-        LOG.info("Login URL: ${securityConfigProperties.loginUrl}")
+        setFilterProcessesUrl(securityProperties.loginUrl)
+        LOG.info("Login URL: ${securityProperties.loginUrl}")
     }
 
     @Throws(AuthenticationException::class)

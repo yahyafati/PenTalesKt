@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.config.security
 
-import org.pentales.pentalesrest.models.User
+import org.pentales.pentalesrest.models.entities.user.User
 import org.springframework.security.core.*
 import org.springframework.security.core.userdetails.*
 
