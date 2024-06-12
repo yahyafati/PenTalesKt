@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
 import org.pentales.pentalesrest.exceptions.*
-import org.pentales.pentalesrest.models.entities.user.EAuthProvider
+import org.pentales.pentalesrest.models.entities.user.*
 
 object OAuth2UserInfoFactory {
 

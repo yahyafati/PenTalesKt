@@ -1,7 +1,7 @@
 package org.pentales.pentalesrest.global.controller.test
 
 import org.pentales.pentalesrest.exceptions.*
-import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.access.prepost.*
 import org.springframework.web.bind.annotation.*
 
 @RestController

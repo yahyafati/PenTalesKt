@@ -7,5 +7,5 @@ object PageableUtil {
     fun getPageable(page: Int, size: Int, sort: Sort): Pageable {
         return PageRequest.of(page, size, sort)
     }
-    
+
 }

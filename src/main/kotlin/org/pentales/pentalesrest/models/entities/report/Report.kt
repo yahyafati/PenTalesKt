@@ -2,7 +2,7 @@ package org.pentales.pentalesrest.models.entities.report
 
 import jakarta.persistence.*
 import org.pentales.pentalesrest.models.entities.interfaces.*
-import org.pentales.pentalesrest.models.entities.rating.Rating
+import org.pentales.pentalesrest.models.entities.rating.*
 import org.pentales.pentalesrest.models.entities.rating.comment.*
 import org.pentales.pentalesrest.models.entities.user.*
 

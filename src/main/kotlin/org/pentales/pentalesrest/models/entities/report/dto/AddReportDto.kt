@@ -20,7 +20,11 @@ data class AddReportDto(
         description = report.description,
     )
 
-    fun toReport(user: User, commentId: Long?, ratingId: Long?): org.pentales.pentalesrest.models.entities.report.Report {
+    fun toReport(
+        user: User,
+        commentId: Long?,
+        ratingId: Long?
+    ): org.pentales.pentalesrest.models.entities.report.Report {
         return org.pentales.pentalesrest.models.entities.report.Report(
             user = user,
             comment = commentId?.let {

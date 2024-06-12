@@ -1,9 +1,7 @@
 package org.pentales.pentalesrest.models.misc.pushNotification
 
 import org.pentales.pentalesrest.config.security.*
-import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.global.dto.*
-import org.pentales.pentalesrest.models.misc.pushNotification.*
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 

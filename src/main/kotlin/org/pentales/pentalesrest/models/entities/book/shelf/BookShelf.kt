@@ -1,8 +1,8 @@
 package org.pentales.pentalesrest.models.entities.book.shelf
 
 import jakarta.persistence.*
-import org.pentales.pentalesrest.models.entities.interfaces.*
 import org.pentales.pentalesrest.models.entities.book.shelf.shelfBook.*
+import org.pentales.pentalesrest.models.entities.interfaces.*
 import org.pentales.pentalesrest.models.entities.user.*
 
 @Entity

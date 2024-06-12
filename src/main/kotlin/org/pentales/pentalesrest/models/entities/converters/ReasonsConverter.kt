@@ -16,6 +16,7 @@ class ReasonsConverter :
         if (dbData == null) {
             return emptyList()
         }
-        return dbData.split(",").map { org.pentales.pentalesrest.models.entities.report.EContentReportReason.valueOf(it) }
+        return dbData.split(",")
+            .map { org.pentales.pentalesrest.models.entities.report.EContentReportReason.valueOf(it) }
     }
 }

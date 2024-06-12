@@ -1,7 +1,6 @@
 package org.pentales.pentalesrest.global.repo.specifications
 
 import jakarta.persistence.criteria.*
-import org.pentales.pentalesrest.dto.*
 import org.pentales.pentalesrest.global.dto.*
 import org.springframework.data.jpa.domain.*
 
