@@ -14,6 +14,9 @@ class VerificationCodeService(
     @Value("\${org.pen-tales.verification-code.length}")
     private val verificationCodeLength: Int = 6
 
+    @Value("\${org.pen-tales.email.template.base}")
+    private var templateURL: String = "classpath:templates/email"
+
     override fun createVerificationCode(userId: Long): VerificationCode {
         val verificationCode = VerificationCode(userId = userId)
         verificationCode.code = IVerificationCodeServices.generateVerificationCode(verificationCodeLength)
@@ -55,6 +58,7 @@ class VerificationCodeService(
     override fun sendVerificationCode(email: String, verificationCode: VerificationCode) {
         val imageURL = "https://i.postimg.cc/3JsMm4x8/undraw-secure-login-pdn4.png"
         val emailHTMLTemplate = EmailTemplateUtils.createEmailTemplate(
+            baseTemplate = EmailTemplateUtils.getBaseTemplate(templateURL),
             content = """
                 <h1>Verification Code</h1>
                 <p>Your verification code is: <strong>${verificationCode.code}</strong></p>
@@ -81,6 +85,7 @@ class VerificationCodeService(
             resetPasswordURL += "&callback=$callbackURL"
         }
         val emailHTMLTemplate = EmailTemplateUtils.createEmailTemplate(
+            baseTemplate = EmailTemplateUtils.getBaseTemplate(templateURL),
             content = """
                 <h1>Forgot Password</h1>
                 

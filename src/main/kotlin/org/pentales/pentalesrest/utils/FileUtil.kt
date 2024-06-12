@@ -74,9 +74,8 @@ object FileUtil {
         }
     }
 
-    private fun readResourceFile(resourceName: String): File {
-        val fileName = resourceName.replace("classpath:", "")
-        val file = getFile("classpath:$fileName") ?: throw FileNotFoundException("File not found: $fileName")
+    private fun readResourceFile(fileName: String): File {
+        val file = getFile(fileName) ?: throw FileNotFoundException("File not found: $fileName")
         return file
     }
 

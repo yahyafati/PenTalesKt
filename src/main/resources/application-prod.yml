@@ -12,6 +12,7 @@ spring:
               - profile
   mail:
     host: smtp.gmail.com # Override the host if needed
+    port: 587 # Override the port if needed
     properties:
       mail:
         smtp:

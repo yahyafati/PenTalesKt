@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.models.entities.user.auth
 
+import jakarta.annotation.*
 import jakarta.validation.*
 import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.models.entities.user.*
@@ -8,6 +9,7 @@ import org.pentales.pentalesrest.models.entities.user.dto.*
 import org.pentales.pentalesrest.models.entities.user.verification.*
 import org.pentales.pentalesrest.models.misc.email.*
 import org.pentales.pentalesrest.utils.*
+import org.springframework.beans.factory.annotation.*
 import org.springframework.security.crypto.password.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
@@ -44,6 +46,14 @@ class AuthServices(
         val verificationCode = verificationCodeService.createVerificationCode(savedUser.id)
         verificationCodeService.sendVerificationCode(savedUser.email, verificationCode)
         return savedUser
+    }
+
+    @Value("\${org.pen-tales.email.template.base}")
+    private var templateURL: String = "classpath:templates/email"
+
+    @PostConstruct
+    fun postInit() {
+        println("Template URL: $templateURL")
     }
 
     override fun getCurrentUser(): User {
@@ -102,6 +112,7 @@ class AuthServices(
 
     override fun sendNewPassword(email: String, newPassword: String) {
         val emailHTMLTemplate = EmailTemplateUtils.createEmailTemplate(
+            baseTemplate = EmailTemplateUtils.getBaseTemplate(templateURL),
             content = """
                 <h1>Password Reset</h1>
                 
