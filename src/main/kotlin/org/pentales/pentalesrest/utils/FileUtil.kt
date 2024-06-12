@@ -52,4 +52,27 @@ object FileUtil {
         jpgImage.createGraphics().drawImage(webpImage, 0, 0, Color.WHITE, null)
         return jpgImage
     }
+
+    fun getFile(fileName: String): File? {
+        return if (fileName.isNotBlank()) {
+            if (fileName.startsWith("classpath:")) {
+                val path = fileName.replace("classpath:", "")
+                val file = File(this::class.java.classLoader.getResource(path)?.file ?: "")
+                if (file.exists()) {
+                    file
+                } else {
+                    null
+                }
+            } else {
+                val file = File(fileName)
+                if (file.exists()) {
+                    file
+                } else {
+                    null
+                }
+            }
+        } else {
+            null
+        }
+    }
 }

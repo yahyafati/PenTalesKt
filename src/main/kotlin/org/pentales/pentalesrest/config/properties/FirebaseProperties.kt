@@ -1,5 +1,6 @@
 package org.pentales.pentalesrest.config.properties
 
+import org.pentales.pentalesrest.utils.*
 import org.springframework.boot.context.properties.*
 import org.springframework.stereotype.*
 import java.io.*
@@ -11,28 +12,7 @@ class FirebaseProperties(
 ) {
 
     fun getServiceAccount(): File? {
-//        this::class.java.classLoader.getResourceAsStream(credentialPath)
-
-        return if (credentialPath.isNotBlank()) {
-            if (credentialPath.startsWith("classpath:")) {
-                val path = credentialPath.replace("classpath:", "")
-                val file = File(this::class.java.classLoader.getResource(path)?.file ?: "")
-                if (file.exists()) {
-                    file
-                } else {
-                    null
-                }
-            } else {
-                val file = File(credentialPath)
-                if (file.exists()) {
-                    file
-                } else {
-                    null
-                }
-            }
-        } else {
-            null
-        }
+        return FileUtil.getFile(credentialPath)
     }
 
     fun getServiceAccountStream(): InputStream {

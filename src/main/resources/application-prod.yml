@@ -10,6 +10,19 @@ spring:
             scope:
               - email
               - profile
+  mail:
+    host: smtp.gmail.com # Override the host if needed
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectionTimeout: 5000
+          timeout: 3000
+
+
 
 org:
   pen-tales:
