@@ -81,21 +81,12 @@ class CustomOAuth2UserService(
         val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
         val user = User()
 
-        var firstName = oAuth2UserInfo.firstName
-        var lastName = oAuth2UserInfo.lastName
-
-        if (firstName == lastName) {
-            val names = oAuth2UserInfo.name.split(" ")
-            firstName = names[0]
-            lastName = names[1]
-        }
-
         user.email = oAuth2UserInfo.email
         user.username = extractUniqueUsernameFromEmail(oAuth2UserInfo.email)
         user.password = ""
         user.profile = UserProfile(
-            firstName = firstName,
-            lastName = lastName,
+            firstName = oAuth2UserInfo.firstName,
+            lastName = oAuth2UserInfo.lastName,
             profilePicture = null,
             user = user
         )
@@ -114,10 +105,6 @@ class CustomOAuth2UserService(
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo, provider: EAuthProvider): User {
         existingUser.isEnabled = true
         existingUser.isVerified = true
-        existingUser.profile?.let {
-            it.firstName = oAuth2UserInfo.name
-            it.lastName = oAuth2UserInfo.name
-        }
         val providerEntity = existingUser.provider ?: UserProvider()
         existingUser.provider = providerEntity.apply {
             this.provider = providerEntity.provider
