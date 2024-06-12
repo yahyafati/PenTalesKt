@@ -54,25 +54,40 @@ object FileUtil {
     }
 
     fun getFile(fileName: String): File? {
-        return if (fileName.isNotBlank()) {
-            if (fileName.startsWith("classpath:")) {
-                val path = fileName.replace("classpath:", "")
-                val file = File(this::class.java.classLoader.getResource(path)?.file ?: "")
-                if (file.exists()) {
-                    file
-                } else {
-                    null
-                }
+        if (fileName.isBlank()) return null
+
+        return if (fileName.startsWith("classpath:")) {
+            val path = fileName.replace("classpath:", "")
+            val file = File(this::class.java.classLoader.getResource(path)?.file ?: "")
+            if (file.exists()) {
+                file
             } else {
-                val file = File(fileName)
-                if (file.exists()) {
-                    file
-                } else {
-                    null
-                }
+                null
             }
         } else {
-            null
+            val file = File(fileName)
+            if (file.exists()) {
+                file
+            } else {
+                null
+            }
         }
     }
+
+    private fun readResourceFile(resourceName: String): File {
+        val fileName = resourceName.replace("classpath:", "")
+        val file = getFile("classpath:$fileName") ?: throw FileNotFoundException("File not found: $fileName")
+        return file
+    }
+
+    fun readResourceFileText(resourceName: String): String {
+        val file = readResourceFile(resourceName)
+        return file.readText()
+    }
+
+    fun readResourceFileBytes(fileName: String): ByteArray {
+        val file = readResourceFile(fileName)
+        return file.readBytes()
+    }
+
 }

@@ -103,6 +103,8 @@ class CustomOAuth2UserService(
             provider = provider,
             providerId = oAuth2UserInfo.id
         )
+        user.isEnabled = true
+        user.isVerified = true
         val savedUser = userServices.save(user)
         val profilePicture = requestService.downloadFile(oAuth2UserInfo.imageUrl)
         userProfileServices.uploadProfilePicture(savedUser.profile!!, profilePicture, "profile.jpg")
@@ -110,6 +112,8 @@ class CustomOAuth2UserService(
     }
 
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo, provider: EAuthProvider): User {
+        existingUser.isEnabled = true
+        existingUser.isVerified = true
         existingUser.profile?.let {
             it.firstName = oAuth2UserInfo.name
             it.lastName = oAuth2UserInfo.name

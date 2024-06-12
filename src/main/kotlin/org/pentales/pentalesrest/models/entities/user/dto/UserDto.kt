@@ -11,6 +11,7 @@ class UserDto(
     val firstName: String? = null,
     val lastName: String? = null,
     val profilePicture: String? = null,
+    val isVerified: Boolean = false,
     val isFollowed: Boolean = false,
     @JsonIgnore
     private val baseURL: String = "http://localhost:8080"
@@ -38,6 +39,7 @@ class UserDto(
         lastName = user.profile?.lastName,
         profilePicture = getURLWithBaseURL(user.profile?.profilePicture, baseURL),
         isFollowed = user.__isFollowed,
+        isVerified = user.isVerified,
         baseURL = baseURL
     )
 

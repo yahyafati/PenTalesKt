@@ -91,7 +91,9 @@ class SecurityConfig(
                         securityProperties.logoutUrl,
                         securityProperties.registerUrl,
                         securityProperties.usernameAvailableUrl,
+                        "/api/auth/forgot-password",
                     ).permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/auth/reset-password/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
                     .requestMatchers("/oauth2/**", "/auth/**", "/oauth/**").permitAll()
                     .requestMatchers("/actuator/**").permitAll()

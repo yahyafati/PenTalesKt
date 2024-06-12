@@ -88,4 +88,14 @@ object ServletUtil {
         return getPageRequest(pageParams)
     }
 
+    fun getIPAddressOfCurrentRequest(): String {
+        val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)?.request
+            ?: throw IllegalStateException("No request found")
+        val xForwardedFor = request.getHeader("X-Forwarded-For")
+        return if (xForwardedFor.isNullOrBlank()) {
+            request.remoteAddr
+        } else {
+            xForwardedFor.split(",").first()
+        }
+    }
 }

@@ -33,7 +33,8 @@ class User(
     private var isAccountNonLocked: Boolean = true
 
     //    private var isCredentialsNonExpired: Boolean = true
-    private var isEnabled: Boolean = true
+    private var isEnabled: Boolean = false
+    var isVerified: Boolean = false
 
     @ManyToOne(fetch = FetchType.EAGER)
     var role: Role = Role()
@@ -94,6 +95,10 @@ class User(
 
     fun setEnabled(isEnabled: Boolean) {
         this.isEnabled = isEnabled
+    }
+
+    fun getEnabled(): Boolean {
+        return this.isEnabled
     }
 
 }
