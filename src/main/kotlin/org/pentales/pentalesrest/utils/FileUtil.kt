@@ -52,4 +52,41 @@ object FileUtil {
         jpgImage.createGraphics().drawImage(webpImage, 0, 0, Color.WHITE, null)
         return jpgImage
     }
+
+    fun getFile(fileName: String): File? {
+        if (fileName.isBlank()) return null
+
+        return if (fileName.startsWith("classpath:")) {
+            val path = fileName.replace("classpath:", "")
+            val file = File(this::class.java.classLoader.getResource(path)?.file ?: "")
+            if (file.exists()) {
+                file
+            } else {
+                null
+            }
+        } else {
+            val file = File(fileName)
+            if (file.exists()) {
+                file
+            } else {
+                null
+            }
+        }
+    }
+
+    private fun readResourceFile(fileName: String): File {
+        val file = getFile(fileName) ?: throw FileNotFoundException("File not found: $fileName")
+        return file
+    }
+
+    fun readResourceFileText(resourceName: String): String {
+        val file = readResourceFile(resourceName)
+        return file.readText()
+    }
+
+    fun readResourceFileBytes(fileName: String): ByteArray {
+        val file = readResourceFile(fileName)
+        return file.readBytes()
+    }
+
 }

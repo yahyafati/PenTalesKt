@@ -1,11 +1,9 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
-import org.pentales.pentalesrest.components.*
 import org.pentales.pentalesrest.exceptions.*
-import org.pentales.pentalesrest.models.*
-import org.pentales.pentalesrest.models.embeddables.*
-import org.pentales.pentalesrest.models.enums.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.models.entities.user.*
+import org.pentales.pentalesrest.models.entities.user.profile.*
+import org.pentales.pentalesrest.models.misc.request.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.*
 import org.springframework.security.oauth2.client.userinfo.*
@@ -83,21 +81,12 @@ class CustomOAuth2UserService(
         val provider = EAuthProvider.from(oAuth2UserRequest.clientRegistration.registrationId)
         val user = User()
 
-        var firstName = oAuth2UserInfo.firstName
-        var lastName = oAuth2UserInfo.lastName
-
-        if (firstName == lastName) {
-            val names = oAuth2UserInfo.name.split(" ")
-            firstName = names[0]
-            lastName = names[1]
-        }
-
         user.email = oAuth2UserInfo.email
         user.username = extractUniqueUsernameFromEmail(oAuth2UserInfo.email)
         user.password = ""
         user.profile = UserProfile(
-            firstName = firstName,
-            lastName = lastName,
+            firstName = oAuth2UserInfo.firstName,
+            lastName = oAuth2UserInfo.lastName,
             profilePicture = null,
             user = user
         )
@@ -105,6 +94,8 @@ class CustomOAuth2UserService(
             provider = provider,
             providerId = oAuth2UserInfo.id
         )
+        user.isEnabled = true
+        user.isVerified = true
         val savedUser = userServices.save(user)
         val profilePicture = requestService.downloadFile(oAuth2UserInfo.imageUrl)
         userProfileServices.uploadProfilePicture(savedUser.profile!!, profilePicture, "profile.jpg")
@@ -112,10 +103,8 @@ class CustomOAuth2UserService(
     }
 
     private fun updateExistingUser(existingUser: User, oAuth2UserInfo: OAuth2UserInfo, provider: EAuthProvider): User {
-        existingUser.profile?.let {
-            it.firstName = oAuth2UserInfo.name
-            it.lastName = oAuth2UserInfo.name
-        }
+        existingUser.isEnabled = true
+        existingUser.isVerified = true
         val providerEntity = existingUser.provider ?: UserProvider()
         existingUser.provider = providerEntity.apply {
             this.provider = providerEntity.provider

@@ -1,9 +1,10 @@
 package org.pentales.pentalesrest.config
 
-import org.pentales.pentalesrest.components.configProperties.*
+import org.pentales.pentalesrest.config.properties.*
 import org.pentales.pentalesrest.config.security.*
 import org.pentales.pentalesrest.config.security.oauth2.*
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.models.entities.user.*
+import org.pentales.pentalesrest.models.misc.jwt.*
 import org.slf4j.*
 import org.springframework.beans.factory.annotation.*
 import org.springframework.context.annotation.*
@@ -26,7 +27,7 @@ import org.springframework.web.filter.*
 @EnableMethodSecurity
 class SecurityConfig(
     private val authenticationConfiguration: AuthenticationConfiguration,
-    private val securityConfigProperties: SecurityConfigProperties,
+    private val securityProperties: SecurityProperties,
     private val userService: IUserServices,
     private val jwtService: JwtService,
     private val oauthUserService: CustomOAuth2UserService,
@@ -77,20 +78,22 @@ class SecurityConfig(
             }
             .csrf { it.disable() }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilter(JWTAuthenticationFilter(authenticationManager(), securityConfigProperties, jwtService))
+            .addFilter(JWTAuthenticationFilter(authenticationManager(), securityProperties, jwtService))
             .addFilterAfter(
                 JWTAuthorizationFilter(
-                    securityConfigProperties, userService, jwtService
+                    securityProperties, userService, jwtService
                 ), JWTAuthenticationFilter::class.java
             ).authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(
                         HttpMethod.POST,
-                        securityConfigProperties.loginUrl,
-                        securityConfigProperties.logoutUrl,
-                        securityConfigProperties.registerUrl,
-                        securityConfigProperties.usernameAvailableUrl,
+                        securityProperties.loginUrl,
+                        securityProperties.logoutUrl,
+                        securityProperties.registerUrl,
+                        securityProperties.usernameAvailableUrl,
+                        "/api/auth/forgot-password",
                     ).permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/auth/reset-password/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/assets/**").permitAll()
                     .requestMatchers("/oauth2/**", "/auth/**", "/oauth/**").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
@@ -128,19 +131,19 @@ class SecurityConfig(
     }
 
     @Bean
-    fun corsFilter(corsConfigProperties: CorsConfigProperties): CorsFilter {
-        LOG.info("CORS Configuration: $corsConfigProperties")
+    fun corsFilter(CORSProperties: CORSProperties): CorsFilter {
+        LOG.info("CORS Configuration: $CORSProperties")
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
-        config.allowedOrigins = corsConfigProperties.allowedOrigins
-        config.allowedMethods = corsConfigProperties.allowedMethods
-        config.allowedHeaders = corsConfigProperties.allowedHeaders
-        config.addAllowedHeader(securityConfigProperties.jwt.header)
-        config.allowCredentials = corsConfigProperties.allowCredentials
-        config.maxAge = corsConfigProperties.maxAge
+        config.allowedOrigins = CORSProperties.allowedOrigins
+        config.allowedMethods = CORSProperties.allowedMethods
+        config.allowedHeaders = CORSProperties.allowedHeaders
+        config.addAllowedHeader(securityProperties.jwt.header)
+        config.allowCredentials = CORSProperties.allowCredentials
+        config.maxAge = CORSProperties.maxAge
         config.exposedHeaders = listOf(
-            *corsConfigProperties.exposedHeaders.toTypedArray(),
-            securityConfigProperties.jwt.header
+            *CORSProperties.exposedHeaders.toTypedArray(),
+            securityProperties.jwt.header
         )
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)

@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.entities.user.*
 import org.springframework.security.core.*
 import org.springframework.security.oauth2.core.user.*
 

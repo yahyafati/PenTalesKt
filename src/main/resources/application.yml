@@ -30,6 +30,11 @@ server:
 
 org:
   pen-tales:
+    verification-code:
+      length: 6 # Length of the verification code
+    email:
+      template:
+        base: ./templates/email
     security:
       jwt:
         expiration: 86400000 # Token validity time in milliseconds
@@ -79,3 +84,5 @@ org:
     sentiment-analysis:
       endpoint: http://localhost:5000/evaluate
       interval-rate: 3600000 # Time in milliseconds to wait before sending another request to the sentiment analysis service
+
+

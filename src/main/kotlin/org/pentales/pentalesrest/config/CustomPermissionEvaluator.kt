@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.config
 
-import org.pentales.pentalesrest.models.enums.*
+import org.pentales.pentalesrest.models.entities.user.role.*
 import org.slf4j.*
 import org.springframework.security.access.*
 import org.springframework.security.core.*
@@ -12,7 +12,7 @@ class CustomPermissionEvaluator : PermissionEvaluator {
 
     companion object {
 
-        val LOG = LoggerFactory.getLogger(CustomPermissionEvaluator::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(CustomPermissionEvaluator::class.java)
     }
 
     override fun hasPermission(

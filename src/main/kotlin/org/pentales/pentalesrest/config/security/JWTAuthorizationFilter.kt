@@ -4,11 +4,11 @@ import com.auth0.jwt.exceptions.*
 import com.fasterxml.jackson.databind.*
 import jakarta.servlet.*
 import jakarta.servlet.http.*
-import org.pentales.pentalesrest.components.configProperties.*
-import org.pentales.pentalesrest.config.*
+import org.pentales.pentalesrest.config.properties.*
 import org.pentales.pentalesrest.exceptions.*
-import org.pentales.pentalesrest.models.User
-import org.pentales.pentalesrest.services.*
+import org.pentales.pentalesrest.models.entities.user.*
+import org.pentales.pentalesrest.models.entities.user.User
+import org.pentales.pentalesrest.models.misc.jwt.*
 import org.slf4j.*
 import org.springframework.http.*
 import org.springframework.security.authentication.*
@@ -17,12 +17,12 @@ import org.springframework.security.core.userdetails.*
 import org.springframework.web.filter.*
 
 class JWTAuthorizationFilter(
-    securityConfigProperties: SecurityConfigProperties,
+    securityProperties: SecurityProperties,
     private val userService: IUserServices,
     private val jwtService: JwtService
 ) : OncePerRequestFilter() {
 
-    private var jwtProperties: SecurityConfigProperties.JwtProperties = securityConfigProperties.jwt
+    private var jwtProperties: SecurityProperties.JwtProperties = securityProperties.jwt
 
     companion object {
 

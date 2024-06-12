@@ -1,6 +1,6 @@
 package org.pentales.pentalesrest.config.security.oauth2
 
-import org.pentales.pentalesrest.models.*
+import org.pentales.pentalesrest.models.entities.user.*
 
 class GoogleOAuth2UserInfo(attributes: Map<String, Any>) : OAuth2UserInfo(attributes) {
 

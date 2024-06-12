@@ -22,4 +22,19 @@ object UserUtils {
 //        "https://ui-avatars.com/api/?name=${profile.firstName}+${profile.lastName}&background=$background&color=$foreground"
         return "https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=$background&color=$foreground"
     }
+
+    fun generateRandomPassword(): String {
+        val lowerCaseChars = ('a'..'z')
+        val upperCaseChars = ('A'..'Z')
+        val digits = ('0'..'9')
+        val specialChars = "!@#$%^&*()_+{}|:<>?".toList()
+
+        val randomLowerCase = (1..2).map { lowerCaseChars.random() }
+        val randomUpperCase = (1..2).map { upperCaseChars.random() }
+        val randomDigits = (1..2).map { digits.random() }
+        val randomSpecialChars = (1..2).map { specialChars.random() }
+
+        val allChars = (randomLowerCase + randomUpperCase + randomDigits + randomSpecialChars).shuffled()
+        return allChars.joinToString("")
+    }
 }
