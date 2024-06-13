@@ -45,10 +45,10 @@ class UserProfileServices(
     fun getUploadPath(parent: String, originalFilename: String): String {
         val extension = FileUtil.getExtension(originalFilename).lowercase()
 
-        val allowedExtensions = assetProperties.upload.allowedExtensions
-        if (extension !in allowedExtensions) {
-            throw GenericException("File extension (.$extension) not allowed")
-        }
+//        val allowedExtensions = assetProperties.upload.allowedExtensions
+//        if (extension !in allowedExtensions) {
+//            throw GenericException("File extension (.$extension) not allowed")
+//        }
         val fileName = FileUtil.getFilenameWithoutExtension(originalFilename)
 
         val uniqueFileName = FileUtil.getUniqueFilename(fileName, extension)
